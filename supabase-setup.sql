@@ -30,6 +30,15 @@ on conflict (id) do nothing;
 -- ---------------------------------------------------------------------------
 alter table public.tracker_state enable row level security;
 
+-- Postgres needs BOTH a grant and a policy. The grant says "this role may touch
+-- this table at all"; the policy says "and here are the rows it may touch".
+-- Supabase's "Automatically expose new tables" project setting is what normally
+-- issues these grants, and it is off by default (correctly — you want to expose
+-- tables deliberately). Granting explicitly here means this script works whatever
+-- that setting says, and exposes exactly this one table and nothing else.
+grant usage on schema public to anon, authenticated;
+grant select, insert, update on public.tracker_state to anon, authenticated;
+
 drop policy if exists "tracker read"   on public.tracker_state;
 drop policy if exists "tracker insert" on public.tracker_state;
 drop policy if exists "tracker update" on public.tracker_state;
