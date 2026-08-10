@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1f6f5c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="IIM Indore">
+<title>IIM Indore</title>
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./icons/icon-180.png">
+<link rel="icon" href="./icons/icon-192.png">
+<style>
+  :root {
+    --ink: #14171f;
+    --paper: #f7f4ee;
+    --card: #ffffff;
+    --line: #e2ddd2;
+    --muted: #6b7280;
+    --accent: #1f6f5c;
+    --accent-soft: #e5f0ec;
+    --amber: #b45309;
+    --amber-soft: #fbe6cf;
+    --red: #b91c1c;
+    --red-soft: #f7dcd8;
+    --green: #15803d;
+    --violet: #6d28d9;
+    --violet-soft: #ede9fe;
+    --done: #9aa0a6;
+    --shadow: 0 1px 2px rgba(20,23,31,.06), 0 8px 24px rgba(20,23,31,.06);
+    --navh: 62px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--paper); color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    padding: 0 0 calc(var(--navh) + env(safe-area-inset-bottom) + 24px);
+    overscroll-behavior-y: none;
+  }
+  .wrap { max-width: 820px; margin: 0 auto; padding: 0 14px; }
+
+  /* ---------- header ---------- */
+  header { padding: calc(env(safe-area-inset-top) + 18px) 0 4px; }
+  .kicker { font-size: 10.5px; letter-spacing: .18em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 5px; }
+  h1 { font-family: Georgia, "Times New Roman", serif; font-size: 26px; line-height: 1.12; font-weight: 700; letter-spacing: -.01em; }
+  .today { color: var(--muted); font-size: 12.5px; margin-top: 6px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .sync { font-size: 10.5px; font-weight: 700; padding: 3px 8px; border-radius: 20px; background: #eceef0; color: var(--muted); white-space: nowrap; }
+  .sync.ok   { background: var(--accent-soft); color: var(--accent); }
+  .sync.warn { background: var(--amber-soft); color: var(--amber); }
+  .sync.err  { background: var(--red-soft);   color: var(--red); }
+
+  /* ---------- bottom tab bar ---------- */
+  nav.tabs {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+    display: flex; background: rgba(255,255,255,.94);
+    -webkit-backdrop-filter: saturate(180%) blur(14px); backdrop-filter: saturate(180%) blur(14px);
+    border-top: 1px solid var(--line);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  nav.tabs button {
+    flex: 1; border: none; background: none; cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    padding: 9px 4px 8px; color: var(--muted); font-size: 10.5px; font-weight: 600;
+    font-family: inherit; position: relative;
+  }
+  nav.tabs button .ico { font-size: 19px; line-height: 1; }
+  nav.tabs button.on { color: var(--accent); }
+  nav.tabs button .pip {
+    position: absolute; top: 5px; left: 50%; margin-left: 6px;
+    min-width: 16px; height: 16px; border-radius: 9px; background: var(--red); color: #fff;
+    font-size: 10px; font-weight: 700; line-height: 16px; padding: 0 4px;
+  }
+  @media (min-width: 700px) {
+    :root { --navh: 0px; }
+    body { padding-bottom: 60px; }
+    nav.tabs {
+      position: static; border-top: none; border-bottom: 1px solid var(--line);
+      background: none; backdrop-filter: none; max-width: 820px; margin: 14px auto 0;
+      padding: 0 14px; gap: 4px;
+    }
+    nav.tabs button { flex: 0 0 auto; flex-direction: row; gap: 7px; font-size: 13.5px; padding: 10px 14px; border-bottom: 2px solid transparent; }
+    nav.tabs button.on { border-bottom-color: var(--accent); }
+    nav.tabs button .ico { font-size: 15px; }
+    nav.tabs button .pip { position: static; margin: 0; }
+  }
+
+  .pane { display: none; }
+  .pane.on { display: block; }
+  .sect-h { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); font-weight: 700; margin: 22px 0 9px; }
+
+  /* ---------- stats ---------- */
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 16px 0 18px; }
+  @media (min-width: 700px) { .stats { grid-template-columns: repeat(6, 1fr); gap: 10px; } }
+  .stat { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 10px 11px; box-shadow: var(--shadow); }
+  .stat .n { font-family: Georgia, serif; font-size: 23px; font-weight: 700; line-height: 1; }
+  .stat .l { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-top: 5px; line-height: 1.3; }
+
+  /* ---------- filter chips ---------- */
+  .toolbar { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+  .filters { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; -webkit-overflow-scrolling: touch; }
+  .filters::-webkit-scrollbar { display: none; }
+  .fbtn { flex: 0 0 auto; border: 1px solid var(--line); background: var(--card); color: var(--muted); font-size: 12.5px; font-weight: 600; padding: 7px 13px; border-radius: 20px; cursor: pointer; font-family: inherit; white-space: nowrap; }
+  .fbtn.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .fbtn .cnt { display: inline-block; margin-left: 5px; font-size: 11px; opacity: .7; font-variant-numeric: tabular-nums; }
+  .ghost { border: 1px solid var(--line); background: transparent; color: var(--muted); font-size: 12px; padding: 7px 12px; border-radius: 8px; cursor: pointer; font-family: inherit; white-space: nowrap; }
+
+  /* ---------- competition card ---------- */
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 15px 14px 13px; margin-bottom: 11px; box-shadow: var(--shadow); border-left: 4px solid var(--line); }
+  .card.urgent { border-left-color: var(--red); }
+  .card.soon   { border-left-color: var(--amber); }
+  .card.later  { border-left-color: var(--accent); }
+  .card.out    { opacity: .52; }
+  .card.out .name { text-decoration: line-through; }
+  .card-top { display: flex; align-items: flex-start; gap: 10px; }
+  .name-block { flex: 1; min-width: 0; }
+  .name { font-size: 16px; font-weight: 700; letter-spacing: -.01em; line-height: 1.25; }
+  .org { font-size: 12px; color: var(--muted); margin-top: 3px; line-height: 1.4; }
+  .tags { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+  .tag { font-size: 10.5px; font-weight: 700; padding: 3px 8px; border-radius: 6px; }
+  .tag.ppra   { background: var(--accent-soft); color: var(--accent); }
+  .tag.noppra { background: var(--amber-soft); color: var(--amber); }
+  .meta { font-size: 12px; color: var(--muted); margin-top: 8px; line-height: 1.45; }
+  .meta b { color: var(--ink); font-weight: 600; }
+  .why { font-size: 12px; font-weight: 600; margin-top: 9px; padding: 7px 10px; border-radius: 8px; line-height: 1.45; }
+  .why.act  { background: var(--red-soft); color: var(--red); }
+  .why.hold { background: #f1f0ee; color: var(--muted); }
+  .why .ppra-note { font-weight: 500; opacity: .85; }
+  .badge { font-size: 10.5px; font-weight: 700; padding: 4px 9px; border-radius: 20px; white-space: nowrap; flex: 0 0 auto; }
+  .badge.red   { background: var(--red-soft);   color: var(--red); }
+  .badge.amber { background: var(--amber-soft); color: var(--amber); }
+  .badge.teal  { background: var(--accent-soft); color: var(--accent); }
+  .badge.done  { background: #eceef0; color: var(--done); }
+  .badge.wait  { background: var(--violet-soft); color: var(--violet); }
+  .stage { margin-top: 12px; padding: 9px 11px; background: var(--paper); border-radius: 9px; font-size: 12.5px; display: flex; align-items: center; gap: 9px; }
+  .stage .lbl { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: .07em; flex: 0 0 auto; }
+  .stage .cur { font-weight: 700; flex: 1; line-height: 1.3; }
+  .stage-track { display: flex; gap: 4px; margin-top: 9px; }
+  .dot { flex: 1; height: 5px; border-radius: 3px; background: var(--line); }
+  .dot.done { background: var(--green); }
+  .dot.now  { background: var(--accent); }
+  .links { display: flex; gap: 12px; margin-top: 12px; flex-wrap: wrap; font-size: 12.5px; }
+  .links a { color: var(--accent); text-decoration: none; font-weight: 600; border-bottom: 1px solid var(--accent-soft); }
+  .links span.dead { color: var(--muted); font-weight: 600; }
+  .ppra-check { display: flex; align-items: center; gap: 9px; margin-top: 11px; padding: 9px 11px; border-radius: 9px;
+                background: var(--amber-soft); color: var(--amber); font-size: 12.5px; font-weight: 700; cursor: pointer; user-select: none; }
+  .ppra-check.done { background: var(--accent-soft); color: var(--accent); }
+  .ppra-check input { width: 16px; height: 16px; accent-color: currentColor; cursor: pointer; flex: 0 0 auto; }
+  .disc { margin-top: 12px; border-top: 1px dashed var(--line); }
+  .disc summary { list-style: none; cursor: pointer; padding-top: 10px; font-size: 12.5px; font-weight: 700; color: var(--accent); display: flex; align-items: center; gap: 6px; }
+  .disc summary::-webkit-details-marker { display: none; }
+  .disc summary .chev { transition: transform .2s; display: inline-block; }
+  .disc[open] summary .chev { transform: rotate(90deg); }
+  .timeline { margin-top: 10px; }
+  .tl-row { display: flex; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--paper); font-size: 12.5px; line-height: 1.5; }
+  .tl-row:last-child { border-bottom: none; }
+  .tl-date { flex: 0 0 78px; color: var(--muted); font-weight: 600; font-size: 11px; padding-top: 2px; }
+  .tl-done .tl-body { color: var(--done); text-decoration: line-through; }
+  .tl-now { background: var(--accent-soft); border-radius: 6px; margin: 0 -6px; padding: 8px 6px; }
+  .actions { display: flex; gap: 7px; margin-top: 12px; flex-wrap: wrap; }
+  button.act { border: none; font-size: 12.5px; font-weight: 600; padding: 9px 12px; border-radius: 8px; cursor: pointer; font-family: inherit; }
+  button.act:active { transform: translateY(1px); }
+  .tick { background: var(--accent); color: #fff; }
+  .elim { background: var(--red-soft); color: var(--red); }
+  .revive { background: #eceef0; color: var(--ink); }
+  .wait { background: var(--violet-soft); color: var(--violet); }
+  .selected { background: var(--green); color: #fff; }
+  .empty { text-align: center; color: var(--muted); padding: 44px 10px; font-size: 14px; line-height: 1.6; }
+
+  /* ---------- shared date strip ---------- */
+  .datebar { display: flex; align-items: center; gap: 8px; margin: 16px 0 10px; }
+  .datebar .arw { border: 1px solid var(--line); background: var(--card); color: var(--ink); width: 34px; height: 34px; border-radius: 9px; cursor: pointer; font-size: 15px; flex: 0 0 auto; font-family: inherit; }
+  .datebar .lbl { flex: 1; text-align: center; font-weight: 700; font-size: 14px; }
+  .strip { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-bottom: 16px; }
+  .sday { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 7px 2px 6px; text-align: center; cursor: pointer; font-family: inherit; }
+  .sday .dw { font-size: 9.5px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+  .sday .dn { font-size: 15px; font-weight: 700; margin-top: 2px; line-height: 1.1; }
+  .sday .dd { height: 4px; margin-top: 4px; display: flex; gap: 2px; justify-content: center; }
+  .sday .dd i { width: 4px; height: 4px; border-radius: 50%; background: var(--accent); display: block; }
+  .sday .dd i.ex { background: var(--red); }
+  .sday.sel { background: var(--ink); border-color: var(--ink); color: #fff; }
+  .sday.sel .dw { color: rgba(255,255,255,.7); }
+  .sday.sel .dd i { background: #fff; }
+  .sday.tdy:not(.sel) { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+
+  /* ---------- mess ---------- */
+  .meal { background: var(--card); border: 1px solid var(--line); border-radius: 14px; margin-bottom: 11px; box-shadow: var(--shadow); overflow: hidden; }
+  .meal.now { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent), var(--shadow); }
+  .meal h3 { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; padding: 12px 14px; letter-spacing: .02em; text-transform: uppercase; background: var(--paper); border-bottom: 1px solid var(--line); }
+  .meal h3 .tm { margin-left: auto; font-size: 11px; font-weight: 600; color: var(--muted); text-transform: none; letter-spacing: 0; }
+  .meal h3 .nowtag { font-size: 10px; background: var(--accent); color: #fff; padding: 2px 7px; border-radius: 20px; letter-spacing: .02em; }
+  .mrow { display: flex; gap: 10px; padding: 9px 14px; border-bottom: 1px solid var(--paper); font-size: 13px; align-items: baseline; }
+  .mrow:last-child { border-bottom: none; }
+  .mrow .k { flex: 0 0 116px; color: var(--muted); font-size: 11.5px; font-weight: 600; line-height: 1.35; }
+  .mrow .v { flex: 1; font-weight: 600; line-height: 1.4; }
+  .linkrow { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0 4px; }
+  .linkrow a { font-size: 12px; font-weight: 600; color: var(--accent); text-decoration: none; background: var(--card); border: 1px solid var(--line); padding: 8px 12px; border-radius: 20px; }
+  .fineprint { font-size: 11.5px; color: var(--muted); margin-top: 14px; line-height: 1.55; text-align: center; }
+
+  .dtools { margin-top: 20px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+  .dtools summary { list-style: none; cursor: pointer; padding: 12px 14px; font-size: 12.5px; font-weight: 700; color: var(--accent); display: flex; align-items: center; gap: 7px; }
+  .dtools summary::-webkit-details-marker { display: none; }
+  .dtools summary .chev { transition: transform .2s; display: inline-block; }
+  .dtools[open] summary .chev { transform: rotate(90deg); }
+  .dtools .body { padding: 0 14px 14px; font-size: 12.5px; color: var(--muted); line-height: 1.6; }
+  .dtools .row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 11px; }
+  .dtools .row .ghost { cursor: pointer; }
+  .dtools .msg { margin-top: 10px; font-weight: 700; font-size: 12px; }
+  .dtools .msg.ok { color: var(--green); }
+  .dtools .msg.bad { color: var(--red); }
+
+  /* ---------- timetable ---------- */
+  .cls { display: flex; gap: 11px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 13px; margin-bottom: 8px; box-shadow: var(--shadow); border-left: 4px solid var(--accent); }
+  .cls.exam { border-left-color: var(--red); background: #fffbfa; }
+  .cls.quiz { border-left-color: var(--amber); }
+  .cls.past { opacity: .45; }
+  .cls.next { box-shadow: inset 0 0 0 1px var(--accent), var(--shadow); }
+  .cls .tcol { flex: 0 0 66px; }
+  .cls .t1 { font-size: 13.5px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .cls .t2 { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; margin-top: 2px; }
+  .cls .bcol { flex: 1; min-width: 0; }
+  .cls .cname { font-size: 14.5px; font-weight: 700; line-height: 1.3; }
+  .cls .csub { font-size: 11.5px; color: var(--muted); margin-top: 3px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .chip { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 5px; background: var(--accent-soft); color: var(--accent); }
+  .chip.ex { background: var(--red-soft); color: var(--red); }
+  .chip.qz { background: var(--amber-soft); color: var(--amber); }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div class="kicker">IIM Indore · PGP 2026–28</div>
+    <h1 id="pageTitle">Case Competitions</h1>
+    <div class="today"><span id="today"></span><span class="sync" id="syncPill">…</span></div>
+  </header>
+</div>
+
+<nav class="tabs">
+  <button data-tab="comps" class="on"><span class="ico">🏆</span><span>Case comps</span><span class="pip" id="pipComps" hidden></span></button>
+  <button data-tab="mess"><span class="ico">🍽️</span><span>Mess menu</span></button>
+  <button data-tab="tt"><span class="ico">📚</span><span>Timetable</span></button>
+</nav>
+
+<div class="wrap">
+  <!-- ================= COMPS ================= -->
+  <section class="pane on" id="pane-comps">
+    <div class="stats" id="stats"></div>
+    <div class="toolbar">
+      <div class="filters">
+        <button class="fbtn active" data-f="todo">Action needed<span class="cnt"></span></button>
+        <button class="fbtn" data-f="hold">Waiting<span class="cnt"></span></button>
+        <button class="fbtn" data-f="active">All active<span class="cnt"></span></button>
+        <button class="fbtn" data-f="all">All<span class="cnt"></span></button>
+        <button class="fbtn" data-f="out">Eliminated<span class="cnt"></span></button>
+      </div>
+      <button class="ghost" id="reset">Reset</button>
+    </div>
+    <div id="list"></div>
+
+    <details class="dtools">
+      <summary><span class="chev">▶</span> Backup &amp; import progress</summary>
+      <div class="body">
+        Your progress is tied to the web address it was saved under, so the old
+        offline tracker's ticks do <b>not</b> carry over to this hosted version on
+        their own. Export from the old file, import here, once.
+        <div class="row">
+          <button class="ghost" id="exportBtn">⬇ Download a backup</button>
+          <label class="ghost" for="importFile">⬆ Import a backup file</label>
+          <input type="file" id="importFile" accept=".json,application/json" hidden>
+        </div>
+        <div class="msg" id="importMsg"></div>
+      </div>
+    </details>
+
+    <div class="fineprint" id="compsNote"></div>
+  </section>
+
+  <!-- ================= MESS ================= -->
+  <section class="pane" id="pane-mess">
+    <div class="datebar">
+      <button class="arw" id="messPrev">‹</button>
+      <div class="lbl" id="messLbl"></div>
+      <button class="arw" id="messNext">›</button>
+    </div>
+    <div class="strip" id="messStrip"></div>
+    <div id="messBody"></div>
+    <div class="linkrow" id="messLinks"></div>
+    <div class="fineprint" id="messNote"></div>
+  </section>
+
+  <!-- ================= TIMETABLE ================= -->
+  <section class="pane" id="pane-tt">
+    <div class="datebar">
+      <button class="arw" id="ttPrev">‹</button>
+      <div class="lbl" id="ttLbl"></div>
+      <button class="arw" id="ttNext">›</button>
+    </div>
+    <div class="strip" id="ttStrip"></div>
+    <div id="ttBody"></div>
+    <div class="fineprint" id="ttNote"></div>
+  </section>
+</div>
+
+<script src="./config.js"></script>
+<script>
+/* =========================================================================
+   DATES — everything is counted in whole IST calendar days.
+   TODAY is midnight IST of the current day, so "in 4 days" always means
+   4 sleeps regardless of what clock time a round or the page open happens at.
+   ========================================================================= */
+const IST_OFFSET_MS = 330 * 60000, DAY_MS = 86400000;
+const WEEKDAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const WD3 = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const M3 = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+function istMidnight(d){ return new Date(Math.floor((d.getTime() + IST_OFFSET_MS) / DAY_MS) * DAY_MS - IST_OFFSET_MS); }
+function istParts(d){ return new Date(d.getTime() + IST_OFFSET_MS); }
+function ymd(d){ const p = istParts(d); return p.getUTCFullYear() + '-' + String(p.getUTCMonth()+1).padStart(2,'0') + '-' + String(p.getUTCDate()).padStart(2,'0'); }
+function fromYmd(s){ return istMidnight(new Date(s + 'T00:00:00+05:30')); }
+function addDays(d, n){ return new Date(d.getTime() + n*DAY_MS); }
+function longDate(d){ const p = istParts(d); return WEEKDAYS[p.getUTCDay()] + ', ' + p.getUTCDate() + ' ' + MONTHS[p.getUTCMonth()] + ' ' + p.getUTCFullYear(); }
+function midDate(d){ const p = istParts(d); return WEEKDAYS[p.getUTCDay()] + ' ' + p.getUTCDate() + ' ' + M3[p.getUTCMonth()]; }
+function daysLeft(iso){ return Math.round((istMidnight(new Date(iso)) - TODAY) / DAY_MS); }
+function whenPhrase(d){ return d<0 ? 'overdue' : d===0 ? 'today' : d===1 ? 'tomorrow' : 'in ' + d + ' days'; }
+/* Minutes since IST midnight, right now. Drives "which meal is on" and "next class". */
+function istMinsNow(){ const p = istParts(new Date()); return p.getUTCHours()*60 + p.getUTCMinutes(); }
+
+let TODAY = istMidnight(new Date());
+
+/* =========================================================================
+   DATA — the three content files. Editing content = editing these JSON files
+   in the repo and pushing; nothing about content lives in the database.
+   ========================================================================= */
+let SEED = [], MESS = null, TT = null;
+let messSel = ymd(TODAY), ttSel = ymd(TODAY);
+
+async function loadData(){
+  const bust = 'v=' + Math.floor(Date.now()/60000);   // 1-min cache bust; SW still serves offline
+  const [c, m, t] = await Promise.all([
+    fetch('./data/competitions.json?' + bust).then(r=>r.json()),
+    fetch('./data/mess.json?' + bust).then(r=>r.json()),
+    fetch('./data/timetable.json?' + bust).then(r=>r.json()),
+  ]);
+  SEED = c; MESS = m; TT = t;
+}
+
+/* =========================================================================
+   STATE + SYNC
+   state = { v, updatedAt, comps: { id: {stage,out,waiting,ppraDone} } }
+
+   The whole blob is one row in Supabase, last-write-wins on updatedAt.
+   That is correct for a single user on two devices: whichever device touched
+   it most recently is the one holding the truth. Every mutation stamps
+   updatedAt, writes localStorage immediately, and queues a debounced push, so
+   a tap is never lost to a flaky campus network — it just syncs later.
+   ========================================================================= */
+const KEY = 'case-comp-tracker-v3';
+const LEGACY_KEY = 'case-comp-tracker-v2';
+const CFG = window.TRACKER_CONFIG || {};
+const REMOTE = !!(CFG.SUPABASE_URL && CFG.SUPABASE_ANON);
+const ROW = CFG.ROW_ID || 'me';
+const REST = REMOTE ? CFG.SUPABASE_URL.replace(/\/+$/,'') + '/rest/v1/tracker_state' : null;
+const HDRS = REMOTE ? { apikey: CFG.SUPABASE_ANON, Authorization: 'Bearer ' + CFG.SUPABASE_ANON, 'Content-Type': 'application/json' } : null;
+
+let state = { v:3, updatedAt:0, comps:{} };
+let dirty = false, pushTimer = null;
+
+function blank(){ return { stage:0, out:false, waiting:false, ppraDone:false }; }
+
+/* Fill in defaults for competitions added to the JSON after this state was
+   saved, and for fields added after the fact. Never wipe, always back-fill. */
+function reconcile(){
+  SEED.forEach(c=>{
+    const s = state.comps[c.id];
+    if(!s) state.comps[c.id] = blank();
+    else {
+      if(s.stage === undefined) s.stage = 0;
+      if(s.out === undefined) s.out = false;
+      if(s.waiting === undefined) s.waiting = false;
+      if(s.ppraDone === undefined) s.ppraDone = false;
+    }
+  });
+}
+
+function readLocal(){
+  try {
+    const raw = localStorage.getItem(KEY);
+    if(raw){ const p = JSON.parse(raw); if(p && p.comps) return p; }
+    // one-time lift from the old single-file tracker so nothing is lost
+    const old = localStorage.getItem(LEGACY_KEY);
+    if(old){ const c = JSON.parse(old); if(c && typeof c === 'object') return { v:3, updatedAt:1, comps:c }; }
+  } catch(e){}
+  return { v:3, updatedAt:0, comps:{} };
+}
+function writeLocal(){ try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} }
+
+function setSync(cls, txt, title){
+  const el = document.getElementById('syncPill');
+  el.className = 'sync ' + cls; el.textContent = txt; el.title = title || '';
+}
+
+async function pullRemote(){
+  const r = await fetch(REST + '?id=eq.' + encodeURIComponent(ROW) + '&select=data', { headers: HDRS, cache:'no-store' });
+  if(!r.ok) throw new Error('pull ' + r.status + ' ' + (await r.text()).slice(0,120));
+  const rows = await r.json();
+  return rows.length ? rows[0].data : null;
+}
+async function pushRemote(){
+  const body = [{ id: ROW, data: state, updated_at: new Date().toISOString() }];
+  const r = await fetch(REST, {
+    method:'POST',
+    headers: Object.assign({}, HDRS, { Prefer: 'resolution=merge-duplicates,return=minimal' }),
+    body: JSON.stringify(body),
+  });
+  if(!r.ok) throw new Error('push ' + r.status + ' ' + (await r.text()).slice(0,120));
+}
+
+function queuePush(){
+  if(!REMOTE) return;
+  dirty = true;
+  setSync('warn', 'Saving…');
+  clearTimeout(pushTimer);
+  pushTimer = setTimeout(flush, 600);
+}
+async function flush(){
+  if(!REMOTE || !dirty) return;
+  try { await pushRemote(); dirty = false; setSync('ok', 'Synced'); }
+  catch(e){ setSync('err', 'Offline — will retry', String(e.message||e)); }
+}
+
+/* Boot-time merge. Newer updatedAt wins outright; if the clocks tie we keep
+   local, because the device you are holding is the one you just touched. */
+async function initSync(){
+  state = readLocal();
+  if(!REMOTE){ setSync('warn', 'This device only', 'Add your Supabase URL and anon key in config.js to sync across devices.'); return; }
+  try {
+    const remote = await pullRemote();
+    if(remote && remote.comps && (remote.updatedAt||0) > (state.updatedAt||0)){
+      state = remote; writeLocal(); setSync('ok', 'Synced');
+    } else if(!remote || (state.updatedAt||0) > (remote.updatedAt||0)){
+      reconcile(); await pushRemote(); setSync('ok', 'Synced');
+    } else { setSync('ok', 'Synced'); }
+  } catch(e){
+    setSync('err', 'Offline — local copy', String(e.message||e));
+  }
+}
+
+function touch(){ state.updatedAt = Date.now(); writeLocal(); queuePush(); }
+
+window.addEventListener('online', flush);
+setInterval(()=>{ if(dirty) flush(); }, 30000);
+/* Pushing on hide matters on iOS, where the tab can be frozen the instant you
+   swipe away — the debounce timer would otherwise never fire. */
+document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState === 'hidden' && dirty) flush(); });
+
+/* =========================================================================
+   COMPETITIONS — logic carried over unchanged from the original tracker.
+   ========================================================================= */
+let filter = 'todo';
+const S = id => state.comps[id];
+
+function urgency(c){ const s=S(c.id); if(s.stage>0||s.waiting) return 'later'; const d=daysLeft(c.deadline); if(d<=1) return 'urgent'; if(d<=4) return 'soon'; return 'later'; }
+
+/* The round you're on hasn't started yet (sim/test/submission still ahead, or
+   date unannounced). Returns the stageStarts entry, or null when the round is
+   genuinely underway. */
+function nextRound(c){
+  const s=S(c.id);
+  if(s.out || s.waiting || s.stage===0 || s.stage>=c.stages.length) return null;
+  const r = c.stageStarts && c.stageStarts[s.stage];
+  if(!r) return null;
+  if(r.on === null) return r;               // announced, date TBA — still ahead of you
+  return daysLeft(r.on) > 0 ? r : null;     // 0 or less = it's live/overdue, that IS in progress
+}
+
+/* Does this competition need something FROM YOU right now, or is the ball in
+   their court? A quiz four days out is "active" but needs nothing today —
+   that's the whole point of the split. null = eliminated/complete. */
+function pending(c){
+  const s = S(c.id);
+  if(s.out || s.stage >= c.stages.length) return null;
+  if(s.waiting) return {action:false, why:'Submitted — waiting on their results'};
+  const nr = nextRound(c);
+  if(nr) return {action:false, why: nr.on === null
+    ? nr.short + ' announced, no date yet — nothing to do'
+    : nr.short + ' opens ' + whenPhrase(daysLeft(nr.on)) + ' — nothing to do yet'};
+  if(s.stage === 0) return {action:true, why:'Not registered — closes ' + whenPhrase(daysLeft(c.deadline))};
+  return {action:true, why: c.stages[s.stage] + ' is open — work is due'};
+}
+
+function badge(c){
+  const s=S(c.id);
+  if(s.out) return {cls:'done', txt:'Eliminated'};
+  if(s.stage>=c.stages.length) return {cls:'done', txt:'Complete'};
+  if(s.waiting) return {cls:'wait', txt:'Awaiting results'};
+  const nr = nextRound(c);
+  if(nr){
+    if(nr.on === null) return {cls:'teal', txt:nr.short + ' — TBA'};
+    const d = daysLeft(nr.on);
+    if(d===1) return {cls:'amber', txt:nr.short + ' tomorrow'};
+    if(d<=2)  return {cls:'amber', txt:nr.short + ' in ' + d + ' days'};
+    return {cls:'teal', txt:nr.short + ' in ' + d + ' days'};
+  }
+  if(s.stage>0) return {cls:'teal', txt:'In progress'};
+  const d=daysLeft(c.deadline);
+  if(d<0) return {cls:'red', txt:'Overdue?'};
+  if(d===0) return {cls:'red', txt:'Due today'};
+  if(d===1) return {cls:'red', txt:'1 day left'};
+  if(d<=4) return {cls:'amber', txt:d+' days left'};
+  return {cls:'teal', txt:d+' days left'};
+}
+function linkHTML(o){
+  if(!o) return '';
+  if(o.url) return '<a href="' + o.url + '" target="_blank" rel="noopener">' + o.label + ' ↗</a>';
+  return '<span class="dead">' + o.label + '</span>';
+}
+
+function renderComps(){
+  const live = SEED.filter(c=>!S(c.id).out && S(c.id).stage < c.stages.length);
+  const needsYou = live.filter(c=>pending(c).action);
+  const onHold = live.filter(c=>!pending(c).action);
+  const urgent = needsYou.filter(c=>['urgent','soon'].includes(urgency(c)) && S(c.id).stage===0);
+  const out = SEED.filter(c=>S(c.id).out).length;
+  const waiting = SEED.filter(c=>!S(c.id).out && S(c.id).waiting).length;
+  const ppraTodo = SEED.filter(c=>c.ppra && !S(c.id).out && !S(c.id).ppraDone).length;
+
+  const pip = document.getElementById('pipComps');
+  if(needsYou.length){ pip.hidden = false; pip.textContent = needsYou.length; } else pip.hidden = true;
+
+  document.getElementById('stats').innerHTML =
+    '<div class="stat"><div class="n" style="color:var(--red)">' + needsYou.length + '</div><div class="l">Action needed</div></div>' +
+    '<div class="stat"><div class="n" style="color:var(--accent)">' + onHold.length + '</div><div class="l">Waiting</div></div>' +
+    '<div class="stat"><div class="n" style="color:var(--red)">' + urgent.length + '</div><div class="l">Reg. due ≤4d</div></div>' +
+    '<div class="stat"><div class="n" style="color:var(--amber)">' + ppraTodo + '</div><div class="l">PPRA pending</div></div>' +
+    '<div class="stat"><div class="n" style="color:var(--violet)">' + waiting + '</div><div class="l">Awaiting results</div></div>' +
+    '<div class="stat"><div class="n" style="color:var(--done)">' + out + '</div><div class="l">Eliminated</div></div>';
+
+  /* todo/hold only cover live comps — complete and eliminated ones have no
+     pending() bucket, hence the null check before reading .action. */
+  const inBucket = (c,f) => {
+    const p = pending(c);
+    if(f==='todo')   return !!p && p.action;
+    if(f==='hold')   return !!p && !p.action;
+    if(f==='active') return !S(c.id).out;
+    if(f==='out')    return S(c.id).out;
+    return true;
+  };
+  document.querySelectorAll('.fbtn').forEach(b=>{
+    b.querySelector('.cnt').textContent = SEED.filter(c=>inBucket(c, b.dataset.f)).length;
+  });
+
+  const items = SEED.filter(c=>inBucket(c, filter)).sort((a,b)=> new Date(a.deadline) - new Date(b.deadline));
+  const list = document.getElementById('list');
+  if(!items.length){
+    list.innerHTML = '<div class="empty">' + (filter==='todo'
+      ? 'Nothing needs you right now. Check <b>Waiting</b> for what’s coming.'
+      : filter==='hold' ? 'Nothing on hold — everything live needs action.' : 'Nothing here.') + '</div>';
+  } else {
+    list.innerHTML = items.map(c => {
+      const s = S(c.id), u = urgency(c), b = badge(c);
+      const complete = s.stage >= c.stages.length;
+      const curStage = complete ? '🏆 All rounds done'
+        : s.waiting ? c.stages[s.stage] + ' — submitted, results awaited'
+        : c.stages[s.stage];
+      const dots = c.stages.map((_,i)=>{
+        const cls = i < s.stage ? 'done' : (i===s.stage && s.waiting ? 'done' : (i===s.stage && !complete && !s.out ? 'now' : ''));
+        return '<div class="dot ' + cls + '"></div>';
+      }).join('');
+      const tl = c.timeline.map((row,i)=>{
+        const cls = i < s.stage ? 'tl-done' : (i===s.stage && !complete && !s.out ? 'tl-now' : '');
+        return '<div class="tl-row ' + cls + '"><div class="tl-date">' + row.d + '</div><div class="tl-body">' + row.t + '</div></div>';
+      }).join('');
+
+      let actions;
+      if (s.out) {
+        actions = '<button class="act revive" onclick="revive(\'' + c.id + '\')">↩ Bring back</button>';
+      } else if (complete) {
+        actions = '<button class="act elim" onclick="elim(\'' + c.id + '\')">✕ Out / not selected</button>';
+      } else if (s.waiting) {
+        actions = '<button class="act selected" onclick="selected(\'' + c.id + '\')">✓ Selected → next round</button>' +
+                  '<button class="act elim" onclick="elim(\'' + c.id + '\')">✕ Not selected</button>';
+      } else {
+        actions = '<button class="act wait" onclick="await_(\'' + c.id + '\')">⏳ Submitted — awaiting results</button>' +
+                  '<button class="act tick" onclick="advance(\'' + c.id + '\')">✓ Advance now</button>' +
+                  '<button class="act elim" onclick="elim(\'' + c.id + '\')">✕ Out</button>';
+      }
+
+      /* PPRA doesn't move a card between tabs (it's a form, not a round), but a
+         Waiting card with an unfilled form still has a to-do — say so rather
+         than let it disappear. */
+      const p = pending(c);
+      const whyLine = p ? '<div class="why ' + (p.action?'act':'hold') + '">' + (p.action?'▶ ':'⏸ ') + p.why +
+        (c.ppra && !s.ppraDone ? ' <span class="ppra-note">· PPRA form still to fill</span>' : '') + '</div>' : '';
+      const ppraTag = c.ppra ? '<span class="tag ppra">PPRA required</span>' : '<span class="tag noppra">No PPRA in mail</span>';
+      const ppraCheck = c.ppra
+        ? '<label class="ppra-check ' + (s.ppraDone?'done':'') + '"><input type="checkbox" ' + (s.ppraDone?'checked':'') +
+          ' onchange="togglePpra(\'' + c.id + '\')">' + (s.ppraDone ? '✓ PPRA form filled' : 'PPRA form not filled yet') + '</label>'
+        : '';
+
+      return '<div class="card ' + (s.out?'out':u) + '">' +
+        '<div class="card-top"><div class="name-block"><div class="name">' + c.name + '</div>' +
+        '<div class="org">' + c.org + '</div><div class="tags">' + ppraTag + '</div></div>' +
+        '<span class="badge ' + b.cls + '">' + b.txt + '</span></div>' +
+        '<div class="meta">📅 <b>' + c.deadlineLabel + '</b></div>' + whyLine +
+        '<div class="stage"><span class="lbl">Now</span><span class="cur">' + curStage + '</span>' +
+        '<span style="color:var(--muted);font-size:12px">' + (complete?'':(s.stage+1) + '/' + c.stages.length) + '</span></div>' +
+        '<div class="stage-track">' + dots + '</div>' +
+        '<div class="links">' + linkHTML(c.reg) + linkHTML(c.pproof) + '</div>' + ppraCheck +
+        '<details class="disc"><summary><span class="chev">▶</span> Rounds &amp; timeline</summary>' +
+        '<div class="timeline">' + tl + '</div></details>' +
+        '<div class="actions">' + actions + '</div></div>';
+    }).join('');
+  }
+
+  document.getElementById('compsNote').innerHTML = REMOTE
+    ? 'Progress syncs to your database, so any device you open this on shows the same thing. Competition details live in <code>data/competitions.json</code> in the repo.'
+    : 'No database configured yet — progress is saved in <b>this browser only</b>. Add your Supabase URL and anon key to <code>config.js</code> to sync across devices.';
+}
+
+function bump(id){
+  const c = SEED.find(x=>x.id===id), s = S(id);
+  if(s.stage < c.stages.length) s.stage++;
+  s.waiting = false; touch(); render();
+}
+function advance(id){ bump(id); }
+function selected(id){ bump(id); }
+function await_(id){ S(id).waiting = true; touch(); render(); }
+function elim(id){ const s=S(id); s.out = true; s.waiting = false; touch(); render(); }
+function revive(id){ S(id).out = false; touch(); render(); }
+function togglePpra(id){ S(id).ppraDone = !S(id).ppraDone; touch(); render(); }
+
+/* =========================================================================
+   SHARED — week strip used by both the mess and timetable tabs.
+   ========================================================================= */
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function mondayOf(d){ const p = istParts(d); return addDays(d, -((p.getUTCDay() + 6) % 7)); }
+
+/* dots(iso) returns an array of dot classes ('' or 'ex') for that day, max 4. */
+function weekStrip(elId, selIso, onPick, dots){
+  const sel = fromYmd(selIso), mon = mondayOf(sel), tIso = ymd(TODAY);
+  const el = document.getElementById(elId);
+  el.innerHTML = Array.from({length:7}, (_,i)=>{
+    const d = addDays(mon, i), iso = ymd(d), p = istParts(d);
+    const dd = (dots ? dots(iso) : []).slice(0,4).map(k=>'<i class="' + k + '"></i>').join('');
+    return '<button class="sday' + (iso===selIso?' sel':'') + (iso===tIso?' tdy':'') + '" data-d="' + iso + '">' +
+           '<div class="dw">' + WD3[p.getUTCDay()] + '</div><div class="dn">' + p.getUTCDate() + '</div>' +
+           '<div class="dd">' + dd + '</div></button>';
+  }).join('');
+  el.querySelectorAll('.sday').forEach(b=> b.onclick = ()=> onPick(b.dataset.d));
+}
+
+/* =========================================================================
+   MESS — the published menu is a 14-day cycle anchored at MESS.cycleStart,
+   so any date maps onto it with a modulo. The CSV prints the cycle twice
+   (3–16 Aug and 17–30 Aug); past 30 Aug we keep cycling and say so, rather
+   than showing nothing.
+   ========================================================================= */
+const MEALS = [
+  { k:'breakfast', name:'Breakfast', time:'7:30 – 9:45 AM', from:0,    to:10*60+30 },
+  { k:'lunch',     name:'Lunch',     time:'12:00 – 2:30 PM', from:10*60+30, to:16*60+30 },
+  { k:'dinner',    name:'Dinner',    time:'7:30 – 9:30 PM',  from:16*60+30, to:24*60 },
+];
+function messIndex(iso){
+  const n = Math.round((fromYmd(iso) - fromYmd(MESS.cycleStart)) / DAY_MS);
+  return ((n % MESS.cycleLength) + MESS.cycleLength) % MESS.cycleLength;
+}
+function renderMess(){
+  const isToday = messSel === ymd(TODAY);
+  document.getElementById('messLbl').textContent = isToday ? 'Today · ' + midDate(fromYmd(messSel)) : midDate(fromYmd(messSel));
+  weekStrip('messStrip', messSel, d=>{ messSel = d; renderMess(); }, ()=>[]);
+
+  const day = MESS.days[messIndex(messSel)];
+  const mins = istMinsNow();
+  const nowMeal = isToday ? (MEALS.find(m => mins < m.to) || MEALS[2]).k : null;
+
+  document.getElementById('messBody').innerHTML = MEALS.map(m=>{
+    const rows = (day[m.k] || []).map(r=>
+      '<div class="mrow"><div class="k">' + esc(r.label) + '</div><div class="v">' + esc(r.item) + '</div></div>'
+    ).join('');
+    const nv = (m.k==='dinner' && day.nonveg)
+      ? '<div class="mrow"><div class="k">Non-veg (paid)</div><div class="v">' + esc(day.nonveg) + '</div></div>' : '';
+    return '<div class="meal' + (nowMeal===m.k?' now':'') + '"><h3>' + m.name +
+      (nowMeal===m.k ? '<span class="nowtag">now</span>' : '') +
+      '<span class="tm">' + m.time + '</span></h3>' + rows + nv + '</div>';
+  }).join('');
+
+  document.getElementById('messLinks').innerHTML = (MESS.links||[]).map(l=>
+    '<a href="' + l.url + '" target="_blank" rel="noopener">' + esc(l.label) + ' ↗</a>').join('');
+
+  const published = Math.round((fromYmd(messSel) - fromYmd(MESS.cycleStart)) / DAY_MS);
+  const stale = published < 0 || published > 27;
+  document.getElementById('messNote').innerHTML = esc(MESS.caterer) + ' · ' + esc(MESS.updated) +
+    (stale ? '<br><b>Heads up:</b> this date is outside the published sheet, so the 14-day cycle is just repeating. Ask me to update <code>data/mess.json</code> when MessCom posts a new menu.' : '');
+}
+
+/* =========================================================================
+   TIMETABLE
+   ========================================================================= */
+let TTBY = null;
+function ttIndex(){
+  TTBY = {};
+  TT.entries.forEach(e=>{ (TTBY[e.date] = TTBY[e.date] || []).push(e); });
+}
+function hhmmLabel(t){
+  const [h,m] = t.split(':').map(Number);
+  const ap = h < 12 ? 'am' : 'pm', hh = h % 12 === 0 ? 12 : h % 12;
+  return hh + ':' + String(m).padStart(2,'0') + ' ' + ap;
+}
+function kindOf(e){ return e.type === 'Exam' ? (e.code === 'QUIZ' ? 'quiz' : 'exam') : ''; }
+function courseName(code){ return (TT.courses && TT.courses[code]) || code; }
+
+function renderTT(){
+  const isToday = ttSel === ymd(TODAY);
+  document.getElementById('ttLbl').textContent = isToday ? 'Today · ' + midDate(fromYmd(ttSel)) : midDate(fromYmd(ttSel));
+  weekStrip('ttStrip', ttSel, d=>{ ttSel = d; renderTT(); },
+    iso => (TTBY[iso]||[]).map(e => kindOf(e)==='exam' ? 'ex' : ''));
+
+  const rows = (TTBY[ttSel] || []).slice().sort((a,b)=> a.start.localeCompare(b.start));
+  const mins = istMinsNow();
+  const toMin = t => { const [h,m]=t.split(':').map(Number); return h*60+m; };
+  const nextIdx = isToday ? rows.findIndex(e => toMin(e.end || e.start) > mins) : -1;
+
+  const body = rows.length
+    ? rows.map((e,i)=>{
+        const kind = kindOf(e);
+        const past = isToday && toMin(e.end || e.start) <= mins;
+        const chip = kind==='exam' ? '<span class="chip ex">Exam</span>'
+                   : kind==='quiz' ? '<span class="chip qz">Quiz slot</span>'
+                   : '<span class="chip">' + esc(e.code) + '</span>';
+        return '<div class="cls ' + kind + (past?' past':'') + (i===nextIdx?' next':'') + '">' +
+          '<div class="tcol"><div class="t1">' + hhmmLabel(e.start) + '</div><div class="t2">' + hhmmLabel(e.end) + '</div></div>' +
+          '<div class="bcol"><div class="cname">' + esc(e.title) + '</div>' +
+          '<div class="csub">' + chip + '<span>' + esc(courseName(e.code)) + '</span><span>· ' + esc(e.room) + '</span></div></div></div>';
+      }).join('')
+    : '<div class="empty">No classes on ' + midDate(fromYmd(ttSel)) + '.<br>Free day.</div>';
+
+  document.getElementById('ttBody').innerHTML = body;
+
+  const all = TT.entries.map(e=>e.date).sort();
+  document.getElementById('ttNote').innerHTML = TT.term + ' · Section ' + TT.section +
+    ' · ' + TT.entries.length + ' slots, ' + midDate(fromYmd(all[0])) + ' to ' + midDate(fromYmd(all[all.length-1])) +
+    '<br>Schedule lives in <code>data/timetable.json</code> in the repo.';
+}
+
+/* =========================================================================
+   TABS + BOOT
+   ========================================================================= */
+const TITLES = { comps:'Case Competitions', mess:'Mess Menu', tt:'Timetable' };
+let tab = 'comps';
+function showTab(t){
+  tab = t;
+  document.querySelectorAll('nav.tabs button').forEach(b=> b.classList.toggle('on', b.dataset.tab===t));
+  document.querySelectorAll('.pane').forEach(p=> p.classList.toggle('on', p.id === 'pane-' + t));
+  document.getElementById('pageTitle').textContent = TITLES[t];
+  try { localStorage.setItem('tracker-tab', t); } catch(e){}
+  window.scrollTo(0,0);
+  render();
+}
+
+function render(){
+  TODAY = istMidnight(new Date());   // re-read the clock every render so counts never go stale
+  document.getElementById('today').textContent =
+    longDate(TODAY) + ' · ' + SEED.filter(c=>!S(c.id).out).length + ' comps still in play';
+  if(tab==='comps') renderComps();
+  if(tab==='mess')  renderMess();
+  if(tab==='tt')    renderTT();
+}
+
+document.querySelectorAll('nav.tabs button').forEach(b=> b.onclick = ()=> showTab(b.dataset.tab));
+document.querySelectorAll('.fbtn').forEach(b=> b.onclick = ()=>{
+  document.querySelectorAll('.fbtn').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active'); filter = b.dataset.f; render();
+});
+document.getElementById('reset').onclick = ()=>{
+  if(!confirm('Reset all competition progress back to the start?')) return;
+  SEED.forEach(c=> state.comps[c.id] = blank());
+  touch(); render();
+};
+/* Progress is scoped to an origin, so a file:// tracker and a github.io one
+   cannot see each other's localStorage. Export/import is the bridge — and
+   doubles as a backup you can keep. Accepts both the old bare {id:{...}} shape
+   and the new {v,updatedAt,comps} envelope. */
+document.getElementById('exportBtn').onclick = ()=>{
+  const blob = new Blob([JSON.stringify(state,null,2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'tracker-backup-' + ymd(TODAY) + '.json';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
+};
+document.getElementById('importFile').onchange = function(){
+  const f = this.files && this.files[0]; if(!f) return;
+  const msg = document.getElementById('importMsg');
+  const done = (cls, txt) => { msg.className = 'msg ' + cls; msg.textContent = txt; };
+  const rd = new FileReader();
+  rd.onload = ()=>{
+    let p;
+    try { p = JSON.parse(rd.result); } catch(e){ return done('bad','That file is not valid JSON.'); }
+    const comps = (p && p.comps) ? p.comps : p;
+    if(!comps || typeof comps !== 'object') return done('bad','No progress found in that file.');
+    let hits = 0;
+    SEED.forEach(c=>{
+      const v = comps[c.id];
+      if(v && typeof v === 'object' && typeof v.stage === 'number'){
+        state.comps[c.id] = { stage:v.stage, out:!!v.out, waiting:!!v.waiting, ppraDone:!!v.ppraDone };
+        hits++;
+      }
+    });
+    if(!hits) return done('bad','That file has no competitions matching this list.');
+    touch(); render();
+    done('ok', 'Imported progress for ' + hits + ' competition' + (hits===1?'':'s') + '.');
+  };
+  rd.readAsText(f);
+  this.value = '';
+};
+
+document.getElementById('messPrev').onclick = ()=>{ messSel = ymd(addDays(fromYmd(messSel), -7)); renderMess(); };
+document.getElementById('messNext').onclick = ()=>{ messSel = ymd(addDays(fromYmd(messSel),  7)); renderMess(); };
+document.getElementById('messLbl').onclick  = ()=>{ messSel = ymd(TODAY); renderMess(); };
+document.getElementById('ttPrev').onclick   = ()=>{ ttSel = ymd(addDays(fromYmd(ttSel), -7)); renderTT(); };
+document.getElementById('ttNext').onclick   = ()=>{ ttSel = ymd(addDays(fromYmd(ttSel),  7)); renderTT(); };
+document.getElementById('ttLbl').onclick    = ()=>{ ttSel = ymd(TODAY); renderTT(); };
+
+async function boot(){
+  try { await loadData(); }
+  catch(e){
+    document.getElementById('list').innerHTML =
+      '<div class="empty">Could not load the data files.<br><br>If you opened this file directly from Finder, that is expected — browsers block <code>fetch</code> on <code>file://</code>. Run <code>python3 -m http.server</code> in this folder and open <b>http://localhost:8000</b>, or just use the deployed GitHub Pages link.</div>';
+    setSync('err','Data not loaded'); return;
+  }
+  ttIndex();
+  await initSync();
+  reconcile();
+  writeLocal();
+  try { const t = localStorage.getItem('tracker-tab'); if(t && TITLES[t]) tab = t; } catch(e){}
+  showTab(tab);
+
+  /* A tab left open across IST midnight would otherwise keep showing yesterday.
+     Also re-renders every minute so "on right now" and "next up" stay honest. */
+  let lastDay = ymd(TODAY), lastMin = istMinsNow();
+  setInterval(()=>{
+    const d = ymd(istMidnight(new Date())), m = istMinsNow();
+    if(d !== lastDay){ lastDay = d; messSel = d; ttSel = d; render(); }
+    else if(m !== lastMin){ lastMin = m; if(tab !== 'comps') render(); }
+  }, 30000);
+
+  if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});
+}
+boot();
+</script>
+</body>
+</html>

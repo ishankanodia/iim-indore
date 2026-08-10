@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Case Competitions Tracker</title>
+<style>
+  :root {
+    --ink: #14171f;
+    --paper: #f7f4ee;
+    --card: #ffffff;
+    --line: #e2ddd2;
+    --muted: #6b7280;
+    --accent: #1f6f5c;
+    --accent-soft: #e5f0ec;
+    --amber: #b45309;
+    --amber-soft: #fbe6cf;
+    --red: #b91c1c;
+    --red-soft: #f7dcd8;
+    --green: #15803d;
+    --done: #9aa0a6;
+    --shadow: 0 1px 2px rgba(20,23,31,.06), 0 8px 24px rgba(20,23,31,.06);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--paper); color: var(--ink);
+    padding: 28px 18px 80px; -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 800px; margin: 0 auto; }
+  header { margin-bottom: 6px; }
+  .kicker { font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 6px; }
+  h1 { font-family: Georgia, "Times New Roman", serif; font-size: 30px; line-height: 1.1; font-weight: 700; letter-spacing: -.01em; }
+  .today { color: var(--muted); font-size: 13px; margin-top: 6px; }
+
+  .stats { display: flex; gap: 10px; margin: 20px 0 22px; flex-wrap: wrap; }
+  .stat { flex: 1; min-width: 90px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; box-shadow: var(--shadow); }
+  .stat .n { font-family: Georgia, serif; font-size: 26px; font-weight: 700; line-height: 1; }
+  .stat .l { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-top: 5px; }
+
+  .toolbar { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+  .filters { display: flex; gap: 6px; }
+  .fbtn { border: 1px solid var(--line); background: var(--card); color: var(--muted); font-size: 12.5px; font-weight: 600; padding: 6px 12px; border-radius: 20px; cursor: pointer; transition: all .15s; }
+  .fbtn.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .fbtn .cnt { display: inline-block; margin-left: 5px; font-size: 11px; opacity: .7; font-variant-numeric: tabular-nums; }
+  .spacer { flex: 1; }
+  .ghost { border: 1px solid var(--line); background: transparent; color: var(--muted); font-size: 12px; padding: 6px 12px; border-radius: 8px; cursor: pointer; }
+  .ghost:hover { color: var(--ink); }
+
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px 16px 14px; margin-bottom: 12px; box-shadow: var(--shadow); position: relative; transition: opacity .2s; border-left: 4px solid var(--line); }
+  .card.urgent { border-left-color: var(--red); }
+  .card.soon   { border-left-color: var(--amber); }
+  .card.later  { border-left-color: var(--accent); }
+  .card.out    { opacity: .52; }
+  .card.out .name { text-decoration: line-through; }
+
+  .card-top { display: flex; align-items: flex-start; gap: 12px; }
+  .name-block { flex: 1; min-width: 0; }
+  .name { font-size: 17px; font-weight: 700; letter-spacing: -.01em; }
+  .org { font-size: 12.5px; color: var(--muted); margin-top: 2px; }
+  .tags { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+  .tag { font-size: 10.5px; font-weight: 700; padding: 3px 8px; border-radius: 6px; letter-spacing: .03em; }
+  .tag.ppra   { background: var(--accent-soft); color: var(--accent); }
+  .tag.noppra { background: var(--amber-soft); color: var(--amber); }
+
+  .meta { font-size: 12px; color: var(--muted); margin-top: 8px; }
+  .meta b { color: var(--ink); font-weight: 600; }
+
+  /* Why this card sits in Action needed vs Waiting — spelled out so the split is never guesswork. */
+  .why { font-size: 12px; font-weight: 600; margin-top: 9px; padding: 6px 10px; border-radius: 8px; }
+  .why.act  { background: var(--red-soft); color: var(--red); }
+  .why.hold { background: #f1f0ee; color: var(--muted); }
+  .why .ppra-note { font-weight: 500; opacity: .85; }
+
+  .badge { font-size: 11px; font-weight: 700; padding: 4px 9px; border-radius: 20px; white-space: nowrap; }
+  .badge.red   { background: var(--red-soft);   color: var(--red); }
+  .badge.amber { background: var(--amber-soft); color: var(--amber); }
+  .badge.teal  { background: var(--accent-soft); color: var(--accent); }
+  .badge.done  { background: #eceef0; color: var(--done); }
+  .badge.wait  { background: #ede9fe; color: #6d28d9; }
+
+  .tag.wait { background: #ede9fe; color: #6d28d9; }
+
+  .stage { margin-top: 12px; padding: 10px 12px; background: var(--paper); border-radius: 9px; font-size: 13px; display: flex; align-items: center; gap: 10px; }
+  .stage .lbl { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .07em; }
+  .stage .cur { font-weight: 700; flex: 1; }
+  .stage-track { display: flex; gap: 4px; margin-top: 10px; }
+  .dot { flex: 1; height: 5px; border-radius: 3px; background: var(--line); }
+  .dot.done { background: var(--green); }
+  .dot.now  { background: var(--accent); }
+
+  .links { display: flex; gap: 14px; margin-top: 12px; flex-wrap: wrap; font-size: 12.5px; }
+  .links a { color: var(--accent); text-decoration: none; font-weight: 600; border-bottom: 1px solid var(--accent-soft); }
+  .links a:hover { border-bottom-color: var(--accent); }
+  .links span.dead { color: var(--muted); font-weight: 600; }
+
+  .ppra-check { display: flex; align-items: center; gap: 9px; margin-top: 12px; padding: 8px 11px; border-radius: 9px;
+                background: var(--amber-soft); color: var(--amber); font-size: 12.5px; font-weight: 700;
+                cursor: pointer; user-select: none; }
+  .ppra-check.done { background: var(--accent-soft); color: var(--accent); }
+  .ppra-check input { width: 15px; height: 15px; accent-color: currentColor; cursor: pointer; flex: 0 0 auto; }
+
+  .disc { margin-top: 12px; border-top: 1px dashed var(--line); }
+  .disc summary { list-style: none; cursor: pointer; padding-top: 10px; font-size: 12.5px; font-weight: 700; color: var(--accent); display: flex; align-items: center; gap: 6px; }
+  .disc summary::-webkit-details-marker { display: none; }
+  .disc summary .chev { transition: transform .2s; display: inline-block; }
+  .disc[open] summary .chev { transform: rotate(90deg); }
+  .timeline { margin-top: 10px; padding-left: 4px; }
+  .tl-row { display: flex; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--paper); font-size: 12.5px; }
+  .tl-row:last-child { border-bottom: none; }
+  .tl-date { flex: 0 0 92px; color: var(--muted); font-weight: 600; font-size: 11.5px; padding-top: 1px; }
+  .tl-body { flex: 1; }
+  .tl-body b { font-weight: 700; }
+  .tl-done .tl-body { color: var(--done); text-decoration: line-through; }
+  .tl-now { background: var(--accent-soft); border-radius: 6px; margin: 0 -6px; padding: 7px 6px; }
+
+  .actions { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+  button.act { border: none; font-size: 12.5px; font-weight: 600; padding: 8px 12px; border-radius: 8px; cursor: pointer; transition: transform .05s, filter .15s; }
+  button.act:active { transform: translateY(1px); }
+  .tick   { background: var(--accent); color: #fff; }
+  .tick:hover { filter: brightness(1.08); }
+  .elim   { background: var(--red-soft); color: var(--red); }
+  .revive { background: #eceef0; color: var(--ink); }
+  .wait   { background: #ede9fe; color: #6d28d9; }
+  .selected { background: var(--green); color: #fff; }
+
+  .empty { text-align: center; color: var(--muted); padding: 40px 0; font-size: 14px; }
+  .note { font-size: 11.5px; color: var(--muted); margin-top: 20px; text-align: center; line-height: 1.5; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="kicker">IIM Indore · PGP 2026–28</div>
+    <h1>Case Competitions Tracker</h1>
+    <div class="today" id="today"></div>
+  </header>
+
+  <div class="stats" id="stats"></div>
+
+  <div class="toolbar">
+    <div class="filters">
+      <button class="fbtn active" data-f="todo">Action needed<span class="cnt"></span></button>
+      <button class="fbtn" data-f="hold">Waiting<span class="cnt"></span></button>
+      <button class="fbtn" data-f="active">All active<span class="cnt"></span></button>
+      <button class="fbtn" data-f="all">All<span class="cnt"></span></button>
+      <button class="fbtn" data-f="out">Eliminated<span class="cnt"></span></button>
+    </div>
+    <div class="spacer"></div>
+    <button class="ghost" id="export" style="border-color:#1f6f5c;color:#1f6f5c;font-weight:700">⬇ Export progress for the new app</button>
+    <button class="ghost" id="reset">Reset all</button>
+  </div>
+
+  <div id="list"></div>
+
+  <div class="note" style="background:#e5f0ec;color:#1f6f5c;padding:12px 14px;border-radius:10px;font-weight:600">
+    This is the retired offline tracker. The live app is the one in the parent folder.<br>
+    To carry your ticks across: hit <b>Export progress for the new app</b> above, then open the new app and use
+    <b>Backup &amp; import progress</b> at the bottom of the Case comps tab.
+  </div>
+  <div class="note">Progress saves automatically to this browser. A backup file also drops into Downloads whenever you mark something eliminated or complete. Open this file in the <b>same browser</b> each time so your progress persists. All dates IST.</div>
+</div>
+
+<script>
+// Live date, not hardcoded. Everything is counted in whole IST calendar days:
+// TODAY is midnight IST of the current day, so "in 4 days" always means 4 sleeps,
+// regardless of what time of day the round itself starts or when the page was opened.
+const IST_OFFSET_MS = 330 * 60000, DAY_MS = 86400000;
+const WEEKDAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+// Midnight IST of whatever calendar day `d` falls on, as a real instant.
+function istMidnight(d){ return new Date(Math.floor((d.getTime() + IST_OFFSET_MS) / DAY_MS) * DAY_MS - IST_OFFSET_MS); }
+// IST calendar fields of an instant (read off the shifted UTC fields).
+function istParts(d){ return new Date(d.getTime() + IST_OFFSET_MS); }
+
+let TODAY = istMidnight(new Date());
+function todayLabel(){
+  const p = istParts(TODAY);
+  return WEEKDAYS[p.getUTCDay()] + ', ' + p.getUTCDate() + ' ' + MONTHS[p.getUTCMonth()] + ' ' + p.getUTCFullYear();
+}
+
+// stages = tick-able rounds. timeline = full schedule shown in dropdown.
+// links: reg = registration link, ppra = placecomm proof form (null if not in mail / "in mail")
+// stageStarts = OPTIONAL, keyed by stage index (sparse — only rounds you know about).
+//   {on: ISO|null, short: 'Sim'} — when that round actually happens. on:null = announced but no date yet.
+//   Drives the "Sim in 12 days" badge so a registered-but-not-started comp doesn't read "In progress".
+const SEED = [
+  { id:'rpg', name:'RPG Outperform 2026', org:'RPG Group · GM Track · Teams 2–3 · ₹6L', ppra:true,
+    reg:{label:'Register (in placement mail)', url:null},
+    pproof:{label:'PPRA — Google Form (in mail)', url:null},
+    deadline:'2026-07-24T23:59:00+05:30', deadlineLabel:'Reg + Exec Summary · 24 Jul 11:59 PM',
+    stages:['Exec Summary','Detailed Deck + VO','Grand Finale'],
+    stageStarts:{ 1:{on:null, short:'Detailed deck'}, 2:{on:null, short:'Finale'} },
+    timeline:[
+      {d:'7–26 Jul', t:'<b>Executive Summary</b> — 2–3 slides on your approach'},
+      {d:'TBA', t:'<b>Detailed Submission</b> — 7–10 slides + 90–120s voice-over video'},
+      {d:'TBA', t:'<b>Grand Finale</b> — present to RPG leadership'},
+    ]},
+  { id:'stratos', name:'ABG Stratos 2026', org:'Aditya Birla Group · Teams of 3 · ₹9L', ppra:true,
+    reg:{label:'Register on Unstop (in mail)', url:null},
+    pproof:{label:'PPRA — proof form (in mail)', url:null},
+    deadline:'2026-07-27T23:59:00+05:30', deadlineLabel:'Simulation LIVE today · 27 Jul (reg was 26 Jul)',
+    stages:['Simulation Round','Case Study (1 of 2)','Grand Finale · Mumbai'],
+    stageStarts:{ 1:{on:'2026-07-29T00:00:00+05:30', short:'Case study'}, 2:{on:'2026-08-26T09:00:00+05:30', short:'Finale · Mumbai'} },
+    timeline:[
+      {d:'27 Jul', t:'<b>Business Simulation</b> — 5 rounds, 2 hrs, anytime 12 PM–11:59 PM. Team leader only'},
+      {d:'29 Jul–2 Aug', t:'<b>Case Study Round</b> — pick 1 of 2 cases; 2-slide exec summary + video (PDF + video)'},
+      {d:'26–27 Aug', t:'<b>Grand Finale</b> — Mumbai. Pre-finale activity 26 Aug'},
+    ]},
+  { id:'pwc', name:'PwC Challenge (8th ed.)', org:'PwC AC India · Teams', ppra:true,
+    reg:{label:'Register (in placement mail)', url:null},
+    pproof:{label:'PPRA — proof form', url:'https://forms.gle/EjnjA8fLiT8q9Ze2A'},
+    deadline:'2026-07-30T23:59:00+05:30', deadlineLabel:'Register · 30 Jul 11:59 PM',
+    stages:['Register','PPT + Video Submission','Finale'],
+    stageStarts:{ 1:{on:'2026-08-03T00:00:00+05:30', short:'Case launch'}, 2:{on:'2026-09-18T09:00:00+05:30', short:'Finale'} },
+    timeline:[
+      {d:'30 Jul', t:'<b>Registration closes</b> — 11:59 PM'},
+      {d:'3 Aug', t:'<b>Case launch</b> + leadership webinar · 4 PM'},
+      {d:'3–7 Aug', t:'<b>Solution submission</b> — due 7 Aug. .pptx→PDF (max 25MB) + 10-min video. Exec summary ≤2 slides, main deck ≤10, appendix ≤10. Georgia headers / Arial body. Name: LeadName_TeamName_Campus'},
+      {d:'18 Aug', t:'Round 1 results announced'},
+      {d:'18 Sep', t:'<b>Finale</b>'},
+    ]},
+  { id:'ace', name:'Amazon ACE Challenge 2026', org:'Amazon · Teams of 4 · ₹4L', ppra:true,
+    reg:{label:'Register on Unstop', url:'https://unstop.com/competitions/crp-amazon-customer-excellence-ace-challenge-2026-amazon-1709385'},
+    pproof:{label:'PPRA — upload proof (in mail)', url:null},
+    deadline:'2026-07-31T23:59:00+05:30', deadlineLabel:'Register · 31 Jul 11:59 PM',
+    stages:['Register','Prelim Quiz','Campus Submission','Campus Presentations','Grand Finale · Bangalore'],
+    stageStarts:{ 1:{on:'2026-08-03T16:00:00+05:30', short:'Quiz'}, 2:{on:'2026-08-06T17:00:00+05:30', short:'Case release'},
+                  3:{on:'2026-08-18T09:00:00+05:30', short:'Presentations'}, 4:{on:'2026-09-04T09:00:00+05:30', short:'Finale'} },
+    timeline:[
+      {d:'31 Jul', t:'<b>Registration closes</b> — teams of 4, campus email'},
+      {d:'3 Aug', t:'<b>Preliminary Round</b> — individual quiz, 3 caselets, 30 min. Team avg counts. 4 PM–10 PM'},
+      {d:'6 Aug', t:'Case study release · 5 PM'},
+      {d:'7 Aug', t:'“Writing at Amazon” session · 6 PM'},
+      {d:'7–13 Aug', t:'<b>Campus Round submission</b> — 4-page Word doc (2 solution + 2 appendix). Due 13 Aug 10 AM'},
+      {d:'18–20 Aug', t:'<b>Campus Presentations</b> — virtual'},
+      {d:'21–28 Aug', t:'<b>Grand Finale submission</b> — due 28 Aug 10 AM'},
+      {d:'4 Sep', t:'<b>Grand Finale</b> — in-person, Bangalore'},
+    ]},
+  { id:'flipkart', name:'Flipkart WiRED X', org:'Flipkart · Teams 1–3 · Business/HR/Supply Chain', ppra:true,
+    reg:{label:'Register (in placement mail)', url:null},
+    pproof:{label:'PPRA — upload proof (in mail)', url:null},
+    deadline:'2026-08-01T23:59:00+05:30', deadlineLabel:'Register · 1 Aug 11:59 PM',
+    stages:['Register','Online Test (SJT)','Track Case Study','Semi-Finals','National Finale · Bengaluru'],
+    stageStarts:{ 1:{on:null, short:'Online test'}, 2:{on:null, short:'Case study'},
+                  3:{on:null, short:'Semi-finals'}, 4:{on:null, short:'Finale'} },
+    timeline:[
+      {d:'20 Jul–2 Aug', t:'<b>Registration window</b> — placecomm deadline 1 Aug'},
+      {d:'R1', t:'<b>Online Test</b> — 30 min, 25-Q SJT quiz (individual qualifier, team score counts)'},
+      {d:'R2', t:'<b>Team Submission</b> — track-specific case study'},
+      {d:'R3', t:'<b>Semi-Finals</b> — detailed deck + 15-min pitch + 10-min Q&A. Top 4/track = National Finalists'},
+      {d:'R4', t:'<b>National Finale</b> — mentorship + final pitch at Flipkart HQ, Bengaluru (travel/stay covered)'},
+    ]},
+  { id:'galderma', name:'Galderma GRAD 3.0', org:'Galderma · Teams 1–3 · ₹6L + PPI', ppra:true,
+    reg:{label:'Register on Unstop (link in placement mail)', url:null},
+    pproof:{label:'PPRA — proof form', url:'https://forms.gle/iQHDwG4m94iS4hbM9'},
+    deadline:'2026-08-01T23:59:00+05:30', deadlineLabel:'Register · 1 Aug 11:59 PM (placecomm)',
+    stages:['Register','Trivia Quiz','MCQ Assessment','Exec Summary','Detailed Submission','National Grand Finale'],
+    stageStarts:{ 1:{on:'2026-08-04T16:00:00+05:30', short:'Trivia quiz'}, 2:{on:'2026-08-05T16:00:00+05:30', short:'MCQ test'},
+                  3:{on:'2026-08-07T19:00:00+05:30', short:'Exec summary'}, 4:{on:'2026-08-28T11:30:00+05:30', short:'Detailed deck'},
+                  5:{on:'2026-09-17T10:00:00+05:30', short:'Finale'} },
+    timeline:[
+      {d:'1 Aug', t:'<b>Registration closes</b> — placecomm deadline 11:59 PM. Mandatory for the batch'},
+      {d:'4 Aug', t:'<b>Trivia Quiz</b> — 4:00–10:00 PM, team leader only. Follow Galderma’s Instagram pages (@cetaphil_india, @cetaphilbaby.india, @benzacindia, @bilumaindia, @gainbygalderma_india) for hints in stories. Non-eliminatory: top 2/college fast-track to Exec Summary, top 5 in India straight to Detailed Submission'},
+      {d:'5 Aug', t:'<b>Round 1 · MCQ Assessment</b> — 20 Q in 30 min, inside an 8-hr window from 4 PM. Team leader only. Logical reasoning, aptitude, marketing'},
+      {d:'7–16 Aug', t:'<b>Round 2 · Executive Summary</b> — <b>qualified ✓</b>. Window 7 Aug 7:00 PM → 16 Aug 4:00 PM. 2 slides excl. cover + thank-you, in PPT <i>and</i> PDF, max 20 MB. Cover slide needs team name, member names, college. Named TeamName_CollegeName. Case downloads via the “Brief” button in the round; team leader submits on the opportunity page. One solution only, for the selected case'},
+      {d:'28 Aug–6 Sep', t:'<b>Round 3 · Detailed Submission</b> — 8–10 slides excl. cover + annexure, PPT <i>and</i> PDF. Due 6 Sep 11:59 PM'},
+      {d:'17 Sep', t:'<b>Round 4 · National Grand Finale</b> — present to Galderma leadership, 10 AM–6 PM'},
+    ]},
+  { id:'vguard', name:'V-Guard Big Idea (16th ed.)', org:'V-Guard · Teams 1–3 · ₹1000 fee · ₹3L', ppra:false,
+    reg:{label:'Register + pay fee (in mail)', url:null},
+    pproof:{label:'No PPRA form in mail', url:null},
+    deadline:'2026-08-06T14:00:00+05:30', deadlineLabel:'Register + pay · 6 Aug 2 PM',
+    stages:['Register + Pay','Exec Summary','Detailed Report','Final Presentation','Finale · Kochi'],
+    stageStarts:{ 1:{on:'2026-08-12T23:59:00+05:30', short:'Exec summary'}, 2:{on:'2026-08-28T23:59:00+05:30', short:'Detailed report'},
+                  3:{on:'2026-09-22T23:59:00+05:30', short:'Final deck'}, 4:{on:'2026-09-25T09:00:00+05:30', short:'Finale · Kochi'} },
+    timeline:[
+      {d:'6 Aug', t:'<b>Registration + ₹1000 payment</b> closes 2 PM'},
+      {d:'12 Aug', t:'<b>Executive Summary</b> submission'},
+      {d:'21 Aug', t:'Shortlist announced'},
+      {d:'28 Aug', t:'<b>Detailed Report</b> submission'},
+      {d:'16 Sep', t:'Finalists declared'},
+      {d:'22 Sep', t:'<b>Final Presentation</b> submission'},
+      {d:'25–26 Sep', t:'<b>Finale</b> — Kochi'},
+    ]},
+  { id:'hul', name:'HUL FinAce Season 10', org:'HUL · Teams of 3 · ₹5L · ₹2.2L/mo PPI', ppra:true,
+    reg:{label:'Apply on Unstop', url:'https://unstop.com/o/tvWRbZw/?ref=TPOtNmQz'},
+    pproof:{label:'PPRA — upload proof (in mail)', url:null},
+    deadline:'2026-08-07T23:59:00+05:30', deadlineLabel:'Register · 7 Aug 11:59 PM',
+    stages:['Register','Business Simulation','Sim Presentations','Semi-Finale','Grand Finale'],
+    stageStarts:{ 1:{on:'2026-08-09T10:00:00+05:30', short:'Simulation'}, 2:{on:'2026-08-12T00:00:00+05:30', short:'Sim deck'},
+                  3:{on:null, short:'Semi-finale'}, 4:{on:null, short:'Grand finale'} },
+    timeline:[
+      {d:'7 Aug', t:'<b>Registration closes</b> 11:59 PM · Digital Launch & Q&A 3–4 PM'},
+      {d:'8 Aug', t:'<b>Stage 1 Simulation Orientation</b> — 11:00 AM IST on MS Teams. Walkthrough of the simulation + Q&A before the round. Meeting ID 319 650 107 600 408, passcode uV2ho2bE'},
+      {d:'9 Aug', t:'<b>Business Simulation Round</b> — 10 AM–6 PM, real-time team decisions'},
+      {d:'12–13 Aug', t:'<b>Qualifying Round</b> — 5-slide PPT (1 financials + 1 per quarter)'},
+      {d:'TBA', t:'<b>Semi-Finale</b> — “CFO Club”, 10-min present + 5-min Q&A to HUL finance leaders. Submit via email'},
+      {d:'TBA', t:'<b>Grand Finale</b> — 1 week mentoring, then detailed pitch'},
+    ]},
+  { id:'cipla', name:'Cipla Ascend Season 4', org:'Cipla · Teams of 2 · ₹3L · PPI for ALIVE SIP', ppra:true,
+    reg:{label:'Register on Grad Partners', url:'https://www.gradpartners.in/e/Cipla-Ascend-Season-4-277'},
+    pproof:{label:'PPRA — proof form', url:'https://forms.gle/eihaBv1SZBe3wHQv8'},
+    deadline:'2026-08-07T23:59:00+05:30', deadlineLabel:'Register · 7 Aug 11:59 PM · R1 due 9 Aug 8:00 AM (extended)',
+    stages:['Register','Round 1 · Exec Summary','Round 2 · Cipla Assessment','Final Submission','Grand Finale'],
+    // R1 is already open (case drops the moment you register), so it reads as "In progress", not "opens in N days".
+    stageStarts:{ 1:{on:'2026-07-20T10:00:00+05:30', short:'Round 1'}, 2:{on:'2026-08-16T09:00:00+05:30', short:'Cipla assessment'},
+                  3:{on:'2026-08-24T10:00:00+05:30', short:'Final deck'}, 4:{on:'2026-09-04T09:00:00+05:30', short:'Grand finale'} },
+    timeline:[
+      {d:'7 Aug', t:'<b>Registration closes</b> 11:59 PM. Team leader registers; case unlocks on registration. Only 1st-yr 2-yr flagship MBA, IIM Indore on the eligible list'},
+      {d:'20 Jul–9 Aug', t:'<b>Round 1 · Executive Summary</b> — <b>deadline extended to 9 Aug 8:00 AM</b> (was 8 Aug 11:59 PM). 3 slides excl. cover; no context-setting; .ppt/.pptx/.pdf under 5 MB, named LeaderFirstName_TeamName_InstituteName. Team leader submits on the Grad Partners page'},
+      {d:'24–25 Jul', t:'<i>Ascend Quiz</i> on Grad Partners’ LinkedIn — engagement activity only, not a competition round (already over)'},
+      {d:'5 Aug', t:'<b>Conversations with Cipla</b> — YouTube Live, 5:00–5:45 PM. Registered students can send questions in advance'},
+      {d:'16–17 Aug', t:'<b>Round 2 · Cipla Assessment</b> — top 50 teams, 16 Aug 9 AM to 17 Aug 9 AM. <b>Mandatory for both members</b> — team is dropped if either skips it'},
+      {d:'26 Aug', t:'<i>Tips to Ace the Finale</i> — Cipla mentoring for the top 5 teams, 9 AM–6 PM'},
+      {d:'24–30 Aug', t:'<b>Final Submission</b> — 7–10 slide deck, due 30 Aug 11:59 PM'},
+      {d:'4 Sep', t:'<b>Round 3 · Grand Finale</b> — pitch to Cipla’s senior leadership, 9 AM–6 PM. ₹1.5L / ₹1L / ₹50K + PPIs, and PPIs may also go to individuals from the top 50 on R1 submissions'},
+    ]},
+  { id:'marico', name:'Marico Over the Wall S14', org:'Marico · Teams 2–3 · ₹8.2L prizes + PPI', ppra:true,
+    reg:{label:'Register on Unstop', url:'https://unstop.com/o/SLaHOQl/?ref=camj7Nqf'},
+    pproof:{label:'PPRA — Google Form', url:'https://forms.gle/CRGk2znbjEHZpxBG7'},
+    deadline:'2026-08-05T23:59:00+05:30', deadlineLabel:'Register · 5 Aug 11:59 PM (placecomm) · Begin Your Journey form due 9 Aug',
+    stages:['Register + Begin Your Journey Form','Marico Quiz','Business Idea Submission','Campus Face-Off','Mentorship Phase','CXO Round','Live Project (MIF)','Grand Finale'],
+    stageStarts:{ 1:{on:'2026-08-13T12:00:00+05:30', short:'Marico Quiz'}, 2:{on:'2026-08-14T10:00:00+05:30', short:'Business idea submission'},
+                  3:{on:'2026-08-24T10:00:00+05:30', short:'Campus Face-Off'}, 4:{on:'2026-09-25T10:00:00+05:30', short:'Mentorship phase'},
+                  5:{on:'2026-11-13T10:00:00+05:30', short:'CXO Round'}, 6:{on:'2026-11-16T10:00:00+05:30', short:'Live project (MIF)'},
+                  7:{on:null, short:'Grand finale'} },
+    timeline:[
+      {d:'31 Jul–9 Aug', t:'<b>Begin Your Journey</b> — short form on aspirations, interests, perceptions and expectations from an organisation'},
+      {d:'5 Aug', t:'<b>Registration closes</b> 11:59 PM (placecomm deadline)'},
+      {d:'13 Aug', t:'<b>Marico Quiz</b> — 12:00–6:00 PM, 15-min Marico trivia quiz, team leader only. Mandatory for all registered teams. Top 3 win prizes; top 20 wildcard teams advance to Business Idea Submission'},
+      {d:'14–24 Aug', t:'<b>Business Idea Submission</b> — one big idea in chosen category; 3-slide PPT proposal + 3–4 line summary'},
+      {d:'24 Aug–24 Sep', t:'<b>Campus Face-Off</b> — shortlisted teams submit a 5-slide deck and present to a jury of Marico senior leaders. Top 8–10 teams advance to CXO Round'},
+      {d:'25 Sep–25 Oct', t:'<b>Mentorship Phase</b> — shortlisted teams paired with Marico mentors to prep for the CXO Round'},
+      {d:'13 Nov', t:'<b>CXO Round</b> — top 8–10 teams present to Marico’s MD, CEO and CXO leadership, 10 AM–6 PM'},
+      {d:'16 Nov–16 Jan', t:'<b>Live Project with Marico Innovation Foundation</b> — top 3 teams work a 2-month live project with a startup under MIF'},
+      {d:'TBA', t:'<b>Grand Finale</b> — top 3 teams present to Founder &amp; Chairman Harsh Mariwala and senior leadership. Eligibility: 1st/2nd-yr full-time 2-yr MBA, graduating 2027/2028'},
+    ]},
+  { id:'tgc', name:'The Governance Challenge 2026 (TGC)', org:'Samagra · Govt. of Maharashtra · Teams of 3 · ₹9L + PPI', ppra:true,
+    reg:{label:'Register on Unstop', url:'https://unstop.com/p/the-governance-challenge-2026-samagra-governance-1726557'},
+    pproof:{label:'PPRA — proof of registration form', url:'https://forms.gle/YMk66DxPxFzKmjDs6'},
+    deadline:'2026-08-19T23:59:00+05:30', deadlineLabel:'PPRA form due 19 Aug EOD · Unstop registration closes 21 Aug 11:59 PM',
+    stages:['Register','Campus Round · Pitch + Concept Note','Nationals · Preliminary Submission','Nationals · Final Submission','Nationals · Presentations','Summit · Final Submission','Summit · Presentations'],
+    stageStarts:{ 1:{on:'2026-08-10T12:00:00+05:30', short:'Campus round pitch'}, 2:{on:'2026-08-26T12:00:00+05:30', short:'Nationals prelim submission'},
+                  3:{on:'2026-09-07T12:00:00+05:30', short:'Nationals final submission'}, 4:{on:'2026-09-11T10:00:00+05:30', short:'Nationals presentations'},
+                  5:{on:'2026-09-13T10:00:00+05:30', short:'Summit final submission'}, 6:{on:'2026-09-30T10:00:00+05:30', short:'Summit presentations'} },
+    timeline:[
+      {d:'10–21 Aug', t:'<b>Stage 1 · Campus Round</b> — register and submit a 3-min executive pitch video + 2-page concept note on the case (problem statement launches 10 Aug). Results 26 Aug. Only group leader fills the PPRA form'},
+      {d:'14 Aug', t:'<b>Campus Round AMA</b> — 10 AM–8 PM, online session on format, timelines and evaluation'},
+      {d:'26 Aug–6 Sep', t:'<b>Nationals · Preliminary Submission</b> — 30 campus-winning teams submit a preliminary presentation, due 6 Sep. Feedback from Samagra leaders 7 Sep'},
+      {d:'27 & 29 Aug', t:'Nationals knowledge-sharing sessions with experts and government leaders'},
+      {d:'7 Sep', t:'Feedback session on the preliminary submission'},
+      {d:'7–10 Sep', t:'<b>Nationals · Final Submission</b> — incorporate feedback, submit final presentation by 10 Sep 6 PM'},
+      {d:'11–12 Sep', t:'<b>Stage 2 · Nationals Presentations</b> — 10-min pitch + Q&A. Top 6 of 30 advance to the Summit Round'},
+      {d:'13–27 Sep', t:'<b>Summit Round · Final Submission</b> — 6 finalist teams submit final presentation by 27 Sep 12 PM'},
+      {d:'28–29 Sep', t:'Governance Immersion Visit — Pune + Mumbai field visits ahead of Summit presentations'},
+      {d:'30 Sep', t:'<b>Stage 3 · Summit Presentations</b> — present to the CM of Maharashtra, senior IAS officers and industry leaders. Top 3 win ₹5L/₹3L/₹1L cash + PPI; all 6 finalists get a Samagra PPI'},
+    ]},
+  { id:'igniters', name:'Suzuki Igniters Innovation Challenge 2026', org:'Suzuki R&D Center India · B-Track · ₹6.5L + PPI', ppra:true,
+    reg:{label:'Register — Management Track (GradPartners)', url:'https://gradpartners.in/e/igniters-innovation-challenge-2026-management-track-317'},
+    pproof:{label:'PPRA — proof form (in mail)', url:null},
+    deadline:'2026-08-14T23:59:00+05:30', deadlineLabel:'Register · 14 Aug 11:59 PM · R1 due 15 Aug 11:59 PM',
+    stages:['Register','Round 1 Submission','National Finale'],
+    // R1 case is already live on the portal for registered teams, so it reads "In progress", not "opens in N days".
+    stageStarts:{ 1:{on:'2026-07-28T00:00:00+05:30', short:'Round 1'}, 2:{on:null, short:'Finale'} },
+    timeline:[
+      {d:'3 Aug', t:'<b>Conversations with Leaders of SRDI</b> — 5:00 PM onwards, YouTube Live. Case insights + expectations'},
+      {d:'8 Aug', t:'<i>Igniters Quiz</i> on SRDI’s LinkedIn — 4:00–11:59 PM. Engagement activity only, not a round. 6 winners get ₹5,000 Amazon vouchers'},
+      {d:'14 Aug', t:'<b>Registration closes</b> 11:59 PM. Management Track: 1st-yr full-time 2-yr MBA/PGDM. IIM Indore is on the eligible list'},
+      {d:'15 Aug', t:'<b>Round 1 Submission</b> — due 11:59 PM. Case is live on the portal, accessible only to registered teams'},
+      {d:'TBA', t:'<b>National Finale</b> — ₹1.5L / ₹1L / ₹75K + PPIs for summer internships at SRDI'},
+    ]},
+  { id:'drreddys', name:'Destination Dr. Reddy’s 3.0', org:'Dr. Reddy’s · Management Track · Individual · 100+ PPIs', ppra:true,
+    reg:{label:'Register — Management Track (GradPartners)', url:'https://gradpartners.in/e/destination-dr-reddys-3-management-track-307'},
+    pproof:{label:'PPRA — proof form', url:'https://forms.gle/pqWL17KJmc2X8JXP9'},
+    deadline:'2026-08-17T23:59:00+05:30', deadlineLabel:'Register · 17 Aug 11:59 PM · MANDATORY',
+    stages:['Register','Assessment','Interview Drive'],
+    stageStarts:{ 1:{on:null, short:'Assessment'}, 2:{on:null, short:'Interviews'} },
+    timeline:[
+      {d:'Till 17 Aug', t:'<b>Registration</b> — closes 17 Aug 11:59 PM IST. <b>Mandatory for the batch.</b> Management Track: 1st-year full-time MBA/PGDM, all B-schools'},
+      {d:'TBA', t:'<b>Assessment round</b> — shortlisting for the interview drive'},
+      {d:'TBA', t:'<b>Interview drive</b> — 100+ PPIs for the 2026–27 summer internship across domains; PPO on internship performance'},
+    ]},
+  { id:'techtonic', name:'HUL TechTonic Season 8', org:'Hindustan Unilever · Teams of 3 · ₹6.25L + PPI', ppra:true,
+    reg:{label:'Register on Unstop', url:'https://unstop.com/o/6L2uC9U/?ref=hulFK4GJ'},
+    pproof:{label:'PPRA — proof form', url:'https://forms.gle/uwJQscf5EqveArrN6'},
+    deadline:'2026-08-20T23:59:00+05:30', deadlineLabel:'Register + Stage 1 submission · 20 Aug 11:59 PM · MANDATORY',
+    stages:['Register','Stage 1 · Case Submission','Stage 2 · Mentorship','Stage 3 · Grand Finale'],
+    // Case was revealed 31 Jul, so Stage 1 is already open — reads "In progress", not "opens in N days".
+    stageStarts:{ 1:{on:'2026-07-31T18:00:00+05:30', short:'Stage 1'}, 2:{on:null, short:'Mentorship'},
+                  3:{on:'2026-08-31T10:00:00+05:30', short:'Finale · Bangalore'} },
+    timeline:[
+      {d:'27 Jul', t:'<b>#TechDoneRight</b> — challenge opens. Reimagine passive products as intelligent AI experiences. <a href="https://d8it4huxumps7.cloudfront.net/files/6a683dc9b912f_tdr_guidelines.pdf" target="_blank">Full guidelines (PDF)</a>'},
+      {d:'31 Jul', t:'<b>Virtual Case Reveal + Q&A</b> — 6:00 PM. Recording available on Unstop if missed'},
+      {d:'31 Jul–20 Aug', t:'<b>Stage 1 · Opening Round</b> — 3-slide PPT: problem analysis, strategy, solution, <b>plus a working agent prototype</b>. Due 20 Aug 11:59 PM'},
+      {d:'TBA', t:'<b>Stage 2 · Mentorship</b> — top 5 teams work on the same problem with an assigned Unilever mentor'},
+      {d:'31 Aug', t:'<b>Stage 3 · Grand Finale</b> — Unilever Campus Bangalore, 10 AM–4 PM. 15 min: 10-min pitch (5–6 slides + functional agent demo) + 5-min Q&A'},
+    ]},
+  { id:'lime', name:'HUL L.I.M.E. Season 18', org:'Hindustan Unilever · Teams of 3 · ₹16L + PPI', ppra:false,
+    reg:{label:'Register on Unstop (link in mail)', url:null},
+    pproof:{label:'No PPRA form in mail', url:null},
+    deadline:'2026-08-12T23:59:00+05:30', deadlineLabel:'Register + Elevator Pitch · 12 Aug 11:59 PM',
+    stages:['Register + Elevator Pitch','Surprise Challenge','Semi-Finals · Marketing Plan','Grand Finale'],
+    stageStarts:{ 1:{on:null, short:'Surprise Challenge'}, 2:{on:null, short:'Semi-finals · Mumbai'}, 3:{on:null, short:'Grand finale'} },
+    timeline:[
+      {d:'3–12 Aug', t:'<b>Stage 1 · Opening Round — Elevator Pitch</b> — “The Next Shelf: Building the Future of Kissan.” 60-sec elevator pitch video + 2 supporting slides (consumer insight, whitespace opportunity, source mix strategy). Due 12 Aug 11:59 PM. Only registered teams get the virtual case-launch invite'},
+      {d:'TBA', t:'<b>Stage 2 · Surprise Challenge</b> — top 5 campus teams face an unrevealed challenge on evaluation day'},
+      {d:'TBA', t:'<b>Stage 3 · Semi-Finals — Marketing Plan</b> — top teams travel to HUL’s Mumbai HQ; ≤3-slide Media &amp; Distribution Strategy deck + build a product prototype + brand ad; 15-min presentation + 10-min Q&amp;A'},
+      {d:'TBA', t:'<b>Stage 4 · Grand Finale</b> — top 4 teams nationally pitch a social impact campaign; PPT + video campaign, 10-min slot (7-min incl. 5-slide PPT &amp; video, then 3-min Q&amp;A). Winner represents India at Unilever Future Leaders’ League 2027, London'},
+    ]},
+  { id:'cognoscenti', name:'Asian Paints Cognoscenti 2026', org:'Asian Paints · Teams of 2 · ₹3L/mo PPI', ppra:true,
+    reg:{label:'Register on Unstop', url:'https://unstop.com/p/asian-paints-cognoscenti-2026-iim-indore-asian-paints-1730641'},
+    pproof:{label:'PPRA — Google Form', url:'https://forms.gle/BQ6n5CkEGtxnsYZ59'},
+    deadline:'2026-08-06T14:00:00+05:30', deadlineLabel:'Register · 6 Aug 2 PM · MANDATORY',
+    stages:['Register','Simulation Round','Interview Round'],
+    stageStarts:{ 1:{on:'2026-08-09T17:00:00+05:30', short:'Simulation'}, 2:{on:null, short:'Interview'} },
+    timeline:[
+      {d:'6 Aug', t:'<b>Registration closes</b> 2:00 PM — teams of 2, cross-specialisation not allowed. Upload proof of registration for placecomm'},
+      {d:'9 Aug', t:'<b>Simulation Round</b> — on campus, IIM Indore. 60-min live decision-making case, no prep needed; only team leader attempts. Followed by a Masterclass with Asian Paints leadership'},
+      {d:'TBA', t:'<b>Interview Round</b> — shortlisted teams from the Simulation Round. Winners get a shot at the IMPRINTS \'27 summer internship cohort, ₹3L/month stipend'},
+    ]},
+  { id:'reflexion', name:'Capgemini Reflexion Season 9', org:'Capgemini · Teams of 3 · ₹2.65L + PPIs (E.L.I.T.E. MT)', ppra:true,
+    reg:{label:'Register on Grad Partners', url:'https://gradpartners.in/e/Capgemini-Reflexion-9-326'},
+    pproof:{label:'PPRA — proof form (in mail)', url:null},
+    deadline:'2026-08-14T23:59:00+05:30', deadlineLabel:'Register · 14 Aug 11:59 PM · R1 aptitude 15 Aug',
+    stages:['Register','Round 1 · Aptitude Test','Round 2 · Case Submission','Finale'],
+    stageStarts:{ 1:{on:'2026-08-15T14:00:00+05:30', short:'Aptitude test'}, 2:{on:'2026-08-17T14:00:00+05:30', short:'Case submission'},
+                  3:{on:null, short:'Finale'} },
+    timeline:[
+      {d:'14 Aug', t:'<b>Registration closes</b> 11:59 PM. Teams of 3, same institute, cross-specialisation allowed; one person can only be in one team. Team leader registers. 1st-yr full-time 2-yr MBA only — IIM Indore is on the eligible list (with IIM B/C/L/K, FMS, SPJIMR, XLRI)'},
+      {d:'15 Aug', t:'<b>Round 1 · Aptitude Assessment</b> — 2:00–11:59 PM window, 15-min test. <b>Team leader only.</b> Aptitude, technology and Capgemini questions. Top teams per institute advance'},
+      {d:'16 Aug', t:'Round 1 shortlist announced'},
+      {d:'17–23 Aug', t:'<b>Round 2 · Case Submission</b> — 17 Aug 2 PM to 23 Aug 11:59 PM. 3–5 slide PPT excl. cover (.ppt/.pptx/.pdf, under 5 MB; extras go in annexures) <i>plus</i> a ≤3-min MP4 video (≤50 MB) showing both the solution and the presenter. Leader submits, named LeaderFirstName_TeamName_InstituteName_PPT/Video'},
+      {d:'1st wk Sep', t:'<b>Round 3 · Finale</b> — jury evaluates submissions and declares National Winner (₹1.5L), Runner-up (₹75K), 2nd Runner-up (₹40K) and Campus Winners. PPIs for the E.L.I.T.E. Management Trainee Program to the top 3 teams and campus winners'},
+    ]},
+  { id:'tataconsumer', name:'TATA Consumer Summer Trainee 2027', org:'Tata Consumer Products · Individual · ₹1.25L/mo SIP', ppra:true,
+    reg:{label:'Apply on InsideKampus', url:'https://insidekampus.com/competition'},
+    pproof:{label:'PPRA — proof form (in mail)', url:null},
+    deadline:'2026-08-12T23:59:00+05:30', deadlineLabel:'Application · 12 Aug 11:59 PM',
+    stages:['Apply · Complete Profile','Simulation Challenge','Interview Round'],
+    stageStarts:{ 1:{on:'2026-08-14T12:00:00+05:30', short:'Simulation'}, 2:{on:'2026-08-20T00:00:00+05:30', short:'Interview'} },
+    timeline:[
+      {d:'3–12 Aug', t:'<b>Round 1 · Application</b> — opened 3 Aug 12:00 PM, closes 12 Aug 11:59 PM. Complete your InsideKampus profile in full; this is what the shortlist is evaluated on. Only 1st-year students in a 2-yr flagship MBA (graduating 2028) are eligible'},
+      {d:'14–18 Aug', t:'<b>Round 2 · The Simulation Challenge</b> — 14 Aug 12:00 PM to 18 Aug 11:59 PM. 45-min proctored simulation, strict time limit, must be done in <b>one sitting</b> once you hit start. Download the instructions sheet before attempting'},
+      {d:'20 Aug – 10 Sep', t:'<b>Round 3 · Interviews</b> — only simulation qualifiers get slots, allotted from 20 Aug. The round deadline is only for <b>uploading your Aadhaar</b> (do it before your interview). Results release in phases — you stay in consideration until a rejection mail arrives'},
+      {d:'Apr–May 2027', t:'<b>Summer Trainee</b> — 2 months, multiple India locations. Domains: Sales &amp; Marketing, Finance, Operations, HR, Digital. Fixed stipend ₹2.5L for the 2 months. Live, high-impact projects'},
+    ]},
+];
+
+const KEY = 'case-comp-tracker-v2';
+let state = {};
+let filter = 'todo';
+
+function load() {
+  try { const raw = localStorage.getItem(KEY); if (raw) state = JSON.parse(raw); }
+  catch(e) { state = {}; }
+  SEED.forEach(c => {
+    if (!state[c.id]) state[c.id] = { stage:0, out:false, waiting:false, ppraDone:false };
+    else if (state[c.id].ppraDone === undefined) state[c.id].ppraDone = false; // back-fill older saves
+  });
+  render();
+  // A tab left open across IST midnight would otherwise keep showing yesterday's counts.
+  setInterval(()=>{ if(istMidnight(new Date()).getTime() !== TODAY.getTime()) render(); }, 60000);
+}
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e) {} }
+
+// Safety net: drop a snapshot into Downloads at moments you'd hate to lose,
+// so progress survives even if the browser clears local data.
+function snapshot(reason){
+  try {
+    const blob = new Blob([JSON.stringify(state,null,2)], {type:'application/json'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'tracker-backup-' + reason + '-' + new Date().toISOString().slice(0,10) + '.json';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
+  } catch(e) {}
+}
+
+function daysLeft(iso){ return Math.round((istMidnight(new Date(iso)) - TODAY) / DAY_MS); }
+function urgency(c){ const s=state[c.id]; if(s.stage>0||s.waiting) return 'later'; const d=daysLeft(c.deadline); if(d<=1) return 'urgent'; if(d<=4) return 'soon'; return 'later'; }
+
+// The round you're on hasn't started yet (sim/test/submission still ahead, or date unannounced).
+// Returns the stageStarts entry, or null when the round is genuinely underway.
+function nextRound(c){
+  const s=state[c.id];
+  if(s.out || s.waiting || s.stage===0 || s.stage>=c.stages.length) return null;
+  const r = c.stageStarts && c.stageStarts[s.stage];
+  if(!r) return null;
+  if(r.on === null) return r;               // announced, date TBA — still ahead of you
+  return daysLeft(r.on) > 0 ? r : null;     // 0 or less = it's live/overdue, that IS in progress
+}
+
+function whenPhrase(d){ return d<0 ? 'overdue' : d===0 ? 'today' : d===1 ? 'tomorrow' : 'in ' + d + ' days'; }
+
+// Does this competition need something FROM YOU right now, or is the ball in their court?
+// A quiz four days out is "active" but needs nothing today — that's the whole point of the split.
+// Returns null for eliminated/complete comps (they belong in neither bucket).
+function pending(c){
+  const s = state[c.id];
+  if(s.out || s.stage >= c.stages.length) return null;
+  if(s.waiting) return {action:false, why:'Submitted — waiting on their results'};
+  const nr = nextRound(c);
+  if(nr) return {action:false, why: nr.on === null
+    ? nr.short + ' announced, no date yet — nothing to do'
+    : nr.short + ' opens ' + whenPhrase(daysLeft(nr.on)) + ' — nothing to do yet'};
+  if(s.stage === 0) return {action:true, why:'Not registered — closes ' + whenPhrase(daysLeft(c.deadline))};
+  return {action:true, why: c.stages[s.stage] + ' is open — work is due'};
+}
+
+function badge(c){
+  const s=state[c.id];
+  if(s.out) return {cls:'done', txt:'Eliminated'};
+  if(s.stage>=c.stages.length) return {cls:'done', txt:'Complete'};
+  if(s.waiting) return {cls:'wait', txt:'Awaiting results'};
+  const nr = nextRound(c);
+  if(nr){
+    if(nr.on === null) return {cls:'teal', txt:nr.short + ' — TBA'};
+    const d = daysLeft(nr.on);
+    if(d===1) return {cls:'amber', txt:nr.short + ' tomorrow'};
+    if(d<=2)  return {cls:'amber', txt:nr.short + ' in ' + d + ' days'};
+    return {cls:'teal', txt:nr.short + ' in ' + d + ' days'};
+  }
+  if(s.stage>0) return {cls:'teal', txt:'In progress'};
+  const d=daysLeft(c.deadline);
+  if(d<0) return {cls:'red', txt:'Overdue?'};
+  if(d===0) return {cls:'red', txt:'Due today'};
+  if(d===1) return {cls:'red', txt:'1 day left'};
+  if(d<=4) return {cls:'amber', txt:d+' days left'};
+  return {cls:'teal', txt:d+' days left'};
+}
+function linkHTML(o){
+  if(!o) return '';
+  if(o.url) return `<a href="${o.url}" target="_blank" rel="noopener">${o.label} ↗</a>`;
+  return `<span class="dead">${o.label}</span>`;
+}
+
+function render(){
+  TODAY = istMidnight(new Date());   // re-read the clock on every render, so counts never go stale
+  document.getElementById('today').textContent =
+    todayLabel() + ' · ' + SEED.filter(c=>!state[c.id].out).length + ' still in play';
+
+  const live = SEED.filter(c=>!state[c.id].out && state[c.id].stage < c.stages.length);
+  // Tiles mirror the tabs: needs you now vs. on the calendar but not yet your problem.
+  const needsYou = live.filter(c=>pending(c).action);
+  const onHold = live.filter(c=>!pending(c).action);
+  const urgent = needsYou.filter(c=>['urgent','soon'].includes(urgency(c)) && state[c.id].stage===0);
+  const out = SEED.filter(c=>state[c.id].out).length;
+  const waiting = SEED.filter(c=>!state[c.id].out && state[c.id].waiting).length;
+  const ppraTodo = SEED.filter(c=>c.ppra && !state[c.id].out && !state[c.id].ppraDone).length;
+  document.getElementById('stats').innerHTML = `
+    <div class="stat"><div class="n" style="color:var(--red)">${needsYou.length}</div><div class="l">Action needed</div></div>
+    <div class="stat"><div class="n" style="color:var(--accent)">${onHold.length}</div><div class="l">Waiting</div></div>
+    <div class="stat"><div class="n" style="color:var(--red)">${urgent.length}</div><div class="l">Reg. due ≤4d</div></div>
+    <div class="stat"><div class="n" style="color:var(--amber)">${ppraTodo}</div><div class="l">PPRA pending</div></div>
+    <div class="stat"><div class="n" style="color:#6d28d9">${waiting}</div><div class="l">Awaiting results</div></div>
+    <div class="stat"><div class="n" style="color:var(--done)">${out}</div><div class="l">Eliminated</div></div>`;
+
+  // Tab counts. todo/hold only cover live comps — complete and eliminated ones have no pending() bucket.
+  const inBucket = (c,f) => {
+    const p = pending(c);
+    if(f==='todo')   return !!p && p.action;
+    if(f==='hold')   return !!p && !p.action;
+    if(f==='active') return !state[c.id].out;
+    if(f==='out')    return state[c.id].out;
+    return true;
+  };
+  document.querySelectorAll('.fbtn').forEach(b=>{
+    b.querySelector('.cnt').textContent = SEED.filter(c=>inBucket(c, b.dataset.f)).length;
+  });
+
+  let items = SEED.filter(c=>inBucket(c, filter));
+  items.sort((a,b)=> new Date(a.deadline) - new Date(b.deadline));
+
+  const list = document.getElementById('list');
+  if(!items.length){
+    const msg = filter==='todo' ? 'Nothing needs you right now. Check <b>Waiting</b> for what’s coming.'
+              : filter==='hold' ? 'Nothing on hold — everything live needs action.'
+              : 'Nothing here.';
+    list.innerHTML = '<div class="empty">' + msg + '</div>'; return;
+  }
+
+  list.innerHTML = items.map(c => {
+    const s = state[c.id]; const u = urgency(c); const b = badge(c);
+    const complete = s.stage >= c.stages.length;
+    const curStage = complete ? '🏆 All rounds done'
+      : s.waiting ? c.stages[s.stage] + ' — submitted, results awaited'
+      : c.stages[s.stage];
+    const dots = c.stages.map((_,i)=>{
+      let cls = i < s.stage ? 'done'
+        : (i===s.stage && s.waiting ? 'done'
+        : (i===s.stage && !complete && !s.out ? 'now' : ''));
+      return `<div class="dot ${cls}"></div>`;
+    }).join('');
+
+    const tl = c.timeline.map((row,i)=>{
+      const cls = i < s.stage ? 'tl-done' : (i===s.stage && !complete && !s.out ? 'tl-now' : '');
+      return `<div class="tl-row ${cls}"><div class="tl-date">${row.d}</div><div class="tl-body">${row.t}</div></div>`;
+    }).join('');
+
+    let actions;
+    if (s.out) {
+      actions = `<button class="act revive" onclick="revive('${c.id}')">↩ Bring back</button>`;
+    } else if (complete) {
+      actions = `<button class="act elim" onclick="elim('${c.id}')">✕ Out / not selected</button>`;
+    } else if (s.waiting) {
+      actions = `<button class="act selected" onclick="selected('${c.id}')">✓ Selected → next round</button>
+                 <button class="act elim" onclick="elim('${c.id}')">✕ Not selected</button>`;
+    } else {
+      actions = `<button class="act wait" onclick="await_('${c.id}')">⏳ Submitted — awaiting results</button>
+                 <button class="act tick" onclick="advance('${c.id}')">✓ Advance now</button>
+                 <button class="act elim" onclick="elim('${c.id}')">✕ Out</button>`;
+    }
+
+    // PPRA doesn't move a card between tabs (it's a form, not a round), but a Waiting card
+    // with an unfilled form still has a to-do — say so rather than let it disappear.
+    const p = pending(c);
+    const whyLine = p ? `<div class="why ${p.action?'act':'hold'}">${p.action?'▶ ':'⏸ '}${p.why}${
+      c.ppra && !s.ppraDone ? ' <span class="ppra-note">· PPRA form still to fill</span>' : ''}</div>` : '';
+
+    const ppraTag = c.ppra
+      ? `<span class="tag ppra">PPRA required</span>`
+      : `<span class="tag noppra">No PPRA in mail</span>`;
+
+    // Only competitions that actually have a PPRA form get the checkbox.
+    const ppraCheck = c.ppra ? `
+      <label class="ppra-check ${s.ppraDone?'done':''}">
+        <input type="checkbox" ${s.ppraDone?'checked':''} onchange="togglePpra('${c.id}')">
+        ${s.ppraDone ? '✓ PPRA form filled' : 'PPRA form not filled yet'}
+      </label>` : '';
+
+    return `
+    <div class="card ${s.out?'out':u}">
+      <div class="card-top">
+        <div class="name-block">
+          <div class="name">${c.name}</div>
+          <div class="org">${c.org}</div>
+          <div class="tags">${ppraTag}</div>
+        </div>
+        <span class="badge ${b.cls}">${b.txt}</span>
+      </div>
+      <div class="meta">📅 <b>${c.deadlineLabel}</b></div>
+      ${whyLine}
+      <div class="stage">
+        <span class="lbl">Now</span>
+        <span class="cur">${curStage}</span>
+        <span style="color:var(--muted);font-size:12px">${complete?'':`${s.stage+1}/${c.stages.length}`}</span>
+      </div>
+      <div class="stage-track">${dots}</div>
+      <div class="links">
+        ${linkHTML(c.reg)}
+        ${linkHTML(c.pproof)}
+      </div>
+      ${ppraCheck}
+      <details class="disc">
+        <summary><span class="chev">▶</span> Rounds &amp; timeline</summary>
+        <div class="timeline">${tl}</div>
+      </details>
+      <div class="actions">${actions}</div>
+    </div>`;
+  }).join('');
+}
+
+function bump(id){ const c=SEED.find(x=>x.id===id); if(state[id].stage<c.stages.length) state[id].stage++; state[id].waiting=false;
+  if(state[id].stage>=c.stages.length){ save(); render(); snapshot('complete'); } else { save(); render(); } }
+function advance(id){ bump(id); }
+function selected(id){ bump(id); }
+function await_(id){ state[id].waiting=true; save(); render(); }
+function elim(id){ state[id].out=true; state[id].waiting=false; save(); render(); snapshot('eliminated'); }
+function revive(id){ state[id].out=false; save(); render(); }
+function togglePpra(id){ state[id].ppraDone = !state[id].ppraDone; save(); render(); }
+
+document.querySelectorAll('.fbtn').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.fbtn').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active'); filter=b.dataset.f; render();
+});
+document.getElementById('export').onclick=()=>snapshot('export');
+document.getElementById('reset').onclick=()=>{
+  if(!confirm('Reset all progress back to the start?')) return;
+  SEED.forEach(c=>state[c.id]={stage:0,out:false,waiting:false,ppraDone:false}); save(); render();
+};
+
+load();
+</script>
+</body>
+</html>

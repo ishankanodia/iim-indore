@@ -1,0 +1,1117 @@
+[
+ {
+  "id": "rpg",
+  "name": "RPG Outperform 2026",
+  "org": "RPG Group · GM Track · Teams 2–3 · ₹6L",
+  "ppra": true,
+  "reg": {
+   "label": "Register (in placement mail)",
+   "url": null
+  },
+  "pproof": {
+   "label": "PPRA — Google Form (in mail)",
+   "url": null
+  },
+  "deadline": "2026-07-24T23:59:00+05:30",
+  "deadlineLabel": "Reg + Exec Summary · 24 Jul 11:59 PM",
+  "stages": [
+   "Exec Summary",
+   "Detailed Deck + VO",
+   "Grand Finale"
+  ],
+  "stageStarts": {
+   "1": {
+    "on": null,
+    "short": "Detailed deck"
+   },
+   "2": {
+    "on": null,
+    "short": "Finale"
+   }
+  },
+  "timeline": [
+   {
+    "d": "7–26 Jul",
+    "t": "<b>Executive Summary</b> — 2–3 slides on your approach"
+   },
+   {
+    "d": "TBA",
+    "t": "<b>Detailed Submission</b> — 7–10 slides + 90–120s voice-over video"
+   },
+   {
+    "d": "TBA",
+    "t": "<b>Grand Finale</b> — present to RPG leadership"
+   }
+  ]
+ },
+ {
+  "id": "stratos",
+  "name": "ABG Stratos 2026",
+  "org": "Aditya Birla Group · Teams of 3 · ₹9L",
+  "ppra": true,
+  "reg": {
+   "label": "Register on Unstop (in mail)",
+   "url": null
+  },
+  "pproof": {
+   "label": "PPRA — proof form (in mail)",
+   "url": null
+  },
+  "deadline": "2026-07-27T23:59:00+05:30",
+  "deadlineLabel": "Simulation LIVE today · 27 Jul (reg was 26 Jul)",
+  "stages": [
+   "Simulation Round",
+   "Case Study (1 of 2)",
+   "Grand Finale · Mumbai"
+  ],
+  "stageStarts": {
+   "1": {
+    "on": "2026-07-29T00:00:00+05:30",
+    "short": "Case study"
+   },
+   "2": {
+    "on": "2026-08-26T09:00:00+05:30",
+    "short": "Finale · Mumbai"
+   }
+  },
+  "timeline": [
+   {
+    "d": "27 Jul",
+    "t": "<b>Business Simulation</b> — 5 rounds, 2 hrs, anytime 12 PM–11:59 PM. Team leader only"
+   },
+   {
+    "d": "29 Jul–2 Aug",
+    "t": "<b>Case Study Round</b> — pick 1 of 2 cases; 2-slide exec summary + video (PDF + video)"
+   },
+   {
+    "d": "26–27 Aug",
+    "t": "<b>Grand Finale</b> — Mumbai. Pre-finale activity 26 Aug"
+   }
+  ]
+ },
+ {
+  "id": "pwc",
+  "name": "PwC Challenge (8th ed.)",
+  "org": "PwC AC India · Teams",
+  "ppra": true,
+  "reg": {
+   "label": "Register (in placement mail)",
+   "url": null
+  },
+  "pproof": {
+   "label": "PPRA — proof form",
+   "url": "https://forms.gle/EjnjA8fLiT8q9Ze2A"
+  },
+  "deadline": "2026-07-30T23:59:00+05:30",
+  "deadlineLabel": "Register · 30 Jul 11:59 PM",
+  "stages": [
+   "Register",
+   "PPT + Video Submission",
+   "Finale"
+  ],
+  "stageStarts": {
+   "1": {
+    "on": "2026-08-03T00:00:00+05:30",
+    "short": "Case launch"
+   },
+   "2": {
+    "on": "2026-09-18T09:00:00+05:30",
+    "short": "Finale"
+   }
+  },
+  "timeline": [
+   {
+    "d": "30 Jul",
+    "t": "<b>Registration closes</b> — 11:59 PM"
+   },
+   {
+    "d": "3 Aug",
+    "t": "<b>Case launch</b> + leadership webinar · 4 PM"
+   },
+   {
+    "d": "3–7 Aug",
+    "t": "<b>Solution submission</b> — due 7 Aug. .pptx→PDF (max 25MB) + 10-min video. Exec summary ≤2 slides, main deck ≤10, appendix ≤10. Georgia headers / Arial body. Name: LeadName_TeamName_Campus"
+   },
+   {
+    "d": "18 Aug",
+    "t": "Round 1 results announced"
+   },
+   {
+    "d": "18 Sep",
+    "t": "<b>Finale</b>"
+   }
+  ]
+ },
+ {
+  "id": "ace",
+  "name": "Amazon ACE Challenge 2026",
+  "org": "Amazon · Teams of 4 · ₹4L",
+  "ppra": true,
+  "reg": {
+   "label": "Register on Unstop",
+   "url": "https://unstop.com/competitions/crp-amazon-customer-excellence-ace-challenge-2026-amazon-1709385"
+  },
+  "pproof": {
+   "label": "PPRA — upload proof (in mail)",
+   "url": null
+  },
+  "deadline": "2026-07-31T23:59:00+05:30",
+  "deadlineLabel": "Register · 31 Jul 11:59 PM",
+  "stages": [
+   "Register",
+   "Prelim Quiz",
+   "Campus Submission",
+   "Campus Presentations",
+   "Grand Finale · Bangalore"
+  ],
+  "stageStarts": {
+   "1": {
+    "on": "2026-08-03T16:00:00+05:30",
+    "short": "Quiz"
+   },
+   "2": {
+    "on": "2026-08-06T17:00:00+05:30",
+    "short": "Case release"
+   },
+   "3": {
+    "on": "2026-08-18T09:00:00+05:30",
+    "short": "Presentations"
+   },
+   "4": {
+    "on": "2026-09-04T09:00:00+05:30",
+    "short": "Finale"
+   }
+  },
+  "timeline": [
+   {
+    "d": "31 Jul",
+    "t": "<b>Registration closes</b> — teams of 4, campus email"
+   },
+   {
+    "d": "3 Aug",
+    "t": "<b>Preliminary Round</b> — individual quiz, 3 caselets, 30 min. Team avg counts. 4 PM–10 PM"
+   },
+   {
+    "d": "6 Aug",
+    "t": "Case study release · 5 PM"
+   },
+   {
+    "d": "7 Aug",
+    "t": "“Writing at Amazon” session · 6 PM"
+   },
+   {
+    "d": "7–13 Aug",
+    "t": "<b>Campus Round submission</b> — 4-page Word doc (2 solution + 2 appendix). Due 13 Aug 10 AM"
+   },
+   {
+    "d": "18–20 Aug",
+    "t": "<b>Campus Presentations</b> — virtual"
+   },
+   {
+    "d": "21–28 Aug",
+    "t": "<b>Grand Finale submission</b> — due 28 Aug 10 AM"
+   },
+   {
+    "d": "4 Sep",
+    "t": "<b>Grand Finale</b> — in-person, Bangalore"
+   }
+  ]
+ },
+ {
+  "id": "flipkart",
+  "name": "Flipkart WiRED X",
+  "org": "Flipkart · Teams 1–3 · Business/HR/Supply Chain",
+  "ppra": true,
+  "reg": {
+   "label": "Register (in placement mail)",
+   "url": null
+  },
+  "pproof": {
+   "label": "PPRA — upload proof (in mail)",
+   "url": null
+  },
+  "deadline": "2026-08-01T23:59:00+05:30",
+  "deadlineLabel": "Register · 1 Aug 11:59 PM",
+  "stages": [
+   "Register",
+   "Online Test (SJT)",
+   "Track Case Study",
+   "Semi-Finals",
+   "National Finale · Bengaluru"
+  ],
+  "stageStarts": {
+   "1": {
+    "on": null,
+    "short": "Online test"
+   },
+   "2": {
+    "on": null,
+    "short": "Case study"
+   },
+   "3": {
+    "on": null,
+    "short": "Semi-finals"
+   },
+   "4": {
+    "on": null,
+    "short": "Finale"
+   }
+  },
+  "timeline": [
+   {
+    "d": "20 Jul–2 Aug",
+    "t": "<b>Registration window</b> — placecomm deadline 1 Aug"
+   },
+   {
+    "d": "R1",
+    "t": "<b>Online Test</b> — 30 min, 25-Q SJT quiz (individual qualifier, team score counts)"
+   },
+   {
+    "d": "R2",
+    "t": "<b>Team Submission</b> — track-specific case study"
+   },
+   {
+    "d": "R3",
+    "t": "<b>Semi-Finals</b> — detailed deck + 15-min pitch + 10-min Q&A. Top 4/track = National Finalists"
+   },
+   {
+    "d": "R4",
+    "t": "<b>National Finale</b> — mentorship + final pitch at Flipkart HQ, Bengaluru (travel/stay covered)"
+   }
+  ]
+ },
+ {
+  "id": "galderma",
+  "name": "Galderma GRAD 3.0",
+  "org": "Galderma · Teams 1–3 · ₹6L + PPI",
+  "ppra": true,
+  "reg": {
+   "label": "Register on Unstop (link in placement mail)",
+   "url": null
+  },
+  "pproof": {
+   "label": "PPRA — proof form",
+   "url": "https://forms.gle/iQHDwG4m94iS4hbM9"
+  },
+  "deadline": "2026-08-01T23:59:00+05:30",
+  "deadlineLabel": "Register · 1 Aug 11:59 PM (placecomm)",
+  "stages": [
+   "Register",
+   "Trivia Quiz",
+   "MCQ Assessment",
+   "Exec Summary",
+   "Detailed Submission",
+   "National Grand Finale"
+  ],
+  "stageStarts": {
+   "1": {
+    "on": "2026-08-04T16:00:00+05:30",
+    "short": "Trivia quiz"
+   },
+   "2": {
+    "on": "2026-08-05T16:00:00+05:30",
+    "short": "MCQ test"
+   },
+   "3": {
+    "on": "2026-08-07T19:00:00+05:30",
+    "short": "Exec summary"
+   },
+   "4": {
+    "on": "2026-08-28T11:30:00+05:30",
+    "short": "Detailed deck"
+   },
+   "5": {
+    "on": "2026-09-17T10:00:00+05:30",
+    "short": "Finale"
+   }
+  },
+  "timeline": [
+   {
+    "d": "1 Aug",
+    "t": "<b>Registration closes</b> — placecomm deadline 11:59 PM. Mandatory for the batch"
+   },
+   {
+    "d": "4 Aug",
+    "t": "<b>Trivia Quiz</b> — 4:00–10:00 PM, team leader only. Follow Galderma’s Instagram pages (@cetaphil_india, @cetaphilbaby.india, @benzacindia, @bilumaindia, @gainbygalderma_india) for hints in stories. Non-eliminatory: top 2/college fast-track to Exec Summary, top 5 in India straight to Detailed Submission"
+   },
+   {
+    "d": "5 Aug",
+    "t": "<b>Round 1 · MCQ Assessment</b> — 20 Q in 30 min, inside an 8-hr window from 4 PM. Team leader only. Logical reasoning, aptitude, marketing"
+   },
+   {
+    "d": "7–16 Aug",
+    "t": "<b>Round 2 · Executive Summary</b> — <b>qualified ✓</b>. Window 7 Aug 7:00 PM → 16 Aug 4:00 PM. 2 slides excl. cover + thank-you, in PPT <i>and</i> PDF, max 20 MB. Cover slide needs team name, member names, college. Named TeamName_CollegeName. Case downloads via the “Brief” button in the round; team leader submits on the opportunity page. One solution only, for the selected case"
+   },
+   {
+    "d": "28 Aug–6 Sep",
+    "t": "<b>Round 3 · Detailed Submission</b> — 8–10 slides excl. cover + annexure, PPT <i>and</i> PDF. Due 6 Sep 11:59 PM"
+   },
+   {
+    "d": "17 Sep",
+    "t": "<b>Round 4 · National Grand Finale</b> — present to Galderma leadership, 10 AM–6 PM"
+   }
+  ]
+ },
+ {
+  "id": "vguard",
+  "name": "V-Guard Big Idea (16th ed.)",
+  "org": "V-Guard · Teams 1–3 · ₹1000 fee · ₹3L",
+  "ppra": false,
+  "reg": {
+   "label": "Register + pay fee (in mail)",
+   "url": null
+  },
+  "pproof": {
+   "label": "No PPRA form in mail",
+   "url": null
+  },
+  "deadline": "2026-08-06T14:00:00+05:30",
+  "deadlineLabel": "Register + pay · 6 Aug 2 PM",
+  "stages": [
+   "Register + Pay",
+   "Exec Summary",
+   "Detailed Report",
+   "Final Presentation",
+   "Finale · Kochi"
+  ],
+  "stageStarts": {
+   "1": {
+    "on": "2026-08-12T23:59:00+05:30",
+    "short": "Exec summary"
+   },
+   "2": {
+    "on": "2026-08-28T23:59:00+05:30",
+    "short": "Detailed report"
+   },
+   "3": {
+    "on": "2026-09-22T23:59:00+05:30",
+    "short": "Final deck"
+   },
+   "4": {
+    "on": "2026-09-25T09:00:00+05:30",
+    "short": "Finale · Kochi"
+   }
+  },
+  "timeline": [
+   {
+    "d": "6 Aug",
+    "t": "<b>Registration + ₹1000 payment</b> closes 2 PM"
+   },
+   {
+    "d": "12 Aug",
+    "t": "<b>Executive Summary</b> submission"
+   },
+   {
+    "d": "21 Aug",
+    "t": "Shortlist announced"
+   },
+   {
+    "d": "28 Aug",
+    "t": "<b>Detailed Report</b> submission"
+   },
+   {
+    "d": "16 Sep",
+    "t": "Finalists declared"
+   },
+   {
+    "d": "22 Sep",
+    "t": "<b>Final Presentation</b> submission"
+   },
+   {
+    "d": "25–26 Sep",
+    "t": "<b>Finale</b> — Kochi"
+   }
+  ]
+ },
+ {
+  "id": "hul",
+  "name": "HUL FinAce Season 10",
+  "org": "HUL · Teams of 3 · ₹5L · ₹2.2L/mo PPI",
+  "ppra": true,
+  "reg": {
+   "label": "Apply on Unstop",
+   "url": "https://unstop.com/o/tvWRbZw/?ref=TPOtNmQz"
+  },
+  "pproof": {
+   "label": "PPRA — upload proof (in mail)",
+   "url": null
+  },
+  "deadline": "2026-08-07T23:59:00+05:30",
+  "deadlineLabel": "Register · 7 Aug 11:59 PM",
+  "stages": [
+   "Register",
+   "Business Simulation",
+   "Sim Presentations",
+   "Semi-Finale",
+   "Grand Finale"
+  ],
+  "stageStarts": {
+   "1": {
+    "on": "2026-08-09T10:00:00+05:30",
+    "short": "Simulation"
+   },
+   "2": {
+    "on": "2026-08-12T00:00:00+05:30",
+    "short": "Sim deck"
+   },
+   "3": {
+    "on": null,
+    "short": "Semi-finale"
+   },
+   "4": {
+    "on": null,
+    "short": "Grand finale"
+   }
+  },
+  "timeline": [
+   {
+    "d": "7 Aug",
+    "t": "<b>Registration closes</b> 11:59 PM · Digital Launch & Q&A 3–4 PM"
+   },
+   {
+    "d": "8 Aug",
+    "t": "<b>Stage 1 Simulation Orientation</b> — 11:00 AM IST on MS Teams. Walkthrough of the simulation + Q&A before the round. Meeting ID 319 650 107 600 408, passcode uV2ho2bE"
+   },
+   {
+    "d": "9 Aug",
+    "t": "<b>Business Simulation Round</b> — 10 AM–6 PM, real-time team decisions"
+   },
+   {
+    "d": "12–13 Aug",
+    "t": "<b>Qualifying Round</b> — 5-slide PPT (1 financials + 1 per quarter)"
+   },
+   {
+    "d": "TBA",
+    "t": "<b>Semi-Finale</b> — “CFO Club”, 10-min present + 5-min Q&A to HUL finance leaders. Submit via email"
+   },
+   {
+    "d": "TBA",
+    "t": "<b>Grand Finale</b> — 1 week mentoring, then detailed pitch"
+   }
+  ]
+ },
+ {
+  "id": "cipla",
+  "name": "Cipla Ascend Season 4",
+  "org": "Cipla · Teams of 2 · ₹3L · PPI for ALIVE SIP",
+  "ppra": true,
+  "reg": {
+   "label": "Register on Grad Partners",
+   "url": "https://www.gradpartners.in/e/Cipla-Ascend-Season-4-277"
+  },
+  "pproof": {
+   "label": "PPRA — proof form",
+   "url": "https://forms.gle/eihaBv1SZBe3wHQv8"
+  },
+  "deadline": "2026-08-07T23:59:00+05:30",
+  "deadlineLabel": "Register · 7 Aug 11:59 PM · R1 due 9 Aug 8:00 AM (extended)",
+  "stages": [
+   "Register",
+   "Round 1 · Exec Summary",
+   "Round 2 · Cipla Assessment",
+   "Final Submission",
+   "Grand Finale"
+  ],
+  "stageStarts": {
+   "1": {
+    "on": "2026-07-20T10:00:00+05:30",
+    "short": "Round 1"
+   },
+   "2": {
+    "on": "2026-08-16T09:00:00+05:30",
+    "short": "Cipla assessment"
+   },
+   "3": {
+    "on": "2026-08-24T10:00:00+05:30",
+    "short": "Final deck"
+   },
+   "4": {
+    "on": "2026-09-04T09:00:00+05:30",
+    "short": "Grand finale"
+   }
+  },
+  "timeline": [
+   {
+    "d": "7 Aug",
+    "t": "<b>Registration closes</b> 11:59 PM. Team leader registers; case unlocks on registration. Only 1st-yr 2-yr flagship MBA, IIM Indore on the eligible list"
+   },
+   {
+    "d": "20 Jul–9 Aug",
+    "t": "<b>Round 1 · Executive Summary</b> — <b>deadline extended to 9 Aug 8:00 AM</b> (was 8 Aug 11:59 PM). 3 slides excl. cover; no context-setting; .ppt/.pptx/.pdf under 5 MB, named LeaderFirstName_TeamName_InstituteName. Team leader submits on the Grad Partners page"
+   },
+   {
+    "d": "24–25 Jul",
+    "t": "<i>Ascend Quiz</i> on Grad Partners’ LinkedIn — engagement activity only, not a competition round (already over)"
+   },
+   {
+    "d": "5 Aug",
+    "t": "<b>Conversations with Cipla</b> — YouTube Live, 5:00–5:45 PM. Registered students can send questions in advance"
+   },
+   {
+    "d": "16–17 Aug",
+    "t": "<b>Round 2 · Cipla Assessment</b> — top 50 teams, 16 Aug 9 AM to 17 Aug 9 AM. <b>Mandatory for both members</b> — team is dropped if either skips it"
+   },
+   {
+    "d": "26 Aug",
+    "t": "<i>Tips to Ace the Finale</i> — Cipla mentoring for the top 5 teams, 9 AM–6 PM"
+   },
+   {
+    "d": "24–30 Aug",
+    "t": "<b>Final Submission</b> — 7–10 slide deck, due 30 Aug 11:59 PM"
+   },
+   {
+    "d": "4 Sep",
+    "t": "<b>Round 3 · Grand Finale</b> — pitch to Cipla’s senior leadership, 9 AM–6 PM. ₹1.5L / ₹1L / ₹50K + PPIs, and PPIs may also go to individuals from the top 50 on R1 submissions"
+   }
+  ]
+ },
+ {
+  "id": "marico",
+  "name": "Marico Over the Wall S14",
+  "org": "Marico · Teams 2–3 · ₹8.2L prizes + PPI",
+  "ppra": true,
+  "reg": {
+   "label": "Register on Unstop",
+   "url": "https://unstop.com/o/SLaHOQl/?ref=camj7Nqf"
+  },
+  "pproof": {
+   "label": "PPRA — Google Form",
+   "url": "https://forms.gle/CRGk2znbjEHZpxBG7"
+  },
+  "deadline": "2026-08-05T23:59:00+05:30",
+  "deadlineLabel": "Register · 5 Aug 11:59 PM (placecomm) · Begin Your Journey form due 9 Aug",
+  "stages": [
+   "Register + Begin Your Journey Form",
+   "Marico Quiz",
+   "Business Idea Submission",
+   "Campus Face-Off",
+   "Mentorship Phase",
+   "CXO Round",
+   "Live Project (MIF)",
+   "Grand Finale"
+  ],
+  "stageStarts": {
+   "1": {
+    "on": "2026-08-13T12:00:00+05:30",
+    "short": "Marico Quiz"
+   },
+   "2": {
+    "on": "2026-08-14T10:00:00+05:30",
+    "short": "Business idea submission"
+   },
+   "3": {
+    "on": "2026-08-24T10:00:00+05:30",
+    "short": "Campus Face-Off"
+   },
+   "4": {
+    "on": "2026-09-25T10:00:00+05:30",
+    "short": "Mentorship phase"
+   },
+   "5": {
+    "on": "2026-11-13T10:00:00+05:30",
+    "short": "CXO Round"
+   },
+   "6": {
+    "on": "2026-11-16T10:00:00+05:30",
+    "short": "Live project (MIF)"
+   },
+   "7": {
+    "on": null,
+    "short": "Grand finale"
+   }
+  },
+  "timeline": [
+   {
+    "d": "31 Jul–9 Aug",
+    "t": "<b>Begin Your Journey</b> — short form on aspirations, interests, perceptions and expectations from an organisation"
+   },
+   {
+    "d": "5 Aug",
+    "t": "<b>Registration closes</b> 11:59 PM (placecomm deadline)"
+   },
+   {
+    "d": "13 Aug",
+    "t": "<b>Marico Quiz</b> — 12:00–6:00 PM, 15-min Marico trivia quiz, team leader only. Mandatory for all registered teams. Top 3 win prizes; top 20 wildcard teams advance to Business Idea Submission"
+   },
+   {
+    "d": "14–24 Aug",
+    "t": "<b>Business Idea Submission</b> — one big idea in chosen category; 3-slide PPT proposal + 3–4 line summary"
+   },
+   {
+    "d": "24 Aug–24 Sep",
+    "t": "<b>Campus Face-Off</b> — shortlisted teams submit a 5-slide deck and present to a jury of Marico senior leaders. Top 8–10 teams advance to CXO Round"
+   },
+   {
+    "d": "25 Sep–25 Oct",
+    "t": "<b>Mentorship Phase</b> — shortlisted teams paired with Marico mentors to prep for the CXO Round"
+   },
+   {
+    "d": "13 Nov",
+    "t": "<b>CXO Round</b> — top 8–10 teams present to Marico’s MD, CEO and CXO leadership, 10 AM–6 PM"
+   },
+   {
+    "d": "16 Nov–16 Jan",
+    "t": "<b>Live Project with Marico Innovation Foundation</b> — top 3 teams work a 2-month live project with a startup under MIF"
+   },
+   {
+    "d": "TBA",
+    "t": "<b>Grand Finale</b> — top 3 teams present to Founder &amp; Chairman Harsh Mariwala and senior leadership. Eligibility: 1st/2nd-yr full-time 2-yr MBA, graduating 2027/2028"
+   }
+  ]
+ },
+ {
+  "id": "tgc",
+  "name": "The Governance Challenge 2026 (TGC)",
+  "org": "Samagra · Govt. of Maharashtra · Teams of 3 · ₹9L + PPI",
+  "ppra": true,
+  "reg": {
+   "label": "Register on Unstop",
+   "url": "https://unstop.com/p/the-governance-challenge-2026-samagra-governance-1726557"
+  },
+  "pproof": {
+   "label": "PPRA — proof of registration form",
+   "url": "https://forms.gle/YMk66DxPxFzKmjDs6"
+  },
+  "deadline": "2026-08-19T23:59:00+05:30",
+  "deadlineLabel": "PPRA form due 19 Aug EOD · Unstop registration closes 21 Aug 11:59 PM",
+  "stages": [
+   "Register",
+   "Campus Round · Pitch + Concept Note",
+   "Nationals · Preliminary Submission",
+   "Nationals · Final Submission",
+   "Nationals · Presentations",
+   "Summit · Final Submission",
+   "Summit · Presentations"
+  ],
+  "stageStarts": {
+   "1": {
+    "on": "2026-08-10T12:00:00+05:30",
+    "short": "Campus round pitch"
+   },
+   "2": {
+    "on": "2026-08-26T12:00:00+05:30",
+    "short": "Nationals prelim submission"
+   },
+   "3": {
+    "on": "2026-09-07T12:00:00+05:30",
+    "short": "Nationals final submission"
+   },
+   "4": {
+    "on": "2026-09-11T10:00:00+05:30",
+    "short": "Nationals presentations"
+   },
+   "5": {
+    "on": "2026-09-13T10:00:00+05:30",
+    "short": "Summit final submission"
+   },
+   "6": {
+    "on": "2026-09-30T10:00:00+05:30",
+    "short": "Summit presentations"
+   }
+  },
+  "timeline": [
+   {
+    "d": "10–21 Aug",
+    "t": "<b>Stage 1 · Campus Round</b> — register and submit a 3-min executive pitch video + 2-page concept note on the case (problem statement launches 10 Aug). Results 26 Aug. Only group leader fills the PPRA form"
+   },
+   {
+    "d": "14 Aug",
+    "t": "<b>Campus Round AMA</b> — 10 AM–8 PM, online session on format, timelines and evaluation"
+   },
+   {
+    "d": "26 Aug–6 Sep",
+    "t": "<b>Nationals · Preliminary Submission</b> — 30 campus-winning teams submit a preliminary presentation, due 6 Sep. Feedback from Samagra leaders 7 Sep"
+   },
+   {
+    "d": "27 & 29 Aug",
+    "t": "Nationals knowledge-sharing sessions with experts and government leaders"
+   },
+   {
+    "d": "7 Sep",
+    "t": "Feedback session on the preliminary submission"
+   },
+   {
+    "d": "7–10 Sep",
+    "t": "<b>Nationals · Final Submission</b> — incorporate feedback, submit final presentation by 10 Sep 6 PM"
+   },
+   {
+    "d": "11–12 Sep",
+    "t": "<b>Stage 2 · Nationals Presentations</b> — 10-min pitch + Q&A. Top 6 of 30 advance to the Summit Round"
+   },
+   {
+    "d": "13–27 Sep",
+    "t": "<b>Summit Round · Final Submission</b> — 6 finalist teams submit final presentation by 27 Sep 12 PM"
+   },
+   {
+    "d": "28–29 Sep",
+    "t": "Governance Immersion Visit — Pune + Mumbai field visits ahead of Summit presentations"
+   },
+   {
+    "d": "30 Sep",
+    "t": "<b>Stage 3 · Summit Presentations</b> — present to the CM of Maharashtra, senior IAS officers and industry leaders. Top 3 win ₹5L/₹3L/₹1L cash + PPI; all 6 finalists get a Samagra PPI"
+   }
+  ]
+ },
+ {
+  "id": "igniters",
+  "name": "Suzuki Igniters Innovation Challenge 2026",
+  "org": "Suzuki R&D Center India · B-Track · ₹6.5L + PPI",
+  "ppra": true,
+  "reg": {
+   "label": "Register — Management Track (GradPartners)",
+   "url": "https://gradpartners.in/e/igniters-innovation-challenge-2026-management-track-317"
+  },
+  "pproof": {
+   "label": "PPRA — proof form (in mail)",
+   "url": null
+  },
+  "deadline": "2026-08-14T23:59:00+05:30",
+  "deadlineLabel": "Register · 14 Aug 11:59 PM · R1 due 15 Aug 11:59 PM",
+  "stages": [
+   "Register",
+   "Round 1 Submission",
+   "National Finale"
+  ],
+  "stageStarts": {
+   "1": {
+    "on": "2026-07-28T00:00:00+05:30",
+    "short": "Round 1"
+   },
+   "2": {
+    "on": null,
+    "short": "Finale"
+   }
+  },
+  "timeline": [
+   {
+    "d": "3 Aug",
+    "t": "<b>Conversations with Leaders of SRDI</b> — 5:00 PM onwards, YouTube Live. Case insights + expectations"
+   },
+   {
+    "d": "8 Aug",
+    "t": "<i>Igniters Quiz</i> on SRDI’s LinkedIn — 4:00–11:59 PM. Engagement activity only, not a round. 6 winners get ₹5,000 Amazon vouchers"
+   },
+   {
+    "d": "14 Aug",
+    "t": "<b>Registration closes</b> 11:59 PM. Management Track: 1st-yr full-time 2-yr MBA/PGDM. IIM Indore is on the eligible list"
+   },
+   {
+    "d": "15 Aug",
+    "t": "<b>Round 1 Submission</b> — due 11:59 PM. Case is live on the portal, accessible only to registered teams"
+   },
+   {
+    "d": "TBA",
+    "t": "<b>National Finale</b> — ₹1.5L / ₹1L / ₹75K + PPIs for summer internships at SRDI"
+   }
+  ]
+ },
+ {
+  "id": "drreddys",
+  "name": "Destination Dr. Reddy’s 3.0",
+  "org": "Dr. Reddy’s · Management Track · Individual · 100+ PPIs",
+  "ppra": true,
+  "reg": {
+   "label": "Register — Management Track (GradPartners)",
+   "url": "https://gradpartners.in/e/destination-dr-reddys-3-management-track-307"
+  },
+  "pproof": {
+   "label": "PPRA — proof form",
+   "url": "https://forms.gle/pqWL17KJmc2X8JXP9"
+  },
+  "deadline": "2026-08-17T23:59:00+05:30",
+  "deadlineLabel": "Register · 17 Aug 11:59 PM · MANDATORY",
+  "stages": [
+   "Register",
+   "Assessment",
+   "Interview Drive"
+  ],
+  "stageStarts": {
+   "1": {
+    "on": null,
+    "short": "Assessment"
+   },
+   "2": {
+    "on": null,
+    "short": "Interviews"
+   }
+  },
+  "timeline": [
+   {
+    "d": "Till 17 Aug",
+    "t": "<b>Registration</b> — closes 17 Aug 11:59 PM IST. <b>Mandatory for the batch.</b> Management Track: 1st-year full-time MBA/PGDM, all B-schools"
+   },
+   {
+    "d": "TBA",
+    "t": "<b>Assessment round</b> — shortlisting for the interview drive"
+   },
+   {
+    "d": "TBA",
+    "t": "<b>Interview drive</b> — 100+ PPIs for the 2026–27 summer internship across domains; PPO on internship performance"
+   }
+  ]
+ },
+ {
+  "id": "techtonic",
+  "name": "HUL TechTonic Season 8",
+  "org": "Hindustan Unilever · Teams of 3 · ₹6.25L + PPI",
+  "ppra": true,
+  "reg": {
+   "label": "Register on Unstop",
+   "url": "https://unstop.com/o/6L2uC9U/?ref=hulFK4GJ"
+  },
+  "pproof": {
+   "label": "PPRA — proof form",
+   "url": "https://forms.gle/uwJQscf5EqveArrN6"
+  },
+  "deadline": "2026-08-20T23:59:00+05:30",
+  "deadlineLabel": "Register + Stage 1 submission · 20 Aug 11:59 PM · MANDATORY",
+  "stages": [
+   "Register",
+   "Stage 1 · Case Submission",
+   "Stage 2 · Mentorship",
+   "Stage 3 · Grand Finale"
+  ],
+  "stageStarts": {
+   "1": {
+    "on": "2026-07-31T18:00:00+05:30",
+    "short": "Stage 1"
+   },
+   "2": {
+    "on": null,
+    "short": "Mentorship"
+   },
+   "3": {
+    "on": "2026-08-31T10:00:00+05:30",
+    "short": "Finale · Bangalore"
+   }
+  },
+  "timeline": [
+   {
+    "d": "27 Jul",
+    "t": "<b>#TechDoneRight</b> — challenge opens. Reimagine passive products as intelligent AI experiences. <a href=\"https://d8it4huxumps7.cloudfront.net/files/6a683dc9b912f_tdr_guidelines.pdf\" target=\"_blank\">Full guidelines (PDF)</a>"
+   },
+   {
+    "d": "31 Jul",
+    "t": "<b>Virtual Case Reveal + Q&A</b> — 6:00 PM. Recording available on Unstop if missed"
+   },
+   {
+    "d": "31 Jul–20 Aug",
+    "t": "<b>Stage 1 · Opening Round</b> — 3-slide PPT: problem analysis, strategy, solution, <b>plus a working agent prototype</b>. Due 20 Aug 11:59 PM"
+   },
+   {
+    "d": "TBA",
+    "t": "<b>Stage 2 · Mentorship</b> — top 5 teams work on the same problem with an assigned Unilever mentor"
+   },
+   {
+    "d": "31 Aug",
+    "t": "<b>Stage 3 · Grand Finale</b> — Unilever Campus Bangalore, 10 AM–4 PM. 15 min: 10-min pitch (5–6 slides + functional agent demo) + 5-min Q&A"
+   }
+  ]
+ },
+ {
+  "id": "lime",
+  "name": "HUL L.I.M.E. Season 18",
+  "org": "Hindustan Unilever · Teams of 3 · ₹16L + PPI",
+  "ppra": false,
+  "reg": {
+   "label": "Register on Unstop (link in mail)",
+   "url": null
+  },
+  "pproof": {
+   "label": "No PPRA form in mail",
+   "url": null
+  },
+  "deadline": "2026-08-12T23:59:00+05:30",
+  "deadlineLabel": "Register + Elevator Pitch · 12 Aug 11:59 PM",
+  "stages": [
+   "Register + Elevator Pitch",
+   "Surprise Challenge",
+   "Semi-Finals · Marketing Plan",
+   "Grand Finale"
+  ],
+  "stageStarts": {
+   "1": {
+    "on": null,
+    "short": "Surprise Challenge"
+   },
+   "2": {
+    "on": null,
+    "short": "Semi-finals · Mumbai"
+   },
+   "3": {
+    "on": null,
+    "short": "Grand finale"
+   }
+  },
+  "timeline": [
+   {
+    "d": "3–12 Aug",
+    "t": "<b>Stage 1 · Opening Round — Elevator Pitch</b> — “The Next Shelf: Building the Future of Kissan.” 60-sec elevator pitch video + 2 supporting slides (consumer insight, whitespace opportunity, source mix strategy). Due 12 Aug 11:59 PM. Only registered teams get the virtual case-launch invite"
+   },
+   {
+    "d": "TBA",
+    "t": "<b>Stage 2 · Surprise Challenge</b> — top 5 campus teams face an unrevealed challenge on evaluation day"
+   },
+   {
+    "d": "TBA",
+    "t": "<b>Stage 3 · Semi-Finals — Marketing Plan</b> — top teams travel to HUL’s Mumbai HQ; ≤3-slide Media &amp; Distribution Strategy deck + build a product prototype + brand ad; 15-min presentation + 10-min Q&amp;A"
+   },
+   {
+    "d": "TBA",
+    "t": "<b>Stage 4 · Grand Finale</b> — top 4 teams nationally pitch a social impact campaign; PPT + video campaign, 10-min slot (7-min incl. 5-slide PPT &amp; video, then 3-min Q&amp;A). Winner represents India at Unilever Future Leaders’ League 2027, London"
+   }
+  ]
+ },
+ {
+  "id": "cognoscenti",
+  "name": "Asian Paints Cognoscenti 2026",
+  "org": "Asian Paints · Teams of 2 · ₹3L/mo PPI",
+  "ppra": true,
+  "reg": {
+   "label": "Register on Unstop",
+   "url": "https://unstop.com/p/asian-paints-cognoscenti-2026-iim-indore-asian-paints-1730641"
+  },
+  "pproof": {
+   "label": "PPRA — Google Form",
+   "url": "https://forms.gle/BQ6n5CkEGtxnsYZ59"
+  },
+  "deadline": "2026-08-06T14:00:00+05:30",
+  "deadlineLabel": "Register · 6 Aug 2 PM · MANDATORY",
+  "stages": [
+   "Register",
+   "Simulation Round",
+   "Interview Round"
+  ],
+  "stageStarts": {
+   "1": {
+    "on": "2026-08-09T17:00:00+05:30",
+    "short": "Simulation"
+   },
+   "2": {
+    "on": null,
+    "short": "Interview"
+   }
+  },
+  "timeline": [
+   {
+    "d": "6 Aug",
+    "t": "<b>Registration closes</b> 2:00 PM — teams of 2, cross-specialisation not allowed. Upload proof of registration for placecomm"
+   },
+   {
+    "d": "9 Aug",
+    "t": "<b>Simulation Round</b> — on campus, IIM Indore. 60-min live decision-making case, no prep needed; only team leader attempts. Followed by a Masterclass with Asian Paints leadership"
+   },
+   {
+    "d": "TBA",
+    "t": "<b>Interview Round</b> — shortlisted teams from the Simulation Round. Winners get a shot at the IMPRINTS '27 summer internship cohort, ₹3L/month stipend"
+   }
+  ]
+ },
+ {
+  "id": "reflexion",
+  "name": "Capgemini Reflexion Season 9",
+  "org": "Capgemini · Teams of 3 · ₹2.65L + PPIs (E.L.I.T.E. MT)",
+  "ppra": true,
+  "reg": {
+   "label": "Register on Grad Partners",
+   "url": "https://gradpartners.in/e/Capgemini-Reflexion-9-326"
+  },
+  "pproof": {
+   "label": "PPRA — proof form (in mail)",
+   "url": null
+  },
+  "deadline": "2026-08-14T23:59:00+05:30",
+  "deadlineLabel": "Register · 14 Aug 11:59 PM · R1 aptitude 15 Aug",
+  "stages": [
+   "Register",
+   "Round 1 · Aptitude Test",
+   "Round 2 · Case Submission",
+   "Finale"
+  ],
+  "stageStarts": {
+   "1": {
+    "on": "2026-08-15T14:00:00+05:30",
+    "short": "Aptitude test"
+   },
+   "2": {
+    "on": "2026-08-17T14:00:00+05:30",
+    "short": "Case submission"
+   },
+   "3": {
+    "on": null,
+    "short": "Finale"
+   }
+  },
+  "timeline": [
+   {
+    "d": "14 Aug",
+    "t": "<b>Registration closes</b> 11:59 PM. Teams of 3, same institute, cross-specialisation allowed; one person can only be in one team. Team leader registers. 1st-yr full-time 2-yr MBA only — IIM Indore is on the eligible list (with IIM B/C/L/K, FMS, SPJIMR, XLRI)"
+   },
+   {
+    "d": "15 Aug",
+    "t": "<b>Round 1 · Aptitude Assessment</b> — 2:00–11:59 PM window, 15-min test. <b>Team leader only.</b> Aptitude, technology and Capgemini questions. Top teams per institute advance"
+   },
+   {
+    "d": "16 Aug",
+    "t": "Round 1 shortlist announced"
+   },
+   {
+    "d": "17–23 Aug",
+    "t": "<b>Round 2 · Case Submission</b> — 17 Aug 2 PM to 23 Aug 11:59 PM. 3–5 slide PPT excl. cover (.ppt/.pptx/.pdf, under 5 MB; extras go in annexures) <i>plus</i> a ≤3-min MP4 video (≤50 MB) showing both the solution and the presenter. Leader submits, named LeaderFirstName_TeamName_InstituteName_PPT/Video"
+   },
+   {
+    "d": "1st wk Sep",
+    "t": "<b>Round 3 · Finale</b> — jury evaluates submissions and declares National Winner (₹1.5L), Runner-up (₹75K), 2nd Runner-up (₹40K) and Campus Winners. PPIs for the E.L.I.T.E. Management Trainee Program to the top 3 teams and campus winners"
+   }
+  ]
+ },
+ {
+  "id": "tataconsumer",
+  "name": "TATA Consumer Summer Trainee 2027",
+  "org": "Tata Consumer Products · Individual · ₹1.25L/mo SIP",
+  "ppra": true,
+  "reg": {
+   "label": "Apply on InsideKampus",
+   "url": "https://insidekampus.com/competition"
+  },
+  "pproof": {
+   "label": "PPRA — proof form (in mail)",
+   "url": null
+  },
+  "deadline": "2026-08-12T23:59:00+05:30",
+  "deadlineLabel": "Application · 12 Aug 11:59 PM",
+  "stages": [
+   "Apply · Complete Profile",
+   "Simulation Challenge",
+   "Interview Round"
+  ],
+  "stageStarts": {
+   "1": {
+    "on": "2026-08-14T12:00:00+05:30",
+    "short": "Simulation"
+   },
+   "2": {
+    "on": "2026-08-20T00:00:00+05:30",
+    "short": "Interview"
+   }
+  },
+  "timeline": [
+   {
+    "d": "3–12 Aug",
+    "t": "<b>Round 1 · Application</b> — opened 3 Aug 12:00 PM, closes 12 Aug 11:59 PM. Complete your InsideKampus profile in full; this is what the shortlist is evaluated on. Only 1st-year students in a 2-yr flagship MBA (graduating 2028) are eligible"
+   },
+   {
+    "d": "14–18 Aug",
+    "t": "<b>Round 2 · The Simulation Challenge</b> — 14 Aug 12:00 PM to 18 Aug 11:59 PM. 45-min proctored simulation, strict time limit, must be done in <b>one sitting</b> once you hit start. Download the instructions sheet before attempting"
+   },
+   {
+    "d": "20 Aug – 10 Sep",
+    "t": "<b>Round 3 · Interviews</b> — only simulation qualifiers get slots, allotted from 20 Aug. The round deadline is only for <b>uploading your Aadhaar</b> (do it before your interview). Results release in phases — you stay in consideration until a rejection mail arrives"
+   },
+   {
+    "d": "Apr–May 2027",
+    "t": "<b>Summer Trainee</b> — 2 months, multiple India locations. Domains: Sales &amp; Marketing, Finance, Operations, HR, Digital. Fixed stipend ₹2.5L for the 2 months. Live, high-impact projects"
+   }
+  ]
+ }
+]

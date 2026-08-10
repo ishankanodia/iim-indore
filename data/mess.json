@@ -1,0 +1,1913 @@
+{
+ "title": "Mess Menu — IIM Indore (Mess 1, 3 and 4)",
+ "caterer": "Jaiswal Canteen (A)",
+ "updated": "Last updated by MessCom on 3 August 2026",
+ "cycleStart": "2026-08-03",
+ "cycleLength": 14,
+ "links": [
+  {
+   "label": "Mess Signout Form",
+   "url": "https://forms.gle/LX3wJP4zA7jhb5cM7"
+  },
+  {
+   "label": "MessCom Masterlink",
+   "url": "https://linktr.ee/Messmasterllink"
+  },
+  {
+   "label": "Mess Feedback (General)",
+   "url": "https://forms.gle/X8mCJu4nzBFQPWYNA"
+  }
+ ],
+ "days": [
+  {
+   "i": 0,
+   "dates": [
+    "3-Aug",
+    "17-Aug"
+   ],
+   "day": "Monday",
+   "breakfast": [
+    {
+     "label": "Hot preparation",
+     "item": "Aloo Sandwich"
+    },
+    {
+     "label": "Side Dish",
+     "item": "Ketchup"
+    },
+    {
+     "label": "Condiments",
+     "item": "Green Chutney"
+    },
+    {
+     "label": "Egg item",
+     "item": "Boiled Egg"
+    },
+    {
+     "label": "Bread item",
+     "item": "Bread,Butter& Jam"
+    },
+    {
+     "label": "Fruit",
+     "item": "Banana"
+    },
+    {
+     "label": "Milk Preparation",
+     "item": "Tea & Coffee"
+    },
+    {
+     "label": "Plain Milk",
+     "item": "Hot & Cold Milk"
+    },
+    {
+     "label": "Corn flakes",
+     "item": "Cornflakes"
+    },
+    {
+     "label": "Bournvita",
+     "item": "Bournvita"
+    }
+   ],
+   "lunch": [
+    {
+     "label": "Salad",
+     "item": "Green Salad"
+    },
+    {
+     "label": "Appalam",
+     "item": "Fried Papad"
+    },
+    {
+     "label": "Curd item",
+     "item": "Jaljira water"
+    },
+    {
+     "label": "Dry veg",
+     "item": "Bhindi Masala"
+    },
+    {
+     "label": "Gravy veg",
+     "item": "Desi Chana"
+    },
+    {
+     "label": "Indian bread",
+     "item": "Plain/Butter Roti"
+    },
+    {
+     "label": "Rice",
+     "item": "Plain Rice"
+    },
+    {
+     "label": "Rice 2",
+     "item": "Jeera rice"
+    },
+    {
+     "label": "Dal preparation",
+     "item": "Dal tadka"
+    },
+    {
+     "label": "Fruit",
+     "item": "Pears"
+    }
+   ],
+   "dinner": [
+    {
+     "label": "Salad",
+     "item": "Mixed Salad"
+    },
+    {
+     "label": "Papad",
+     "item": "Roasted papad"
+    },
+    {
+     "label": "Soup/Curd Item",
+     "item": "Buttermilk"
+    },
+    {
+     "label": "Dry veg",
+     "item": "Egg Curry"
+    },
+    {
+     "label": "Gravy veg",
+     "item": "Matar Paneer"
+    },
+    {
+     "label": "Indian bread",
+     "item": "Plain/Butter Roti"
+    },
+    {
+     "label": "Rice",
+     "item": "Plain Rice"
+    },
+    {
+     "label": "Rice 2",
+     "item": "Curd Rice"
+    },
+    {
+     "label": "Dal preparation",
+     "item": "Dal Fry"
+    },
+    {
+     "label": "Sweet Preparation",
+     "item": "Pineapple halwa"
+    }
+   ],
+   "nonveg": ""
+  },
+  {
+   "i": 1,
+   "dates": [
+    "4-Aug",
+    "18-Aug"
+   ],
+   "day": "Tuesday",
+   "breakfast": [
+    {
+     "label": "Hot preparation",
+     "item": "Mix paneer Paratha"
+    },
+    {
+     "label": "Side Dish",
+     "item": "Curd"
+    },
+    {
+     "label": "Condiments",
+     "item": "Green Chutney"
+    },
+    {
+     "label": "Egg item",
+     "item": "Boiled Egg"
+    },
+    {
+     "label": "Bread item",
+     "item": "Atta Bread, Butter Jam"
+    },
+    {
+     "label": "Fruit",
+     "item": "Guava"
+    },
+    {
+     "label": "Milk Preparation",
+     "item": "Tea & Coffee"
+    },
+    {
+     "label": "Plain Milk",
+     "item": "Hot & Cold Milk"
+    },
+    {
+     "label": "Corn flakes",
+     "item": "Oats"
+    },
+    {
+     "label": "Bournvita",
+     "item": "Bournvita"
+    }
+   ],
+   "lunch": [
+    {
+     "label": "Salad",
+     "item": "Mix salad"
+    },
+    {
+     "label": "Appalam",
+     "item": "Roasted papad"
+    },
+    {
+     "label": "Curd item",
+     "item": "Masala Chaas"
+    },
+    {
+     "label": "Dry veg",
+     "item": "Veg Jalfrezi"
+    },
+    {
+     "label": "Gravy veg",
+     "item": "Soyabean Curry"
+    },
+    {
+     "label": "Indian bread",
+     "item": "Plain/Butter Roti"
+    },
+    {
+     "label": "Rice",
+     "item": "Plain Rice"
+    },
+    {
+     "label": "Rice 2",
+     "item": "Fried rice"
+    },
+    {
+     "label": "Dal preparation",
+     "item": "Dal Makhani"
+    },
+    {
+     "label": "Fruit",
+     "item": "Papaya"
+    }
+   ],
+   "dinner": [
+    {
+     "label": "Salad",
+     "item": "Corn Salad"
+    },
+    {
+     "label": "Papad",
+     "item": "Fryums"
+    },
+    {
+     "label": "Soup/Curd Item",
+     "item": "Boondi Raita"
+    },
+    {
+     "label": "Dry veg",
+     "item": "Aloo Lahsania"
+    },
+    {
+     "label": "Gravy veg",
+     "item": "Veg Kofta"
+    },
+    {
+     "label": "Indian bread",
+     "item": "Paratha"
+    },
+    {
+     "label": "Rice",
+     "item": "Plain Rice"
+    },
+    {
+     "label": "Rice 2",
+     "item": "Veg Pulao"
+    },
+    {
+     "label": "Dal preparation",
+     "item": "Dal Tadka"
+    },
+    {
+     "label": "Sweet Preparation",
+     "item": "Ice cream"
+    }
+   ],
+   "nonveg": ""
+  },
+  {
+   "i": 2,
+   "dates": [
+    "5-Aug",
+    "19-Aug"
+   ],
+   "day": "Wednesday",
+   "breakfast": [
+    {
+     "label": "Hot preparation",
+     "item": "Idli and meduvada"
+    },
+    {
+     "label": "Side Dish",
+     "item": "Sambhar"
+    },
+    {
+     "label": "Condiments",
+     "item": "Coconut chutney"
+    },
+    {
+     "label": "Egg item",
+     "item": "Egg fry"
+    },
+    {
+     "label": "Bread item",
+     "item": "Bread,Butter& Jam"
+    },
+    {
+     "label": "Fruit",
+     "item": "Pears"
+    },
+    {
+     "label": "Milk Preparation",
+     "item": "Tea & Coffee"
+    },
+    {
+     "label": "Plain Milk",
+     "item": "Hot & Cold Milk"
+    },
+    {
+     "label": "Corn flakes",
+     "item": "Cornflakes"
+    },
+    {
+     "label": "Bournvita",
+     "item": "Bournvita"
+    }
+   ],
+   "lunch": [
+    {
+     "label": "Salad",
+     "item": "Cucumber Salad"
+    },
+    {
+     "label": "Appalam",
+     "item": "Appalam"
+    },
+    {
+     "label": "Curd item",
+     "item": "Mango crush"
+    },
+    {
+     "label": "Dry veg",
+     "item": "Pumpkin Masala"
+    },
+    {
+     "label": "Gravy veg",
+     "item": "Besan Gatta"
+    },
+    {
+     "label": "Indian bread",
+     "item": "Plain/Butter Roti"
+    },
+    {
+     "label": "Rice",
+     "item": "Plain Rice"
+    },
+    {
+     "label": "Rice 2",
+     "item": "Peas pulao"
+    },
+    {
+     "label": "Dal preparation",
+     "item": "Kadhi Pakoda"
+    },
+    {
+     "label": "Fruit",
+     "item": "Watermelon"
+    }
+   ],
+   "dinner": [
+    {
+     "label": "Salad",
+     "item": "Beans Salad"
+    },
+    {
+     "label": "Papad",
+     "item": "Fried papad"
+    },
+    {
+     "label": "Soup/Curd Item",
+     "item": "Veg Raita"
+    },
+    {
+     "label": "Dry veg",
+     "item": "Aloo matar flower Dry"
+    },
+    {
+     "label": "Gravy veg",
+     "item": "Mirchi ka Salan"
+    },
+    {
+     "label": "Indian bread",
+     "item": "Plain/Butter Roti"
+    },
+    {
+     "label": "Rice",
+     "item": "Plain Rice"
+    },
+    {
+     "label": "Rice 2",
+     "item": "Veg Biryani"
+    },
+    {
+     "label": "Dal preparation",
+     "item": "Dal Fry"
+    },
+    {
+     "label": "Sweet Preparation",
+     "item": "Gulab Jamun"
+    }
+   ],
+   "nonveg": "Chicken do Pyaza"
+  },
+  {
+   "i": 3,
+   "dates": [
+    "6-Aug",
+    "20-Aug"
+   ],
+   "day": "Thursday",
+   "breakfast": [
+    {
+     "label": "Hot preparation",
+     "item": "Moong Dal Chila"
+    },
+    {
+     "label": "Side Dish",
+     "item": "Tomato ketchup"
+    },
+    {
+     "label": "Condiments",
+     "item": "Green Chutney"
+    },
+    {
+     "label": "Egg item",
+     "item": "Boiled Egg"
+    },
+    {
+     "label": "Bread item",
+     "item": "Atta Bread, Butter Jam"
+    },
+    {
+     "label": "Fruit",
+     "item": "Papaya"
+    },
+    {
+     "label": "Milk Preparation",
+     "item": "Tea & Coffee"
+    },
+    {
+     "label": "Plain Milk",
+     "item": "Hot & Cold Milk"
+    },
+    {
+     "label": "Corn flakes",
+     "item": "Cornflakes"
+    },
+    {
+     "label": "Bournvita",
+     "item": "Bournvita"
+    }
+   ],
+   "lunch": [
+    {
+     "label": "Salad",
+     "item": "Onion, lemon,fry chilli"
+    },
+    {
+     "label": "Appalam",
+     "item": "Fryums"
+    },
+    {
+     "label": "Curd item",
+     "item": "Lassi"
+    },
+    {
+     "label": "Dry veg",
+     "item": "Jeera Aloo"
+    },
+    {
+     "label": "Gravy veg",
+     "item": "Amritsari Chole"
+    },
+    {
+     "label": "Indian bread",
+     "item": "bhature"
+    },
+    {
+     "label": "Rice",
+     "item": "Plain Rice"
+    },
+    {
+     "label": "Rice 2",
+     "item": "Curd Rice"
+    },
+    {
+     "label": "Dal preparation",
+     "item": "Dal Tadka"
+    },
+    {
+     "label": "Fruit",
+     "item": "Guava"
+    }
+   ],
+   "dinner": [
+    {
+     "label": "Salad",
+     "item": "Pasta Salad"
+    },
+    {
+     "label": "Papad",
+     "item": "Fryums"
+    },
+    {
+     "label": "Soup/Curd Item",
+     "item": "Plain Curd"
+    },
+    {
+     "label": "Dry veg",
+     "item": "Masala Bhindi"
+    },
+    {
+     "label": "Gravy veg",
+     "item": "White matar"
+    },
+    {
+     "label": "Indian bread",
+     "item": "Plain/Butter Roti"
+    },
+    {
+     "label": "Rice",
+     "item": "Plain Rice"
+    },
+    {
+     "label": "Rice 2",
+     "item": "Veg Pulao"
+    },
+    {
+     "label": "Dal preparation",
+     "item": "Mix Dal"
+    },
+    {
+     "label": "Sweet Preparation",
+     "item": "Jalebi"
+    }
+   ],
+   "nonveg": ""
+  },
+  {
+   "i": 4,
+   "dates": [
+    "7-Aug",
+    "21-Aug"
+   ],
+   "day": "Friday",
+   "breakfast": [
+    {
+     "label": "Hot preparation",
+     "item": "Vermicelli Upma"
+    },
+    {
+     "label": "Side Dish",
+     "item": "Coconut Chutney"
+    },
+    {
+     "label": "Condiments",
+     "item": "Mysore Chutney"
+    },
+    {
+     "label": "Egg item",
+     "item": "Omelette"
+    },
+    {
+     "label": "Bread item",
+     "item": "Bread,Butter& Jam"
+    },
+    {
+     "label": "Fruit",
+     "item": "Water melon"
+    },
+    {
+     "label": "Milk Preparation",
+     "item": "Tea & Coffee"
+    },
+    {
+     "label": "Plain Milk",
+     "item": "Hot & Cold Milk"
+    },
+    {
+     "label": "Corn flakes",
+     "item": "Cornflakes"
+    },
+    {
+     "label": "Bournvita",
+     "item": "Bournvita"
+    }
+   ],
+   "lunch": [
+    {
+     "label": "Salad",
+     "item": "Cucumber Salad"
+    },
+    {
+     "label": "Appalam",
+     "item": "Fried Papad"
+    },
+    {
+     "label": "Curd item",
+     "item": "Plain Curd"
+    },
+    {
+     "label": "Dry veg",
+     "item": "Baigan Bharta"
+    },
+    {
+     "label": "Gravy veg",
+     "item": "Kadhai Paneer"
+    },
+    {
+     "label": "Indian bread",
+     "item": "Plain/Butter Roti"
+    },
+    {
+     "label": "Rice",
+     "item": "Plain Rice"
+    },
+    {
+     "label": "Rice 2",
+     "item": "Mint Rice"
+    },
+    {
+     "label": "Dal preparation",
+     "item": "Chana Dal"
+    },
+    {
+     "label": "Fruit",
+     "item": "Muskmelon"
+    }
+   ],
+   "dinner": [
+    {
+     "label": "Salad",
+     "item": "Choped onion lemon"
+    },
+    {
+     "label": "Papad",
+     "item": "Rosted papad"
+    },
+    {
+     "label": "Soup/Curd Item",
+     "item": "Buttermilk"
+    },
+    {
+     "label": "Dry veg",
+     "item": "Dry Manchurian"
+    },
+    {
+     "label": "Gravy veg",
+     "item": "Kashmiri Dum Aloo"
+    },
+    {
+     "label": "Indian bread",
+     "item": "Plain/Butter Roti"
+    },
+    {
+     "label": "Rice",
+     "item": "Plain Rice"
+    },
+    {
+     "label": "Rice 2",
+     "item": "Jeera Rice"
+    },
+    {
+     "label": "Dal preparation",
+     "item": "Dal Fry"
+    },
+    {
+     "label": "Sweet Preparation",
+     "item": "Boondi"
+    }
+   ],
+   "nonveg": "Chicken Kolhapuri"
+  },
+  {
+   "i": 5,
+   "dates": [
+    "8-Aug",
+    "22-Aug"
+   ],
+   "day": "Saturday",
+   "breakfast": [
+    {
+     "label": "Hot preparation",
+     "item": "Aloo Paratha"
+    },
+    {
+     "label": "Side Dish",
+     "item": "Curd"
+    },
+    {
+     "label": "Condiments",
+     "item": "Green Chutney"
+    },
+    {
+     "label": "Egg item",
+     "item": "Boiled Egg"
+    },
+    {
+     "label": "Bread item",
+     "item": "Atta Bread, Butter Jam"
+    },
+    {
+     "label": "Fruit",
+     "item": "Guava"
+    },
+    {
+     "label": "Milk Preparation",
+     "item": "Tea & Coffee"
+    },
+    {
+     "label": "Plain Milk",
+     "item": "Hot & Cold Milk"
+    },
+    {
+     "label": "Corn flakes",
+     "item": "Oats"
+    },
+    {
+     "label": "Bournvita",
+     "item": "Bournvita"
+    }
+   ],
+   "lunch": [
+    {
+     "label": "Salad",
+     "item": "Beans Salad"
+    },
+    {
+     "label": "Appalam",
+     "item": "Fried Papad"
+    },
+    {
+     "label": "Curd item",
+     "item": "Buttermilk"
+    },
+    {
+     "label": "Dry veg",
+     "item": "Chilli Potato"
+    },
+    {
+     "label": "Gravy veg",
+     "item": "Rajma Masala"
+    },
+    {
+     "label": "Indian bread",
+     "item": "Plain/Butter Roti"
+    },
+    {
+     "label": "Rice",
+     "item": "Plain Rice"
+    },
+    {
+     "label": "Rice 2",
+     "item": "Masala Khichdi"
+    },
+    {
+     "label": "Dal preparation",
+     "item": "Dal Fry"
+    },
+    {
+     "label": "Fruit",
+     "item": "Banana"
+    }
+   ],
+   "dinner": [
+    {
+     "label": "Salad",
+     "item": "Mixed Salad"
+    },
+    {
+     "label": "Papad",
+     "item": "Fryums"
+    },
+    {
+     "label": "Soup/Curd Item",
+     "item": "Masala Chaas"
+    },
+    {
+     "label": "Dry veg",
+     "item": "Cheese Garlic Pasta"
+    },
+    {
+     "label": "Gravy veg",
+     "item": "Punjabi Chole"
+    },
+    {
+     "label": "Indian bread",
+     "item": "Plain/Butter Roti"
+    },
+    {
+     "label": "Rice",
+     "item": "Plain Rice"
+    },
+    {
+     "label": "Rice 2",
+     "item": "Peas Pulao"
+    },
+    {
+     "label": "Dal preparation",
+     "item": "Dal Tadka"
+    },
+    {
+     "label": "Sweet Preparation",
+     "item": "Suji Halwa"
+    }
+   ],
+   "nonveg": ""
+  },
+  {
+   "i": 6,
+   "dates": [
+    "9-Aug",
+    "23-Aug"
+   ],
+   "day": "Sunday",
+   "breakfast": [
+    {
+     "label": "Hot preparation",
+     "item": "Masala dosa"
+    },
+    {
+     "label": "Side Dish",
+     "item": "Sambhar"
+    },
+    {
+     "label": "Condiments",
+     "item": "Coconut Chutney"
+    },
+    {
+     "label": "Egg item",
+     "item": "Boiled Egg"
+    },
+    {
+     "label": "Bread item",
+     "item": "Bread,Butter& Jam"
+    },
+    {
+     "label": "Fruit",
+     "item": "Pears"
+    },
+    {
+     "label": "Milk Preparation",
+     "item": "Tea & Coffee"
+    },
+    {
+     "label": "Plain Milk",
+     "item": "Hot & Cold Milk"
+    },
+    {
+     "label": "Corn flakes",
+     "item": "Cornflakes"
+    },
+    {
+     "label": "Bournvita",
+     "item": "Bournvita"
+    }
+   ],
+   "lunch": [
+    {
+     "label": "Salad",
+     "item": "Green salad"
+    },
+    {
+     "label": "Appalam",
+     "item": "Appalam"
+    },
+    {
+     "label": "Curd item",
+     "item": "Litchi crush"
+    },
+    {
+     "label": "Dry veg",
+     "item": "Mix Veg Dry"
+    },
+    {
+     "label": "Gravy veg",
+     "item": "Malai Kofta"
+    },
+    {
+     "label": "Indian bread",
+     "item": "Plain/Butter Roti"
+    },
+    {
+     "label": "Rice",
+     "item": "Plain Rice"
+    },
+    {
+     "label": "Rice 2",
+     "item": "Veg Biryani"
+    },
+    {
+     "label": "Dal preparation",
+     "item": "Dal Tadka"
+    },
+    {
+     "label": "Fruit",
+     "item": "Water Melon"
+    }
+   ],
+   "dinner": [
+    {
+     "label": "Salad",
+     "item": "Chopped onion"
+    },
+    {
+     "label": "Papad",
+     "item": "Sev"
+    },
+    {
+     "label": "Soup/Curd Item",
+     "item": "Mint Lemon water+Imli Jeera Pani"
+    },
+    {
+     "label": "Dry veg",
+     "item": "Aloo Masala"
+    },
+    {
+     "label": "Gravy veg",
+     "item": "Soya chunks Masala"
+    },
+    {
+     "label": "Indian bread",
+     "item": "Plain/Butter Roti"
+    },
+    {
+     "label": "Rice",
+     "item": "Pani Puri"
+    },
+    {
+     "label": "Rice 2",
+     "item": "Veg Pulao"
+    },
+    {
+     "label": "Dal preparation",
+     "item": "Curd"
+    },
+    {
+     "label": "Sweet Preparation",
+     "item": "Balu shahi"
+    }
+   ],
+   "nonveg": "Chicken Biryani"
+  },
+  {
+   "i": 7,
+   "dates": [
+    "10-Aug",
+    "24-Aug"
+   ],
+   "day": "Monday",
+   "breakfast": [
+    {
+     "label": "Hot preparation",
+     "item": "Batata Poha"
+    },
+    {
+     "label": "Side Dish",
+     "item": "Chana Tari"
+    },
+    {
+     "label": "Condiments",
+     "item": "onion,sev,tomato"
+    },
+    {
+     "label": "Egg item",
+     "item": "Omelette"
+    },
+    {
+     "label": "Bread item",
+     "item": "Atta Bread, Butter Jam"
+    },
+    {
+     "label": "Fruit",
+     "item": "Banana"
+    },
+    {
+     "label": "Milk Preparation",
+     "item": "Tea & Coffee"
+    },
+    {
+     "label": "Plain Milk",
+     "item": "Hot & Cold Milk"
+    },
+    {
+     "label": "Corn flakes",
+     "item": "Cornflakes"
+    },
+    {
+     "label": "Bournvita",
+     "item": "Bournvita"
+    }
+   ],
+   "lunch": [
+    {
+     "label": "Salad",
+     "item": "Corn Salad"
+    },
+    {
+     "label": "Appalam",
+     "item": "Roasted Papad"
+    },
+    {
+     "label": "Curd item",
+     "item": "Masala Chaas"
+    },
+    {
+     "label": "Dry veg",
+     "item": "Red Sauce Pasta"
+    },
+    {
+     "label": "Gravy veg",
+     "item": "Chana masala"
+    },
+    {
+     "label": "Indian bread",
+     "item": "Plain/Butter Roti"
+    },
+    {
+     "label": "Rice",
+     "item": "Plain Rice"
+    },
+    {
+     "label": "Rice 2",
+     "item": "Curd Rice"
+    },
+    {
+     "label": "Dal preparation",
+     "item": "Mix Dal"
+    },
+    {
+     "label": "Fruit",
+     "item": "Guava"
+    }
+   ],
+   "dinner": [
+    {
+     "label": "Salad",
+     "item": "Onion salad"
+    },
+    {
+     "label": "Papad",
+     "item": "Rosted papad"
+    },
+    {
+     "label": "Soup/Curd Item",
+     "item": "Veg Raita"
+    },
+    {
+     "label": "Dry veg",
+     "item": "Egg Butter Masala"
+    },
+    {
+     "label": "Gravy veg",
+     "item": "Paneer Kolhapuri"
+    },
+    {
+     "label": "Indian bread",
+     "item": "Plain/Butter Roti"
+    },
+    {
+     "label": "Rice",
+     "item": "Plain Rice"
+    },
+    {
+     "label": "Rice 2",
+     "item": "Jeera rice"
+    },
+    {
+     "label": "Dal preparation",
+     "item": "Dal Tadka"
+    },
+    {
+     "label": "Sweet Preparation",
+     "item": "Kala Jamun"
+    }
+   ],
+   "nonveg": ""
+  },
+  {
+   "i": 8,
+   "dates": [
+    "11-Aug",
+    "25-Aug"
+   ],
+   "day": "Tuesday",
+   "breakfast": [
+    {
+     "label": "Hot preparation",
+     "item": "Masala Idli"
+    },
+    {
+     "label": "Side Dish",
+     "item": "Sambhar"
+    },
+    {
+     "label": "Condiments",
+     "item": "Coconut chutney"
+    },
+    {
+     "label": "Egg item",
+     "item": "Egg Fry"
+    },
+    {
+     "label": "Bread item",
+     "item": "Bread,Butter& Jam"
+    },
+    {
+     "label": "Fruit",
+     "item": "Guava"
+    },
+    {
+     "label": "Milk Preparation",
+     "item": "Tea & Coffee"
+    },
+    {
+     "label": "Plain Milk",
+     "item": "Hot & Cold Milk"
+    },
+    {
+     "label": "Corn flakes",
+     "item": "Oats"
+    },
+    {
+     "label": "Bournvita",
+     "item": "Bournvita"
+    }
+   ],
+   "lunch": [
+    {
+     "label": "Salad",
+     "item": "Beans Salad"
+    },
+    {
+     "label": "Appalam",
+     "item": "Appalam"
+    },
+    {
+     "label": "Curd item",
+     "item": "Plain curd"
+    },
+    {
+     "label": "Dry veg",
+     "item": "Cabbage Matar"
+    },
+    {
+     "label": "Gravy veg",
+     "item": "Kashmiri Dum Aloo"
+    },
+    {
+     "label": "Indian bread",
+     "item": "Plain/Butter Roti"
+    },
+    {
+     "label": "Rice",
+     "item": "Plain Rice"
+    },
+    {
+     "label": "Rice 2",
+     "item": "Veg Pulao"
+    },
+    {
+     "label": "Dal preparation",
+     "item": "Moong dal"
+    },
+    {
+     "label": "Fruit",
+     "item": "Watermelon"
+    }
+   ],
+   "dinner": [
+    {
+     "label": "Salad",
+     "item": "chopped onion lemon"
+    },
+    {
+     "label": "Papad",
+     "item": "papad"
+    },
+    {
+     "label": "Soup/Curd Item",
+     "item": "Masala Chaas"
+    },
+    {
+     "label": "Dry veg",
+     "item": "Aloo baigan chokha"
+    },
+    {
+     "label": "Gravy veg",
+     "item": "lassan ki chutney"
+    },
+    {
+     "label": "Indian bread",
+     "item": "Plain/Butter Roti"
+    },
+    {
+     "label": "Rice",
+     "item": "Plain Rice"
+    },
+    {
+     "label": "Rice 2",
+     "item": "Litti"
+    },
+    {
+     "label": "Dal preparation",
+     "item": "Dal Fry"
+    },
+    {
+     "label": "Sweet Preparation",
+     "item": "Dahi Vada"
+    }
+   ],
+   "nonveg": ""
+  },
+  {
+   "i": 9,
+   "dates": [
+    "12-Aug",
+    "26-Aug"
+   ],
+   "day": "Wednesday",
+   "breakfast": [
+    {
+     "label": "Hot preparation",
+     "item": "Poori"
+    },
+    {
+     "label": "Side Dish",
+     "item": "Aloo chole sabji"
+    },
+    {
+     "label": "Condiments",
+     "item": "Pickle"
+    },
+    {
+     "label": "Egg item",
+     "item": "Boiled Egg"
+    },
+    {
+     "label": "Bread item",
+     "item": "Atta Bread, Butter Jam"
+    },
+    {
+     "label": "Fruit",
+     "item": "Water melon"
+    },
+    {
+     "label": "Milk Preparation",
+     "item": "Tea & Coffee"
+    },
+    {
+     "label": "Plain Milk",
+     "item": "Hot & Cold Milk"
+    },
+    {
+     "label": "Corn flakes",
+     "item": "Cornflakes"
+    },
+    {
+     "label": "Bournvita",
+     "item": "Bournvita"
+    }
+   ],
+   "lunch": [
+    {
+     "label": "Salad",
+     "item": "Cucumber Salad"
+    },
+    {
+     "label": "Appalam",
+     "item": "Fried Papad"
+    },
+    {
+     "label": "Curd item",
+     "item": "Litchi crush"
+    },
+    {
+     "label": "Dry veg",
+     "item": "Masala Bhindi"
+    },
+    {
+     "label": "Gravy veg",
+     "item": "Moong Masala"
+    },
+    {
+     "label": "Indian bread",
+     "item": "Plain/Butter Roti"
+    },
+    {
+     "label": "Rice",
+     "item": "Plain Rice"
+    },
+    {
+     "label": "Rice 2",
+     "item": "Jeera rice"
+    },
+    {
+     "label": "Dal preparation",
+     "item": "Dal Makhani"
+    },
+    {
+     "label": "Fruit",
+     "item": "Pears"
+    }
+   ],
+   "dinner": [
+    {
+     "label": "Salad",
+     "item": "Pasta Salad"
+    },
+    {
+     "label": "Papad",
+     "item": "Fried Papad"
+    },
+    {
+     "label": "Soup/Curd Item",
+     "item": "Masala chaas"
+    },
+    {
+     "label": "Dry veg",
+     "item": "Masala Karela"
+    },
+    {
+     "label": "Gravy veg",
+     "item": "Gravy Manchurain"
+    },
+    {
+     "label": "Indian bread",
+     "item": "Plain/Butter Roti"
+    },
+    {
+     "label": "Rice",
+     "item": "Plain Rice"
+    },
+    {
+     "label": "Rice 2",
+     "item": "Peas Pulao"
+    },
+    {
+     "label": "Dal preparation",
+     "item": "Dal Tadka"
+    },
+    {
+     "label": "Sweet Preparation",
+     "item": "Moong Dal halwa"
+    }
+   ],
+   "nonveg": "Butter chicken"
+  },
+  {
+   "i": 10,
+   "dates": [
+    "13-Aug",
+    "27-Aug"
+   ],
+   "day": "Thursday",
+   "breakfast": [
+    {
+     "label": "Hot preparation",
+     "item": "Sabudana Khichdi"
+    },
+    {
+     "label": "Side Dish",
+     "item": "Curd"
+    },
+    {
+     "label": "Condiments",
+     "item": "Mysore Chutney"
+    },
+    {
+     "label": "Egg item",
+     "item": "Omelette"
+    },
+    {
+     "label": "Bread item",
+     "item": "Bread,Butter& Jam"
+    },
+    {
+     "label": "Fruit",
+     "item": "Banana"
+    },
+    {
+     "label": "Milk Preparation",
+     "item": "Tea & Coffee"
+    },
+    {
+     "label": "Plain Milk",
+     "item": "Hot & Cold Milk"
+    },
+    {
+     "label": "Corn flakes",
+     "item": "Cornflakes"
+    },
+    {
+     "label": "Bournvita",
+     "item": "Bournvita"
+    }
+   ],
+   "lunch": [
+    {
+     "label": "Salad",
+     "item": "Mixed Salad"
+    },
+    {
+     "label": "Appalam",
+     "item": "Fryums"
+    },
+    {
+     "label": "Curd item",
+     "item": "Masala Chaas"
+    },
+    {
+     "label": "Dry veg",
+     "item": "Mix Veg Dry"
+    },
+    {
+     "label": "Gravy veg",
+     "item": "Chilli Paneer"
+    },
+    {
+     "label": "Indian bread",
+     "item": "Plain/Butter Roti"
+    },
+    {
+     "label": "Rice",
+     "item": "Plain Rice"
+    },
+    {
+     "label": "Rice 2",
+     "item": "Veg Biryani"
+    },
+    {
+     "label": "Dal preparation",
+     "item": "Dal fry"
+    },
+    {
+     "label": "Fruit",
+     "item": "Musk melon"
+    }
+   ],
+   "dinner": [
+    {
+     "label": "Salad",
+     "item": "Mix Salad"
+    },
+    {
+     "label": "Papad",
+     "item": "Appalam"
+    },
+    {
+     "label": "Soup/Curd Item",
+     "item": "Cucumber Raita"
+    },
+    {
+     "label": "Dry veg",
+     "item": "Cabbage Matar"
+    },
+    {
+     "label": "Gravy veg",
+     "item": "Rajma Masala"
+    },
+    {
+     "label": "Indian bread",
+     "item": "Paratha"
+    },
+    {
+     "label": "Rice",
+     "item": "Plain Rice"
+    },
+    {
+     "label": "Rice 2",
+     "item": "Masala Bhaat"
+    },
+    {
+     "label": "Dal preparation",
+     "item": "Chana Dal"
+    },
+    {
+     "label": "Sweet Preparation",
+     "item": "Icecream Strawberry"
+    }
+   ],
+   "nonveg": ""
+  },
+  {
+   "i": 11,
+   "dates": [
+    "14-Aug",
+    "28-Aug"
+   ],
+   "day": "Friday",
+   "breakfast": [
+    {
+     "label": "Hot preparation",
+     "item": "Dal Kachori"
+    },
+    {
+     "label": "Side Dish",
+     "item": "Green Chutney"
+    },
+    {
+     "label": "Condiments",
+     "item": "Red Chutney"
+    },
+    {
+     "label": "Egg item",
+     "item": "Boiled Egg"
+    },
+    {
+     "label": "Bread item",
+     "item": "Atta Bread, Butter Jam"
+    },
+    {
+     "label": "Fruit",
+     "item": "Water melon"
+    },
+    {
+     "label": "Milk Preparation",
+     "item": "Tea & Coffee"
+    },
+    {
+     "label": "Plain Milk",
+     "item": "Hot & Cold Milk"
+    },
+    {
+     "label": "Corn flakes",
+     "item": "Cornflakes"
+    },
+    {
+     "label": "Bournvita",
+     "item": "Bournvita"
+    }
+   ],
+   "lunch": [
+    {
+     "label": "Salad",
+     "item": "Onion, lemon,fry chilli"
+    },
+    {
+     "label": "Appalam",
+     "item": "Fryums"
+    },
+    {
+     "label": "Curd item",
+     "item": "Lassi"
+    },
+    {
+     "label": "Dry veg",
+     "item": "Jeera Aloo"
+    },
+    {
+     "label": "Gravy veg",
+     "item": "Amritsari Chole"
+    },
+    {
+     "label": "Indian bread",
+     "item": "Poori"
+    },
+    {
+     "label": "Rice",
+     "item": "Plain Rice"
+    },
+    {
+     "label": "Rice 2",
+     "item": "Fried rice"
+    },
+    {
+     "label": "Dal preparation",
+     "item": "Dal Tadka"
+    },
+    {
+     "label": "Fruit",
+     "item": "Gauva"
+    }
+   ],
+   "dinner": [
+    {
+     "label": "Salad",
+     "item": "Mixed Salad"
+    },
+    {
+     "label": "Papad",
+     "item": "Fryums"
+    },
+    {
+     "label": "Soup/Curd Item",
+     "item": "Buttermilk"
+    },
+    {
+     "label": "Dry veg",
+     "item": "Desi Chana Dry"
+    },
+    {
+     "label": "Gravy veg",
+     "item": "Aloo Tamatar Rassewala"
+    },
+    {
+     "label": "Indian bread",
+     "item": "Plain/Butter Roti"
+    },
+    {
+     "label": "Rice",
+     "item": "Plain Rice"
+    },
+    {
+     "label": "Rice 2",
+     "item": "Mint Rice"
+    },
+    {
+     "label": "Dal preparation",
+     "item": "Masoor Dal"
+    },
+    {
+     "label": "Sweet Preparation",
+     "item": "Sewain Kheer"
+    }
+   ],
+   "nonveg": "Kadhai chicken"
+  },
+  {
+   "i": 12,
+   "dates": [
+    "15-Aug",
+    "29-Aug"
+   ],
+   "day": "Saturday",
+   "breakfast": [
+    {
+     "label": "Hot preparation",
+     "item": "Masala dosa"
+    },
+    {
+     "label": "Side Dish",
+     "item": "Sambhar"
+    },
+    {
+     "label": "Condiments",
+     "item": "Coconut Chutney"
+    },
+    {
+     "label": "Egg item",
+     "item": "Boiled Egg"
+    },
+    {
+     "label": "Bread item",
+     "item": "Bread,Butter& Jam"
+    },
+    {
+     "label": "Fruit",
+     "item": "Guava"
+    },
+    {
+     "label": "Milk Preparation",
+     "item": "Tea & Coffee"
+    },
+    {
+     "label": "Plain Milk",
+     "item": "Hot & Cold Milk"
+    },
+    {
+     "label": "Corn flakes",
+     "item": "Oats"
+    },
+    {
+     "label": "Bournvita",
+     "item": "Bournvita"
+    }
+   ],
+   "lunch": [
+    {
+     "label": "Salad",
+     "item": "Pasta salad"
+    },
+    {
+     "label": "Appalam",
+     "item": "Roasted papad"
+    },
+    {
+     "label": "Curd item",
+     "item": "Boondi Raita"
+    },
+    {
+     "label": "Dry veg",
+     "item": "Baigan Bharta"
+    },
+    {
+     "label": "Gravy veg",
+     "item": "Soyabean Chilli"
+    },
+    {
+     "label": "Indian bread",
+     "item": "Plain/Butter Roti"
+    },
+    {
+     "label": "Rice",
+     "item": "Plain Rice"
+    },
+    {
+     "label": "Rice 2",
+     "item": "Tadka Khichadi"
+    },
+    {
+     "label": "Dal preparation",
+     "item": "Kadhi Pakoda"
+    },
+    {
+     "label": "Fruit",
+     "item": "Papaya"
+    }
+   ],
+   "dinner": [
+    {
+     "label": "Salad",
+     "item": "Mixed Salad"
+    },
+    {
+     "label": "Papad",
+     "item": "Rosted papad"
+    },
+    {
+     "label": "Soup/Curd Item",
+     "item": "Plain Curd"
+    },
+    {
+     "label": "Dry veg",
+     "item": "Aloo Gawar Fali"
+    },
+    {
+     "label": "Gravy veg",
+     "item": "Veg Kolhapuri"
+    },
+    {
+     "label": "Indian bread",
+     "item": "Plain/Butter Roti"
+    },
+    {
+     "label": "Rice",
+     "item": "Plain Rice"
+    },
+    {
+     "label": "Rice 2",
+     "item": "Hakka noodles"
+    },
+    {
+     "label": "Dal preparation",
+     "item": "Mix Dal"
+    },
+    {
+     "label": "Sweet Preparation",
+     "item": "Balu shahi"
+    }
+   ],
+   "nonveg": ""
+  },
+  {
+   "i": 13,
+   "dates": [
+    "16-Aug",
+    "30-Aug"
+   ],
+   "day": "Sunday",
+   "breakfast": [
+    {
+     "label": "Hot preparation",
+     "item": "Samosa"
+    },
+    {
+     "label": "Side Dish",
+     "item": "Green and red chutney"
+    },
+    {
+     "label": "Condiments",
+     "item": "Ketchup"
+    },
+    {
+     "label": "Egg item",
+     "item": "Omelette"
+    },
+    {
+     "label": "Bread item",
+     "item": "Atta Bread, Butter Jam"
+    },
+    {
+     "label": "Fruit",
+     "item": "Pears"
+    },
+    {
+     "label": "Milk Preparation",
+     "item": "Tea & Coffee"
+    },
+    {
+     "label": "Plain Milk",
+     "item": "Hot & Cold Milk"
+    },
+    {
+     "label": "Corn flakes",
+     "item": "Cornflakes"
+    },
+    {
+     "label": "Bournvita",
+     "item": "Bournvita"
+    }
+   ],
+   "lunch": [
+    {
+     "label": "Salad",
+     "item": "Beans Salad"
+    },
+    {
+     "label": "Appalam",
+     "item": "Appalam"
+    },
+    {
+     "label": "Curd item",
+     "item": "Lemonade"
+    },
+    {
+     "label": "Dry veg",
+     "item": "Aloo Capscicum"
+    },
+    {
+     "label": "Gravy veg",
+     "item": "Rajma Masala"
+    },
+    {
+     "label": "Indian bread",
+     "item": "Plain/Butter Roti"
+    },
+    {
+     "label": "Rice",
+     "item": "Plain Rice"
+    },
+    {
+     "label": "Rice 2",
+     "item": "Curd Rice"
+    },
+    {
+     "label": "Dal preparation",
+     "item": "Rasam"
+    },
+    {
+     "label": "Fruit",
+     "item": "Watermelon"
+    }
+   ],
+   "dinner": [
+    {
+     "label": "Salad",
+     "item": "Green Salad"
+    },
+    {
+     "label": "Papad",
+     "item": "FRYUMS"
+    },
+    {
+     "label": "Soup/Curd Item",
+     "item": "Veg Raita"
+    },
+    {
+     "label": "Dry veg",
+     "item": "Lauki Chana"
+    },
+    {
+     "label": "Gravy veg",
+     "item": "Aloo Chole Sabji"
+    },
+    {
+     "label": "Indian bread",
+     "item": "Plain/Butter Roti"
+    },
+    {
+     "label": "Rice",
+     "item": "Plain Rice"
+    },
+    {
+     "label": "Rice 2",
+     "item": "Veg Fried rice"
+    },
+    {
+     "label": "Dal preparation",
+     "item": "Dal Makhani"
+    },
+    {
+     "label": "Sweet Preparation",
+     "item": "Gulab Jamun"
+    }
+   ],
+   "nonveg": "Chicken Biryani"
+  }
+ ]
+}
