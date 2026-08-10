@@ -1,10 +1,22 @@
-/* Offline shell. Strategy is deliberately split:
-   - App shell + icons: cache-first, so the home-screen icon opens instantly
-     with no network, which is the whole point of installing it.
-   - data/*.json: network-first with a cache fallback, so a `git push` shows up
-     on your phone on the next open instead of being stuck behind the cache.
-   - Supabase: never touched here. Sync must always hit the live network. */
-const VERSION = 'campus-v1';
+/* Offline support, network-first.
+ *
+ * The first version of this file was cache-first for everything except
+ * data/*.json. That is the textbook PWA recipe, and it was wrong here: it
+ * pinned index.html and config.js to whatever was cached on your very first
+ * visit, so a `git push` would never reach an already-installed device. You
+ * would edit a file, deploy it, and the phone would keep showing the old app
+ * forever — with no error to tell you why.
+ *
+ * Network-first fixes that. Every same-origin GET tries the network, and only
+ * falls back to the cache when the network fails. Being online costs you a few
+ * KB per load; being offline still opens instantly from the last good copy.
+ * For a personal app of this size that is the right trade.
+ *
+ * Supabase requests are cross-origin and are never intercepted — sync must
+ * always hit the live network, and a stale cached response would be worse
+ * than no response.
+ */
+const VERSION = 'iim-indore-v2';
 const SHELL = [
   './', './index.html', './config.js', './manifest.webmanifest',
   './icons/icon-192.png', './icons/icon-512.png', './icons/icon-180.png',
@@ -12,7 +24,13 @@ const SHELL = [
 ];
 
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(VERSION).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
+  // Pre-warm so the very first offline open works. Individual failures are
+  // tolerated: one missing icon should not abort the whole install.
+  e.waitUntil(
+    caches.open(VERSION)
+      .then(c => Promise.all(SHELL.map(u => c.add(u).catch(() => {}))))
+      .then(() => self.skipWaiting())
+  );
 });
 
 self.addEventListener('activate', e => {
@@ -26,23 +44,19 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   const req = e.request;
   if (req.method !== 'GET') return;
-  const url = new URL(req.url);
-  if (url.origin !== self.location.origin) return;   // Supabase and anything external: straight to network
-
-  if (url.pathname.includes('/data/')) {
-    e.respondWith(
-      fetch(req)
-        .then(res => { const copy = res.clone(); caches.open(VERSION).then(c => c.put(req, copy)); return res; })
-        .catch(() => caches.match(req, { ignoreSearch: true }))
-    );
-    return;
-  }
+  if (new URL(req.url).origin !== self.location.origin) return;  // Supabase, external: untouched
 
   e.respondWith(
-    caches.match(req, { ignoreSearch: true }).then(hit => hit || fetch(req).then(res => {
-      const copy = res.clone();
-      caches.open(VERSION).then(c => c.put(req, copy));
-      return res;
-    }))
+    fetch(req)
+      .then(res => {
+        // Only cache real successes. Caching a 404 would serve that 404 offline.
+        if (res && res.ok) {
+          const copy = res.clone();
+          caches.open(VERSION).then(c => c.put(req, copy)).catch(() => {});
+        }
+        return res;
+      })
+      .catch(() => caches.match(req, { ignoreSearch: true })
+        .then(hit => hit || caches.match('./index.html')))
   );
 });
