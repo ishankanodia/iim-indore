@@ -76,7 +76,7 @@ for(const [tab, el] of [['comps','list'], ['mess','messBody'], ['tt','ttBody']])
 }
 
 /* Inline onclick means these must stay reachable as globals. */
-['advance','selected','await_','elim','revive','togglePpra','removeUser','undo'].forEach(fn =>
+['advance','selected','await_','elim','revive','togglePpra','removeUser','undo','back'].forEach(fn =>
   typeof win[fn] === 'function' ? ok(`window.${fn} reachable`) : bad(`window.${fn} missing — inline onclick would break`));
 
 /* Undo has to restore every progress field, not just the one the action was
@@ -89,6 +89,14 @@ try {
   is(ev('JSON.stringify(state.comps[SEED[0].id])'), before, 'undo restores the full progress record');
   win.undo(id);
   ok('undo on an empty stack is a no-op');
+  /* Most cards are mid-schedule with no snapshot behind them — those get
+     back(), which must walk submitted-then-round and stop at the start. */
+  ev(`state.comps["${id}"] = {stage:2, out:false, waiting:true, ppraDone:false}`);
+  win.back(id);
+  is(ev(`state.comps["${id}"].waiting + '/' + state.comps["${id}"].stage`), 'false/2', 'back un-marks submitted before touching the round');
+  win.back(id); win.back(id); win.back(id);
+  is(ev(`state.comps["${id}"].stage`), 0, 'back stops at the first round');
+  is(ev(`canBack(state.comps["${id}"]) || !!(UNDO["${id}"]||[]).length`), false, 'no button offered on an untouched first-round card');
   /* The misclick has to stay recoverable after the card jumps filter tabs and
      after a reload — hence the toast and the separate storage key. */
   win.elim(id);

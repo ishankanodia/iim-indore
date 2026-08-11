@@ -115,6 +115,15 @@ holds the truth.
   two devices would have them arguing over whose history is current. The cost is
   accepted: you cannot undo a phone tap from your laptop. Reset clears the stacks
   rather than leaving an Undo that would restore one card to a pre-reset state.
+- **`back()` is the fallback for cards with no snapshot**, which is most of them
+  — a comp sits at round 4 because that is where the schedule is, not because
+  anything was clicked here. It walks the forward path in reverse, one notch per
+  press (submitted, then the round), and the card shows either `↶ Undo` or
+  `← Back a round`, never both, because they promise different things: one
+  replays a snapshot exactly, the other only claims the round. `back()`
+  deliberately records no snapshot — if it did, the card would sprout an Undo
+  that undid the undo and two presses would return you to the start. Overshoot
+  is covered by `✓ Advance now` sitting beside it.
 
 ### Accounts
 

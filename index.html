@@ -1163,14 +1163,20 @@ function renderComps(){
                   '<button class="act tick" onclick="advance(\'' + c.id + '\')">✓ Advance now</button>' +
                   '<button class="act elim" onclick="elim(\'' + c.id + '\')">✕ Out</button>';
       }
-      /* Undo sits with the actions and only exists when there is something to
-         undo — an always-visible dead button would read as broken. */
+      /* Two different buttons, never both, because they are two different
+         promises. Undo replays a snapshot and is exact. Back a round is for the
+         comps that were already deep in the schedule before any of this existed
+         — there is no snapshot to replay, so it walks the forward path in
+         reverse and cannot claim to restore anything more than the round.
+         Label goes in the tooltip, not on the face: "↶ Undo brought back into
+         play" would wrap the button onto its own row on a phone. */
       const stack = UNDO[c.id];
       if(stack && stack.length){
-        /* Label goes in the tooltip, not on the face: "↶ Undo brought back into
-           play" would wrap the button onto its own row on a phone. */
         actions += '<button class="act undo" onclick="undo(\'' + c.id + '\')" title="Undo: ' +
                    esc(stack[stack.length-1].label) + '">↶ Undo</button>';
+      } else if(canBack(s)){
+        actions += '<button class="act undo" onclick="back(\'' + c.id + '\')" title="' + esc(backLabel(s)) +
+                   '">← Back a round</button>';
       }
 
       /* PPRA doesn't move a card between tabs (it's a form, not a round), but a
@@ -1244,6 +1250,27 @@ function undo(id){
   if(!stack.length) delete UNDO[id];
   saveUndo(); touch(); render();
   hideToast();
+}
+
+/* Undo can only reverse what it watched happen, and most cards are past round 1
+   because that is where the schedule actually is, not because anything was
+   clicked on this device. Those have no snapshot, so they get `back()` instead:
+   the forward path walked backwards, one notch per press, in the same order the
+   buttons go — submitted, then the round itself.
+
+   It deliberately records no snapshot of its own. If it did, the card would
+   sprout an Undo that undid the undo, and two presses would land you back where
+   you started; overshoot is already covered by "✓ Advance now" sitting next to
+   it. It also cannot restore `waiting` when stepping a round back, because
+   nothing here knows whether that round ended by Selected or by Advance now.
+   Out is left to "↩ Bring back", which is the same move under a better name. */
+function canBack(s){ return !s.out && (s.waiting || s.stage > 0); }
+function backLabel(s){ return s.waiting ? 'Un-mark submitted' : 'Step back to the previous round'; }
+function back(id){
+  const s = S(id);
+  if(!canBack(s)) return;
+  if(s.waiting) s.waiting = false; else s.stage--;
+  touch(); render(); hideToast();
 }
 
 /* The toast is the answer to "I clicked the wrong button and the card vanished"
