@@ -76,8 +76,20 @@ for(const [tab, el] of [['comps','list'], ['mess','messBody'], ['tt','ttBody']])
 }
 
 /* Inline onclick means these must stay reachable as globals. */
-['advance','selected','await_','elim','revive','togglePpra','removeUser'].forEach(fn =>
+['advance','selected','await_','elim','revive','togglePpra','removeUser','undo'].forEach(fn =>
   typeof win[fn] === 'function' ? ok(`window.${fn} reachable`) : bad(`window.${fn} missing — inline onclick would break`));
+
+/* Undo has to restore every progress field, not just the one the action was
+   named after — elim() clears `waiting` as a side effect, and an undo that
+   left that cleared would quietly lose a round. */
+try {
+  const id = ev('SEED[0].id'), before = ev('JSON.stringify(state.comps[SEED[0].id])');
+  win.await_(id); win.elim(id);
+  win.undo(id); win.undo(id);
+  is(ev('JSON.stringify(state.comps[SEED[0].id])'), before, 'undo restores the full progress record');
+  win.undo(id);
+  ok('undo on an empty stack is a no-op');
+} catch(e){ bad(`undo threw: ${e.message}`); }
 
 /* Accounts. With no Supabase configured the gate must get out of the way
    entirely — that is the single-user fallback, and it is this test's path. */

@@ -167,6 +167,7 @@
   .revive { background: #eceef0; color: var(--ink); }
   .wait { background: var(--violet-soft); color: var(--violet); }
   .selected { background: var(--green); color: #fff; }
+  .undo { background: transparent; color: var(--muted); border: 1px solid var(--line) !important; margin-left: auto; }
   .empty { text-align: center; color: var(--muted); padding: 44px 10px; font-size: 14px; line-height: 1.6; }
 
   /* ---------- shared date strip ---------- */
@@ -1155,6 +1156,13 @@ function renderComps(){
                   '<button class="act tick" onclick="advance(\'' + c.id + '\')">✓ Advance now</button>' +
                   '<button class="act elim" onclick="elim(\'' + c.id + '\')">✕ Out</button>';
       }
+      /* Undo sits with the actions and only exists when there is something to
+         undo — an always-visible dead button would read as broken. */
+      const stack = UNDO[c.id];
+      if(stack && stack.length){
+        actions += '<button class="act undo" onclick="undo(\'' + c.id + '\')" title="Undo last change">↶ Undo ' +
+                   esc(stack[stack.length-1].label) + '</button>';
+      }
 
       /* PPRA doesn't move a card between tabs (it's a form, not a round), but a
          Waiting card with an unfilled form still has a to-do — say so rather
@@ -1188,17 +1196,46 @@ function renderComps(){
     : 'No database configured yet — progress is saved in <b>this browser only</b>. Add your Supabase URL and anon key to <code>config.js</code> to sync across devices.';
 }
 
-function bump(id){
-  const c = SEED.find(x=>x.id===id), s = S(id);
-  if(s.stage < c.stages.length) s.stage++;
-  s.waiting = false; touch(); render();
+/* ---- undo ---------------------------------------------------------------
+   One stack of snapshots per competition, held in memory only. It is
+   deliberately NOT part of `state`: an undo stack is a fact about this sitting
+   at this device, not progress, and pushing it through the sync blob would
+   make two devices fight over whose history is current. Closing the tab drops
+   it, which is the honest behaviour — you cannot undo something you did on
+   your phone from your laptop.
+   Every mutation goes through mutate(), which snapshots first, then applies,
+   then calls touch(). Adding a new card action means routing it through here
+   too, or its effect becomes silently un-undoable. */
+const UNDO = {};
+const UNDO_MAX = 10;
+function snap(s){ return {stage: s.stage, out: s.out, waiting: s.waiting, ppraDone: s.ppraDone}; }
+function mutate(id, label, fn){
+  const s = S(id);
+  (UNDO[id] = UNDO[id] || []).push({label, prev: snap(s)});
+  if(UNDO[id].length > UNDO_MAX) UNDO[id].shift();
+  fn(s);
+  touch(); render();
 }
-function advance(id){ bump(id); }
-function selected(id){ bump(id); }
-function await_(id){ S(id).waiting = true; touch(); render(); }
-function elim(id){ const s=S(id); s.out = true; s.waiting = false; touch(); render(); }
-function revive(id){ S(id).out = false; touch(); render(); }
-function togglePpra(id){ S(id).ppraDone = !S(id).ppraDone; touch(); render(); }
+function undo(id){
+  const stack = UNDO[id];
+  if(!stack || !stack.length) return;
+  Object.assign(S(id), stack.pop().prev);
+  touch(); render();
+}
+
+function bump(id, label){
+  mutate(id, label, s => {
+    const c = SEED.find(x=>x.id===id);
+    if(s.stage < c.stages.length) s.stage++;
+    s.waiting = false;
+  });
+}
+function advance(id){ bump(id, 'advance'); }
+function selected(id){ bump(id, 'selected'); }
+function await_(id){ mutate(id, 'submitted', s => { s.waiting = true; }); }
+function elim(id){ mutate(id, 'out', s => { s.out = true; s.waiting = false; }); }
+function revive(id){ mutate(id, 'bring back', s => { s.out = false; }); }
+function togglePpra(id){ mutate(id, 'PPRA tick', s => { s.ppraDone = !s.ppraDone; }); }
 
 /* =========================================================================
    SHARED — week strip used by both the mess and timetable tabs.

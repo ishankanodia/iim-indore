@@ -99,9 +99,17 @@ holds the truth.
 - **`render()`** is a full re-render via template strings, dispatched to
   `renderComps` / `renderMess` / `renderTT` / `renderUsers` by the active tab.
   No diffing, no framework. Card buttons use inline `onclick`, so `advance`,
-  `selected`, `await_`, `elim`, `revive`, `togglePpra` and `removeUser` must
-  stay top-level function declarations (a `const` arrow would not be reachable
-  from the attribute).
+  `selected`, `await_`, `elim`, `revive`, `togglePpra`, `undo` and `removeUser`
+  must stay top-level function declarations (a `const` arrow would not be
+  reachable from the attribute).
+- **`mutate()` is how every card action changes progress**, and it snapshots
+  the whole `{stage, out, waiting, ppraDone}` record into `UNDO[id]` before
+  applying the change. A new action that writes state directly still works but
+  is silently un-undoable, so route it through `mutate()`. `UNDO` is in memory
+  only and never enters `state` — an undo stack is a fact about this sitting on
+  this device, not progress, and syncing it would have two devices arguing over
+  whose history is current. The Undo button renders only when that comp's stack
+  is non-empty.
 
 ### Accounts
 
