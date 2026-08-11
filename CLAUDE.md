@@ -105,11 +105,16 @@ holds the truth.
 - **`mutate()` is how every card action changes progress**, and it snapshots
   the whole `{stage, out, waiting, ppraDone}` record into `UNDO[id]` before
   applying the change. A new action that writes state directly still works but
-  is silently un-undoable, so route it through `mutate()`. `UNDO` is in memory
-  only and never enters `state` — an undo stack is a fact about this sitting on
-  this device, not progress, and syncing it would have two devices arguing over
-  whose history is current. The Undo button renders only when that comp's stack
-  is non-empty.
+  is silently un-undoable, so route it through `mutate()`.
+- **Undo exists for the misclick**, which is why it has two surfaces and its own
+  storage. The per-card `↶ Undo` button renders only when that comp's stack is
+  non-empty; the `#toast` covers the case the button cannot, because marking a
+  card submitted moves it out of *Action needed* and takes its own button with
+  it. `UNDO` persists to `KEY + ':undo'` — deliberately a separate key, not a
+  field in `state`, because a last-write-wins synced blob shared by one person's
+  two devices would have them arguing over whose history is current. The cost is
+  accepted: you cannot undo a phone tap from your laptop. Reset clears the stacks
+  rather than leaving an Undo that would restore one card to a pre-reset state.
 
 ### Accounts
 

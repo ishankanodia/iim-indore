@@ -89,6 +89,13 @@ try {
   is(ev('JSON.stringify(state.comps[SEED[0].id])'), before, 'undo restores the full progress record');
   win.undo(id);
   ok('undo on an empty stack is a no-op');
+  /* The misclick has to stay recoverable after the card jumps filter tabs and
+     after a reload — hence the toast and the separate storage key. */
+  win.elim(id);
+  is(win.document.getElementById('toast').hidden, false, 'toast offers undo right after a change');
+  is(JSON.parse(win.localStorage.getItem(ev('undoKey()')))[id].length, 1, 'undo stack persisted for after a reload');
+  is(ev('undoKey().indexOf(KEY) === 0 && undoKey() !== KEY'), true, 'undo stored under its own key, out of the synced blob');
+  win.undo(id);
 } catch(e){ bad(`undo threw: ${e.message}`); }
 
 /* Accounts. With no Supabase configured the gate must get out of the way

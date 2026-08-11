@@ -168,6 +168,13 @@
   .wait { background: var(--violet-soft); color: var(--violet); }
   .selected { background: var(--green); color: #fff; }
   .undo { background: transparent; color: var(--muted); border: 1px solid var(--line) !important; margin-left: auto; }
+  #toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(18px + env(safe-area-inset-bottom));
+    z-index: 40; display: flex; align-items: center; gap: 12px; max-width: min(520px, calc(100vw - 28px));
+    background: #1c2321; color: #fff; padding: 11px 12px 11px 15px; border-radius: 11px; box-shadow: 0 8px 26px rgba(0,0,0,.28); font-size: 13px; }
+  #toast[hidden] { display: none; }
+  #toast .t-msg { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  #toast button { background: rgba(255,255,255,.14); color: #fff; border: none; font: inherit; font-weight: 700;
+    padding: 7px 13px; border-radius: 8px; cursor: pointer; flex: 0 0 auto; }
   .empty { text-align: center; color: var(--muted); padding: 44px 10px; font-size: 14px; line-height: 1.6; }
 
   /* ---------- shared date strip ---------- */
@@ -1160,8 +1167,10 @@ function renderComps(){
          undo — an always-visible dead button would read as broken. */
       const stack = UNDO[c.id];
       if(stack && stack.length){
-        actions += '<button class="act undo" onclick="undo(\'' + c.id + '\')" title="Undo last change">↶ Undo ' +
-                   esc(stack[stack.length-1].label) + '</button>';
+        /* Label goes in the tooltip, not on the face: "↶ Undo brought back into
+           play" would wrap the button onto its own row on a phone. */
+        actions += '<button class="act undo" onclick="undo(\'' + c.id + '\')" title="Undo: ' +
+                   esc(stack[stack.length-1].label) + '">↶ Undo</button>';
       }
 
       /* PPRA doesn't move a card between tabs (it's a form, not a round), but a
@@ -1197,31 +1206,61 @@ function renderComps(){
 }
 
 /* ---- undo ---------------------------------------------------------------
-   One stack of snapshots per competition, held in memory only. It is
-   deliberately NOT part of `state`: an undo stack is a fact about this sitting
-   at this device, not progress, and pushing it through the sync blob would
-   make two devices fight over whose history is current. Closing the tab drops
-   it, which is the honest behaviour — you cannot undo something you did on
-   your phone from your laptop.
+   The case this exists for: you meant to tap Out and hit Advance now, and want
+   the tap back. So it has to survive the two things that happen immediately
+   after a misclick — the card jumping to a different filter tab (which is why
+   there is a toast as well as a per-card button) and a reload (which is why the
+   stack is persisted).
+
+   It persists to localStorage under its own key, NOT into `state`. That keeps
+   it out of the synced blob on purpose: an undo history is a fact about what
+   you did on this device, and syncing it would have a phone and a laptop
+   disagreeing about whose history is current, on a last-write-wins row. The
+   consequence is deliberate — you cannot undo a phone tap from your laptop.
+
    Every mutation goes through mutate(), which snapshots first, then applies,
    then calls touch(). Adding a new card action means routing it through here
    too, or its effect becomes silently un-undoable. */
-const UNDO = {};
+let UNDO = {};
 const UNDO_MAX = 10;
+function undoKey(){ return KEY + ':undo'; }
+function loadUndo(){ try { UNDO = JSON.parse(localStorage.getItem(undoKey())) || {}; } catch(e){ UNDO = {}; } }
+function saveUndo(){ try { localStorage.setItem(undoKey(), JSON.stringify(UNDO)); } catch(e){} }
 function snap(s){ return {stage: s.stage, out: s.out, waiting: s.waiting, ppraDone: s.ppraDone}; }
+
 function mutate(id, label, fn){
   const s = S(id);
   (UNDO[id] = UNDO[id] || []).push({label, prev: snap(s)});
   if(UNDO[id].length > UNDO_MAX) UNDO[id].shift();
   fn(s);
-  touch(); render();
+  saveUndo(); touch(); render();
+  const c = SEED.find(x=>x.id===id);
+  toast((c ? c.name : 'Change') + ' · ' + label, id);
 }
 function undo(id){
   const stack = UNDO[id];
   if(!stack || !stack.length) return;
   Object.assign(S(id), stack.pop().prev);
-  touch(); render();
+  if(!stack.length) delete UNDO[id];
+  saveUndo(); touch(); render();
+  hideToast();
 }
+
+/* The toast is the answer to "I clicked the wrong button and the card vanished"
+   — marking something submitted moves it out of Action needed, taking its own
+   undo button with it. Times out rather than persisting: after 8 seconds it is
+   no longer a misclick, and the per-card button still has the history. */
+let toastTimer = null;
+function toast(msg, id){
+  const el = document.getElementById('toast');
+  if(!el) return;
+  el.innerHTML = '<span class="t-msg"></span><button onclick="undo(\'' + id + '\')">Undo</button>';
+  el.querySelector('.t-msg').textContent = msg;
+  el.hidden = false;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(hideToast, 8000);
+}
+function hideToast(){ const el = document.getElementById('toast'); if(el) el.hidden = true; clearTimeout(toastTimer); }
 
 function bump(id, label){
   mutate(id, label, s => {
@@ -1230,11 +1269,11 @@ function bump(id, label){
     s.waiting = false;
   });
 }
-function advance(id){ bump(id, 'advance'); }
-function selected(id){ bump(id, 'selected'); }
-function await_(id){ mutate(id, 'submitted', s => { s.waiting = true; }); }
-function elim(id){ mutate(id, 'out', s => { s.out = true; s.waiting = false; }); }
-function revive(id){ mutate(id, 'bring back', s => { s.out = false; }); }
+function advance(id){ bump(id, 'moved to the next round'); }
+function selected(id){ bump(id, 'marked selected'); }
+function await_(id){ mutate(id, 'marked submitted', s => { s.waiting = true; }); }
+function elim(id){ mutate(id, 'marked out', s => { s.out = true; s.waiting = false; }); }
+function revive(id){ mutate(id, 'brought back into play', s => { s.out = false; }); }
 function togglePpra(id){ mutate(id, 'PPRA tick', s => { s.ppraDone = !s.ppraDone; }); }
 
 /* =========================================================================
@@ -1452,6 +1491,9 @@ document.getElementById('usersRefresh').onclick = ()=>{ USERS = null; renderUser
 document.getElementById('reset').onclick = ()=>{
   if(!confirm('Reset all competition progress back to the start?')) return;
   SEED.forEach(c=> state.comps[c.id] = blank());
+  /* Reset is not undoable, and leaving the stacks would offer an Undo that
+     silently restores one card to a pre-reset state — worse than no button. */
+  UNDO = {}; saveUndo(); hideToast();
   touch(); render();
 };
 /* Progress is scoped to an origin, so a file:// tracker and a github.io one
@@ -1513,6 +1555,7 @@ async function boot(){
   await gate();
   applyUser();
   await initSync();
+  loadUndo();          /* after applyUser — the key is scoped to the signed-in user */
   reconcile();
   writeLocal();
   try { const t = localStorage.getItem('tracker-tab'); if(t && TITLES[t]) tab = t; } catch(e){}
@@ -1531,5 +1574,6 @@ async function boot(){
 }
 boot();
 </script>
+<div id="toast" hidden></div>
 </body>
 </html>
