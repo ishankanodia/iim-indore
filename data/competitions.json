@@ -1113,5 +1113,63 @@
     "t": "<b>Summer Trainee</b> — 2 months, multiple India locations. Domains: Sales &amp; Marketing, Finance, Operations, HR, Digital. Fixed stipend ₹2.5L for the 2 months. Live, high-impact projects"
    }
   ]
+ },
+ {
+  "id": "relead",
+  "name": "ReLead 9.0",
+  "org": "ReNew · Clean energy · Teams of 3 · ₹8L + PPIs",
+  "ppra": true,
+  "reg": {
+   "label": "Register on Unstop",
+   "url": "https://unstop.com/o/xMOVw6I/?ref=PMT8Hv3B"
+  },
+  "pproof": {
+   "label": "PPRA — proof form",
+   "url": "https://forms.gle/g4hzT9jwx2jjx4sk8"
+  },
+  "deadline": "2026-08-21T23:59:00+05:30",
+  "deadlineLabel": "Register + case submission · 21 Aug 11:59 PM · MANDATORY",
+  "stages": [
+   "Register",
+   "Case Submission",
+   "Campus Round",
+   "National Final"
+  ],
+  "stageStarts": {
+   "1": {
+    "on": "2026-08-07T17:00:00+05:30",
+    "short": "Case submission"
+   },
+   "2": {
+    "on": "2026-09-14T15:00:00+05:30",
+    "short": "Campus round"
+   },
+   "3": {
+    "on": null,
+    "short": "National final"
+   }
+  },
+  "timeline": [
+   {
+    "d": "7 Aug",
+    "t": "<b>Registration opens</b> — 5:00 PM IST. Open to 1st- and 2nd-year students of 2-year full-time MBA/PGDM at eligible campuses"
+   },
+   {
+    "d": "Till 21 Aug",
+    "t": "<b>Placecomm deadline</b> — 21 Aug 11:59 PM IST. <b>Mandatory for the batch</b>, and earlier than Unstop's own 23 Aug cutoff, so treat 21 Aug as the real one"
+   },
+   {
+    "d": "7–23 Aug",
+    "t": "<b>Registration & Case Submission</b> — two deliverables: a max 2-slide <b>Executive Summary</b> and a max 10-slide <b>Main Presentation</b> (appendix up to 20 slides). State assumptions; the deck must be deliverable in 15 minutes"
+   },
+   {
+    "d": "14–18 Sep",
+    "t": "<b>Campus Round</b> — top 3 teams per campus present to the evaluation panel, virtual or in person. Opens 14 Sep 3:00 PM, closes 18 Sep 11:59 PM"
+   },
+   {
+    "d": "TBA",
+    "t": "<b>National Final Round</b> — top 5 campus winners present to the jury at ReNew's head office in Gurgaon. ₹5L winner, ₹3L runner-up, plus PPI opportunities"
+   }
+  ]
  }
 ]

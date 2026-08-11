@@ -17,4 +17,33 @@ window.TRACKER_CONFIG = {
   // Which row in the table holds your progress. Only change this if you want
   // to keep two independent sets of progress in the same Supabase project.
   ROW_ID: "me",
+
+  // -------------------------------------------------------------------------
+  // Live sheets. Leave the two URLs empty and the app reads data/timetable.json
+  // and data/mess.json exactly as before — everything still works, it just
+  // won't pick up sheet edits on its own.
+  //
+  // The PGP office and MessCom sheets are restricted to iimidr.ac.in, and this
+  // page has no login, so it cannot read them directly. Point these at a
+  // MIRROR sheet in your own Drive instead:
+  //
+  //   1. New sheet in your IIM Drive. Two tabs, "timetable" and "mess".
+  //   2. In A1 of each, IMPORTRANGE the original (IMPORTRANGE runs as you, so
+  //      it can see the restricted source):
+  //        =IMPORTRANGE("15g97jW7cTPlV5qAhx6WoIvb5g-xcUhgKmlOc8MA76q8","Term-I Time Table!A1:Z1000")
+  //        =IMPORTRANGE("1n4geM3NTBH19XEXSa6Sn5pEt0VMh5nV1UIzRYkj3JkQ","BLD Menu!A1:Z100")
+  //      Each shows #REF! once with an "Allow access" button. Click it.
+  //   3. File -> Share -> Publish to web. Publish each TAB separately as
+  //      Comma-separated values (.csv), not the whole document.
+  //   4. Paste the two /pub?...&output=csv URLs below.
+  //
+  // Only the mirror is public, and it contains nothing but the timetable and
+  // the menu. Google caches published output, so a change upstream shows up
+  // here in about five minutes rather than instantly.
+  // -------------------------------------------------------------------------
+  SHEETS: {
+    TIMETABLE_CSV: "",
+    MESS_CSV:      "",
+    SECTION:       "G",
+  },
 };

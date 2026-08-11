@@ -11,10 +11,12 @@ package manager.
 
 ```
 index.html              the entire app (HTML + inline CSS + inline vanilla JS)
-config.js               Supabase URL + anon key, edited by the user
+config.js               Supabase keys + the two published sheet CSV URLs
 data/competitions.json  competition content
-data/mess.json          14-day mess cycle
-data/timetable.json     Term I schedule
+data/mess.json          14-day mess cycle          (regenerated from the sheet)
+data/timetable.json     Term I schedule            (regenerated from the sheet)
+tools/refresh-data.mjs  rebuild those two from the sheets
+tools/smoke-test.mjs    boot + render check (needs jsdom)
 supabase-setup.sql      one-time table + RLS setup
 sw.js, manifest.webmanifest, icons/
 legacy/                 the original single-file localStorage tracker, unused
@@ -33,10 +35,43 @@ Supabase row, because the user's phone can write over HTTP but cannot push a
 commit. Do not move content into the database, and do not move progress into a
 file, without being asked; each is where it is for a specific reason.
 
+**The timetable and the mess menu now have an upstream.** Both are maintained
+by the institute in Google Sheets, and the app reads them live at boot. The
+originals are restricted to `iimidr.ac.in`, and a static page has no login, so
+`config.js` points at a **mirror** sheet in the user's own Drive: its cells are
+`IMPORTRANGE()` against the originals (which runs with the user's credentials)
+and the mirror is published to the web as CSV, which is anonymously readable.
+
+That does **not** demote the JSON. `loadData()` loads `data/*.json` first and
+renders from it; the sheet read is applied on top and is allowed to fail. No
+URL configured, no signal, Google slow, sheet reshaped past recognition — every
+one of those keeps the committed copy. Competitions have no sheet at all and
+remain hand-edited. So the rule still holds, with one clause added: content is
+in git, and for two of the three tabs git holds the *fallback* while the sheet
+holds the truth.
+
 ## Architecture
 
 - **`SEED`, `MESS`, `TT`** are populated by `loadData()` from the three JSON
-  files at boot. They are not literals in the source any more.
+  files at boot, and `MESS`/`TT` are then replaced if the live sheet read
+  succeeds. They are not literals in the source any more.
+- **The sheet parsers live between the `SHEET PARSERS` markers in
+  `index.html`, and `tools/refresh-data.mjs` lifts that block out and runs
+  it.** That is deliberate: one implementation means the committed JSON cannot
+  drift from what the app would compute from the same sheet, and drift would
+  only ever surface offline. Keep the block self-contained — it must not
+  reference anything outside the markers, or the Node side stops working.
+- **`SRC` records where each of the two live tabs got its data**
+  (`file` / `live` / `stale`) and `srcNote()` turns that into the footnote
+  under each tab. Being able to tell "today's sheet" from "the copy from the
+  last push" at a glance is the point; don't quietly drop it.
+- **Course codes are discovered from the sheet, not hardcoded.** Anything
+  appearing as `<CODE> <SECTION> <n>` becomes a code, which is how `CMT`
+  appeared without a code change. A slot column is any header that is a bare
+  time range, which is what keeps Lunch/Break/Remarks out without naming them.
+- **Consecutive slots with identical text collapse into one entry.** Four days
+  of End Term are 4 cards, not 24, and the two-slot SMOD group assignment
+  reads as the single sitting it is. A blank slot breaks the run.
 - **`state`** = `{v, updatedAt, comps: {id: {stage, out, waiting, ppraDone}}}`.
   Written to `localStorage` under `KEY` on every mutation, and pushed to
   Supabase on a 600 ms debounce.

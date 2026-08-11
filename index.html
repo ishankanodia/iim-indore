@@ -332,11 +332,271 @@ function istMinsNow(){ const p = istParts(new Date()); return p.getUTCHours()*60
 let TODAY = istMidnight(new Date());
 
 /* =========================================================================
-   DATA — the three content files. Editing content = editing these JSON files
-   in the repo and pushing; nothing about content lives in the database.
+   DATA — the three content files. Competitions are edited by hand and live
+   only in the repo. The timetable and the mess menu additionally have an
+   upstream: the Google Sheets the PGP office and MessCom actually maintain.
+
+   Those sheets are restricted to iimidr.ac.in accounts, so a static page on
+   GitHub Pages can never read them directly — it has no login. The way round
+   that is a *mirror* sheet in your own Drive whose cells are IMPORTRANGE()
+   against the originals. IMPORTRANGE runs with your credentials, so it can
+   see the restricted source; the mirror is then published to the web as CSV,
+   which is anonymously readable. Those two published URLs go in config.js.
+
+   The committed JSON still loads first and is what renders. The sheet read is
+   an upgrade applied on top, never a dependency — no URL configured, no
+   signal, Google slow, sheet reshaped past recognition: every one of those
+   falls back to the JSON and the app opens exactly as before. That matters
+   more than it sounds, because this thing lives on a home screen and gets
+   opened in corridors with no bars.
    ========================================================================= */
 let SEED = [], MESS = null, TT = null;
 let messSel = ymd(TODAY), ttSel = ymd(TODAY);
+
+/* Where each of the two live tabs got its data, for the footnotes.
+   'file' = no sheet URL set · 'live' = read from the sheet just now
+   'stale' = sheet unreachable or unparseable, showing the committed copy */
+let SRC = { tt:{ how:'file' }, mess:{ how:'file' } };
+
+/* ===== SHEET PARSERS (start) =============================================
+   Everything between these two markers is also loaded, verbatim, by
+   tools/refresh-data.mjs to regenerate data/*.json from the same sheets. One
+   implementation, so the offline fallback can never drift from what the app
+   itself would have computed. Keep the block self-contained: no references to
+   anything outside it.
+   ======================================================================== */
+
+/* RFC-4180-ish. Google quotes any field containing a comma, a newline or a
+   quote, and doubles interior quotes — the mess sheet has all three. */
+function parseCSV(text){
+  const s = String(text).replace(/^\uFEFF/, '');
+  const rows = []; let row = [], f = '', q = false;
+  for(let i = 0; i < s.length; i++){
+    const ch = s[i];
+    if(q){
+      if(ch === '"'){ if(s[i+1] === '"'){ f += '"'; i++; } else q = false; }
+      else f += ch;
+    }
+    else if(ch === '"') q = true;
+    else if(ch === ','){ row.push(f); f = ''; }
+    else if(ch === '\n'){ row.push(f); rows.push(row); row = []; f = ''; }
+    else if(ch !== '\r') f += ch;
+  }
+  if(f.length || row.length){ row.push(f); rows.push(row); }
+  return rows;
+}
+function tidy(v){ return String(v == null ? '' : v).replace(/\s+/g, ' ').trim(); }
+
+const DAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const MONTH_NAMES = ['january','february','march','april','may','june','july','august','september','october','november','december'];
+
+/* "2:30 pm" · "09:00 am" · "12 noon" -> "14:30" / "09:00" / "12:00" */
+function clock(s){
+  const m = tidy(s).match(/^(\d{1,2})(?::(\d{2}))?\s*(am|pm|noon|midnight)?$/i);
+  if(!m) return null;
+  let h = +m[1]; const mm = m[2] ? +m[2] : 0, ap = (m[3] || '').toLowerCase();
+  if(ap === 'noon') h = 12;
+  else if(ap === 'midnight') h = 0;
+  else if(ap === 'pm' && h < 12) h += 12;
+  else if(ap === 'am' && h === 12) h = 0;
+  if(h > 23 || mm > 59) return null;
+  return String(h).padStart(2,'0') + ':' + String(mm).padStart(2,'0');
+}
+/* A slot column is a header that is a time range and nothing else. That test
+   is what keeps the Lunch, Break and Remarks columns out without naming them,
+   so re-ordering or renaming those columns upstream cannot break this. */
+function slotTimes(label){
+  const m = tidy(label).match(/^(\d{1,2}(?::\d{2})?\s*(?:am|pm|noon|midnight))\s*[-‐-―]\s*(\d{1,2}(?::\d{2})?\s*(?:am|pm|noon|midnight))$/i);
+  if(!m) return null;
+  const a = clock(m[1]), b = clock(m[2]);
+  return (a && b) ? { start:a, end:b } : null;
+}
+/* "Thursday, August 13, 2026" -> { iso:'2026-08-13', day:'Thursday' } */
+function sheetDate(s){
+  const m = tidy(s).match(/([A-Za-z]+)\s+(\d{1,2})\s*,?\s*(\d{4})/);
+  if(!m) return null;
+  const mi = MONTH_NAMES.indexOf(m[1].toLowerCase());
+  if(mi < 0) return null;
+  const iso = m[3] + '-' + String(mi+1).padStart(2,'0') + '-' + String(+m[2]).padStart(2,'0');
+  return { iso, day: DAY_NAMES[new Date(iso + 'T00:00:00Z').getUTCDay()] };
+}
+function label12(hhmm){
+  const [h,m] = hhmm.split(':').map(Number);
+  return (h % 12 === 0 ? 12 : h % 12) + ':' + String(m).padStart(2,'0') + ' ' + (h < 12 ? 'am' : 'pm');
+}
+
+/* A cell is a course session if its first token is a code that appears
+   somewhere as "<CODE> <SECTION> <n>". Derived from the sheet rather than
+   hardcoded, so a new course next term needs no edit here. */
+function classifyTT(title, codes){
+  const low = title.toLowerCase();
+  if(/^reserved for quiz/.test(low)) return { code:'QUIZ', type:'Exam' };
+  const first = (title.match(/^([A-Za-z][A-Za-z0-9.\-]*)/) || [])[1] || '';
+  const known = codes.find(c => c.toLowerCase() === first.toLowerCase());
+  const exam = /\b(quiz|exam|test|assignment)\b/.test(low) || /\b(mid|end)[\s-]*term\b/.test(low);
+  if(known) return { code:known, type: exam ? 'Exam' : 'Class' };
+  return { code: exam ? 'EXAM' : 'EVENT', type: exam ? 'Exam' : 'Class' };
+}
+
+function parseTimetableCSV(text, section){
+  const rows = parseCSV(text);
+  const sec = tidy(section || 'G').toUpperCase();
+
+  const hi = rows.findIndex(r => /session\s*date/i.test(String((r || [])[0] || '')));
+  if(hi < 0) throw new Error('timetable: no "Session Date" header row');
+  const hdr = rows[hi];
+
+  const slots = [];
+  hdr.forEach((h, col) => { const t = slotTimes(h); if(t) slots.push({ col, start:t.start, end:t.end }); });
+  if(!slots.length) throw new Error('timetable: no time-slot columns in the header');
+
+  const secCol  = hdr.findIndex(c => /^section$/i.test(tidy(c)));
+  const roomCol = hdr.findIndex(c => /room/i.test(tidy(c)));
+  if(secCol < 0) throw new Error('timetable: no Section column');
+
+  const body = rows.slice(hi + 1).filter(r => r && tidy(r[secCol]).toUpperCase() === sec);
+  if(!body.length) throw new Error('timetable: no rows for section ' + sec);
+
+  const codes = [];
+  const sessionRe = new RegExp('^([A-Za-z][A-Za-z0-9.\\-]*)\\s+' + sec.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + '\\s+\\d+', 'i');
+  body.forEach(r => slots.forEach(s => {
+    const m = tidy(r[s.col]).match(sessionRe);
+    if(m && !codes.some(c => c.toLowerCase() === m[1].toLowerCase())) codes.push(m[1]);
+  }));
+
+  const entries = [];
+  body.forEach(r => {
+    const d = sheetDate(r[0]);
+    if(!d) return;
+    const room = roomCol >= 0 ? tidy(r[roomCol]) : '';
+    /* Consecutive slots holding the same text are one block, not N rows. That
+       turns four days of "End Term" from 24 identical cards into 4, and reads
+       the two-slot SMOD group assignment as the single 2.5-hour sitting it is.
+       A blank slot breaks the run, so two separate sessions of the same course
+       on one day stay separate. */
+    let run = null;
+    slots.forEach(s => {
+      const raw = tidy(r[s.col]);
+      if(!raw){ run = null; return; }
+      if(run && run.title === raw){ run.end = s.end; return; }
+      run = { date:d.iso, day:d.day, start:s.start, end:s.end, title:raw, room:room || 'TBA' };
+      entries.push(run);
+    });
+  });
+  if(!entries.length) throw new Error('timetable: parsed 0 entries');
+
+  entries.forEach(e => {
+    const c = classifyTT(e.title, codes);
+    e.code = c.code; e.type = c.type;
+    e.time = label12(e.start) + ' - ' + label12(e.end);
+  });
+  entries.sort((a,b) => a.date < b.date ? -1 : a.date > b.date ? 1 : a.start.localeCompare(b.start));
+
+  /* Codes map to themselves: the sheet never gives full course titles and
+      inventing them would be worse than the abbreviation. */
+  const courses = {};
+  codes.slice().sort().forEach(c => { courses[c] = c; });
+  if(entries.some(e => e.code === 'EXAM'))  courses.EXAM  = 'Exam';
+  if(entries.some(e => e.code === 'QUIZ'))  courses.QUIZ  = 'Reserved for Quiz';
+  if(entries.some(e => e.code === 'EVENT')) courses.EVENT = 'Event';
+
+  let term = 'Term I';
+  for(let i = 0; i < Math.min(hi + 1, rows.length); i++){
+    const m = (rows[i] || []).map(tidy).join(' ').match(/Term\s*-?\s*([IVX]+)\b/i);
+    if(m){ term = 'Term ' + m[1].toUpperCase(); break; }
+  }
+  return { term, section:sec, courses, entries };
+}
+
+function parseMessCSV(text){
+  const rows = parseCSV(text).map(r => (r || []).map(tidy));
+  const findRow = re => rows.findIndex(r => r.some(c => re.test(c)));
+
+  const dateRow = findRow(/^DATE$/i);
+  const dayRow  = findRow(/^DAY$/i);
+  if(dateRow < 0 || dayRow <= dateRow) throw new Error('mess: no DATE / DAY header rows');
+  const labelCol = rows[dateRow].findIndex(c => /^DATE$/i.test(c));
+
+  /* Day columns are the ones the DAY row actually names. Everything else
+     keys off that, so trailing junk columns cost nothing. */
+  const cols = [];
+  rows[dayRow].forEach((c, i) => { if(i > labelCol && c) cols.push(i); });
+  if(!cols.length) throw new Error('mess: no day columns');
+
+  /* The sheet lists the same 14-day cycle twice, one date row per pass. */
+  const dateRows = [];
+  for(let r = dateRow; r < dayRow; r++) if(cols.some(i => rows[r][i])) dateRows.push(r);
+
+  const days = cols.map((col, i) => ({
+    i,
+    dates: dateRows.map(r => rows[r][col]).filter(Boolean),
+    day: rows[dayRow][col],
+    breakfast: [], lunch: [], dinner: []
+  }));
+
+  const MEALS = { BREAKFAST:'breakfast', LUNCH:'lunch', DINNER:'dinner' };
+  let meal = null;
+  for(let r = dayRow + 1; r < rows.length; r++){
+    const label = rows[r][labelCol];
+    if(!label) continue;
+    const isHeader = cols.every(i => !rows[r][i]);
+    if(isHeader){ meal = MEALS[label.toUpperCase()] || null; continue; }  // e.g. NON VEG (PAID ITEMS) ends the menu
+    if(!meal) continue;
+    cols.forEach((col, i) => { if(rows[r][col]) days[i][meal].push({ label, item: rows[r][col] }); });
+  }
+  if(!days.some(d => d.breakfast.length || d.lunch.length || d.dinner.length)) throw new Error('mess: parsed 0 items');
+
+  const titleRow = findRow(/^Mess Menu\b/i);
+  const updRow   = findRow(/^Last Updated\b/i);
+  const title   = titleRow >= 0 ? rows[titleRow].find(c => /^Mess Menu\b/i.test(c)) : 'Mess Menu';
+  const updated = updRow  >= 0 ? rows[updRow].find(c => /^Last Updated\b/i.test(c)) : '';
+  const caterer = (titleRow > 0 ? rows[titleRow - 1].find(Boolean) : '') || '';
+
+  /* Year is never on the date cells ("3-Aug"), so take it from the
+     "Last Updated ... 2026" line and fall back to the current year. */
+  const year = (updated.match(/\b(20\d{2})\b/) || [])[1] || String(new Date().getUTCFullYear());
+  const first = String(days[0].dates[0] || '').match(/^(\d{1,2})\s*[-\s]\s*([A-Za-z]+)/);
+  let cycleStart = '';
+  if(first){
+    const mi = MONTH_NAMES.findIndex(n => n.startsWith(first[2].toLowerCase().slice(0,3)));
+    if(mi >= 0) cycleStart = year + '-' + String(mi+1).padStart(2,'0') + '-' + String(+first[1]).padStart(2,'0');
+  }
+  if(!cycleStart) throw new Error('mess: could not read the cycle start date');
+
+  const links = [];
+  for(let r = 0; r < dateRow; r++){
+    rows[r].forEach((c, i) => {
+      const u = c.match(/https?:\/\/\S+/);
+      if(!u) return;
+      let lab = tidy(c.slice(0, u.index)).replace(/[-:–]\s*$/, '').trim();
+      if(!lab) for(let j = i - 1; j >= 0; j--){ if(rows[r][j] && !/https?:/.test(rows[r][j])){ lab = rows[r][j].replace(/[-:–]\s*$/, '').trim(); break; } }
+      links.push({ label: lab || 'Link', url: u[0] });
+    });
+  }
+
+  return { title, caterer, updated, cycleStart, cycleLength: days.length, links, days };
+}
+/* ===== SHEET PARSERS (end) ============================================== */
+
+/* One live tab. Resolves to null on anything at all going wrong — a bad URL,
+   a captive portal serving an HTML login page, a reshaped sheet — and the
+   caller keeps the committed JSON. Never throws, never blocks boot for long. */
+async function fromSheet(url, parse){
+  if(!url) return null;
+  try {
+    const ctl = new AbortController();
+    const bail = setTimeout(() => ctl.abort(), 8000);   // campus wifi, not a fast link
+    const res = await fetch(url + (url.indexOf('?') < 0 ? '?' : '&') + '_=' + Date.now(), { signal: ctl.signal });
+    clearTimeout(bail);
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    const text = await res.text();
+    if(/^\s*</.test(text)) throw new Error('got HTML, not CSV — is the sheet published?');
+    return parse(text);
+  } catch(e){
+    console.warn('[sheet] falling back to the committed copy:', e.message);
+    return null;
+  }
+}
 
 async function loadData(){
   const bust = 'v=' + Math.floor(Date.now()/60000);   // 1-min cache bust; SW still serves offline
@@ -346,6 +606,31 @@ async function loadData(){
     fetch('./data/timetable.json?' + bust).then(r=>r.json()),
   ]);
   SEED = c; MESS = m; TT = t;
+
+  /* Sheets are strictly an upgrade on top of the above. If this whole block
+     were deleted the app would still work; it would just go stale. */
+  const S = (window.TRACKER_CONFIG || {}).SHEETS || {};
+  const now = istParts(new Date());
+  const stamp = label12(String(now.getUTCHours()).padStart(2,'0') + ':' + String(now.getUTCMinutes()).padStart(2,'0'));
+  const [liveTT, liveMess] = await Promise.all([
+    fromSheet(S.TIMETABLE_CSV, txt => parseTimetableCSV(txt, S.SECTION || TT.section)),
+    fromSheet(S.MESS_CSV, parseMessCSV),
+  ]);
+  if(liveTT){ TT = liveTT; SRC.tt = { how:'live', at:stamp }; }
+  else if(S.TIMETABLE_CSV) SRC.tt = { how:'stale' };
+  if(liveMess){ MESS = liveMess; SRC.mess = { how:'live', at:stamp }; }
+  else if(S.MESS_CSV) SRC.mess = { how:'stale' };
+}
+
+/* The footnote under each of the two sheet-backed tabs. Being able to tell
+   "this is today's sheet" from "this is the copy from the last push" at a
+   glance is the whole point of showing it. */
+function srcNote(which, what){
+  const s = SRC[which] || {};
+  if(s.how === 'live')  return 'Live from the ' + what + ' sheet · read at ' + s.at;
+  if(s.how === 'stale') return '<b>Showing the saved copy.</b> Could not reach the ' + what +
+                               ' sheet just now, so this may be behind. It will catch up on the next open with signal.';
+  return 'From <code>data/' + (which === 'tt' ? 'timetable' : 'mess') + '.json</code> in the repo · no sheet URL set in <code>config.js</code>';
 }
 
 /* =========================================================================
@@ -694,7 +979,8 @@ function renderMess(){
   const published = Math.round((fromYmd(messSel) - fromYmd(MESS.cycleStart)) / DAY_MS);
   const stale = published < 0 || published > 27;
   document.getElementById('messNote').innerHTML = esc(MESS.caterer) + ' · ' + esc(MESS.updated) +
-    (stale ? '<br><b>Heads up:</b> this date is outside the published sheet, so the 14-day cycle is just repeating. Ask me to update <code>data/mess.json</code> when MessCom posts a new menu.' : '');
+    (stale ? '<br><b>Heads up:</b> this date is outside the published sheet, so the 14-day cycle is just repeating.' : '') +
+    '<br>' + srcNote('mess', 'MessCom');
 }
 
 /* =========================================================================
@@ -743,7 +1029,7 @@ function renderTT(){
   const all = TT.entries.map(e=>e.date).sort();
   document.getElementById('ttNote').innerHTML = TT.term + ' · Section ' + TT.section +
     ' · ' + TT.entries.length + ' slots, ' + midDate(fromYmd(all[0])) + ' to ' + midDate(fromYmd(all[all.length-1])) +
-    '<br>Schedule lives in <code>data/timetable.json</code> in the repo.';
+    '<br>' + srcNote('tt', 'PGP timetable');
 }
 
 /* =========================================================================

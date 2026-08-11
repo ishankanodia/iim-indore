@@ -148,10 +148,63 @@ cache.
 `index.html` straight from Finder will *not* work — browsers block `fetch` on
 `file://` URLs, and the app will tell you so.
 
-**Mess menu changes.** Send me the new sheet and I will regenerate
-`data/mess.json`. It is a 14-day cycle anchored at `cycleStart`; the app maps any
-date onto it with a modulo, and warns you when you have scrolled past the
-published window into a repeat.
+**Timetable and mess changes.** Nothing to do. Both come from the institute's
+own sheets and the app re-reads them every time it opens, so a session moved by
+the PGP office shows up on its own. See the section below if you have not set
+that up yet, or if the footnote under a tab says it is showing a saved copy.
+
+---
+
+## Reading the timetable and mess sheets live
+
+The PGP office timetable and the MessCom menu are Google Sheets restricted to
+`iimidr.ac.in` accounts. This app is a static page with no login, so it cannot
+open them directly no matter how it is written. The way round that is a
+**mirror sheet** in your own Drive: `IMPORTRANGE()` runs with *your*
+credentials, so it can read the restricted originals, and you publish only the
+mirror. Nothing about the originals changes, and the mirror holds nothing but
+the timetable and the menu.
+
+1. **New sheet** in your IIM Drive. Two tabs, `timetable` and `mess`.
+2. **In A1 of each**, pointing at the source tab by name:
+
+   ```
+   =IMPORTRANGE("15g97jW7cTPlV5qAhx6WoIvb5g-xcUhgKmlOc8MA76q8","Term-I Time Table!A1:Z1000")
+   =IMPORTRANGE("1n4geM3NTBH19XEXSa6Sn5pEt0VMh5nV1UIzRYkj3JkQ","BLD Menu!A1:Z100")
+   ```
+
+   Each shows `#REF!` once with an **Allow access** button. Click it.
+3. **File → Share → Publish to web.** Publish each *tab* separately as
+   **Comma-separated values (.csv)**, not the whole document.
+4. **Paste the two URLs** into `SHEETS` in `config.js`, and set `SECTION` to
+   your section letter.
+
+The footnote under the Timetable and Mess tabs tells you which copy you are
+looking at: *live from the sheet* with a read time, *showing the saved copy* if
+the sheet could not be reached, or *no sheet URL set*. Google caches published
+output, so an upstream edit lands here in about five minutes rather than
+instantly.
+
+**Keep the offline copy honest.** The committed JSON is what the app renders
+before the fetch returns and whenever you have no signal, so refresh it when
+you push:
+
+```bash
+node tools/refresh-data.mjs                     # from the published URLs
+node tools/refresh-data.mjs tt.csv mess.csv     # or from two local exports
+```
+
+That script does not have its own parsers. It lifts the block between the
+`SHEET PARSERS` markers out of `index.html` and runs that, so the committed
+files cannot drift from what the app itself would compute.
+
+**Check it still boots** after changing anything in `index.html`:
+
+```bash
+npm install jsdom
+node tools/smoke-test.mjs                       # committed-JSON path
+node tools/smoke-test.mjs tt.csv mess.csv       # live-sheet path
+```
 
 ---
 
@@ -171,14 +224,18 @@ Two things that are easy to get wrong:
   is never read.
 - Changing an existing `id` orphans that competition's saved progress.
 
-**`data/timetable.json`** — `courses` maps each code to a display name. Right now
-every code maps to itself (`"FAC": "FAC"`) because I did not want to guess your
-course titles. Tell me what FAC, IPS, MC, ME-I, MM-I, OB-I, OM-I, SMOD and IA
-actually stand for and I will fill them in; the app will show the full names
-under each class.
+**`data/timetable.json`** and **`data/mess.json`** are now *generated* — edit the
+sheet, not these. Run `node tools/refresh-data.mjs` to rebuild them.
 
-**`data/mess.json`** — `days` is 14 entries, one per cycle day, each with
-`breakfast` / `lunch` / `dinner` arrays of `{label, item}` plus a `nonveg` string.
+`courses` maps each code to a display name, and every code still maps to itself
+(`"FAC": "FAC"`) because the sheet does not carry full course titles and I did
+not want to invent them. Tell me what FAC, IPS, MC, ME-I, MM-I, OB-I, OM-I,
+SMOD, IA and CMT stand for and I will add them.
+
+`days` in the mess file is 14 entries, one per cycle day, each with
+`breakfast` / `lunch` / `dinner` arrays of `{label, item}`. It is a 14-day cycle
+anchored at `cycleStart`; the app maps any date onto it with a modulo and warns
+you when you have scrolled past the published window into a repeat.
 
 ---
 
