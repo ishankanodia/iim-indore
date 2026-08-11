@@ -1,9 +1,14 @@
 # IIM Indore — case comps, mess menu, timetable
 
-A single-page app with three tabs, built to live on GitHub Pages and sit on your
-phone's home screen. Competition details, mess menu and class schedule are JSON
-files in this repo. Your *progress* through the competitions lives in a Supabase
+A single-page app, built to live on GitHub Pages and sit on your phone's home
+screen. Competition details, mess menu and class schedule are JSON files in this
+repo. Each person's *progress* through the competitions lives in a Supabase
 table, which is what makes it follow you from laptop to phone.
+
+Anyone in the batch can use it: you sign in with a user number and a 6-digit
+PIN, everyone sees the same competition list, and everyone's ticks are their
+own. Whoever signs up first is user 1 and is the only one who can see the
+Users tab.
 
 ```
 index.html                 the whole app (HTML + CSS + vanilla JS, no build step)
@@ -11,7 +16,7 @@ config.js                  your Supabase URL and key — the only file you must 
 data/competitions.json     competition details, deadlines, rounds, timelines
 data/mess.json             the 14-day mess cycle
 data/timetable.json        Term I class schedule
-supabase-setup.sql         run once in Supabase to create the table
+supabase-setup.sql         run once in Supabase to create the tables + login functions
 manifest.webmanifest, sw.js, icons/    what makes it installable + work offline
 start-local.command        double-click to preview locally on a Mac
 ```
@@ -29,11 +34,48 @@ that content only ever changes on your laptop.
 Ticking off a round is different — you do that on your phone, in a queue, on the
 bus. Your phone cannot push a git commit, so that state has to go somewhere
 writable over HTTP. That is the entire job Supabase does here. It holds one row
-of JSON: `{stage, out, waiting, ppraDone}` per competition. Nothing else.
+of JSON per person, `id = 'u<serial>'`: `{stage, out, waiting, ppraDone}` per
+competition. Nothing else.
+
+Adding accounts did not change that split. It only means "progress" is now
+per-person. Competitions stay one shared file in git — nobody's copy can drift
+from anybody else's, and one push updates the list for the whole batch.
 
 One consequence worth knowing: on iOS, a home-screen app gets its own storage,
 separate from Safari. Without the database step you would see different progress
 in the app and in the browser, on the same phone. With it, they agree.
+
+---
+
+## Accounts
+
+**Signing up.** New user → name + a 6-digit PIN → the app hands back a number.
+Numbers start at 1 and go up; they are never reused, so a removed user's number
+does not come back. Write yours down: the number and PIN are the whole login,
+and there is no email to recover through.
+
+**Signing in.** Number + PIN, once per device. After that the device stays
+signed in — the header shows `#1 Ishan`, and tapping it signs out.
+
+**What's protected, and what isn't.** The PIN is stored as a bcrypt hash and is
+never sent back to any device. The users table is invisible to the app's public
+key — no grant, no policy on it at all — so names and hashes cannot be read out
+of the page even by someone who reads its source. Every account operation goes
+through a Postgres function that decides what the caller is allowed to see.
+
+Progress rows are the looser half, exactly as they were before: anyone holding
+the anon key can read or write any `u<n>` row if they know it exists. That is
+the same trade the app already made for a login-free tracker, and the blast
+radius is still a checklist of case-comp ticks. Names and PINs are held to the
+higher standard; progress is not.
+
+**The Users tab** appears only for user 1, and only lists what an admin needs:
+number, name, when they joined, when they last opened the app, and whether they
+have ticked anything. Remove deletes the account and that person's progress
+together; user 1 cannot remove themselves.
+
+**Forgotten PIN.** Not recoverable. User 1 removes the account and the person
+signs up again with a fresh number.
 
 ---
 
@@ -62,12 +104,17 @@ in the app and in the browser, on the same phone. With it, they agree.
    ```
 
 Both values are safe to commit publicly. The anon key is a client key; the SQL
-script's row-level-security policies are what actually control access, and they
-scope it to this one table. See the comment block in the SQL file for the honest
-version of the trade-off you are making by having no login.
+script's grants, policies and security-definer functions are what actually
+control access, and they scope it to these two tables. See the comment blocks in
+the SQL file for the honest version of what each half is and is not protected
+against.
 
-Skip this step entirely if you want — the app still runs, it just saves progress
-to one browser and the pill in the header says "This device only".
+7. Open the app and **create your account first** — the first person to sign up
+   gets number 1 and is the admin. Do this before sharing the link.
+
+Skip this step entirely if you want — with no Supabase values the app skips the
+sign-in screen altogether, runs as a single local user, and the pill in the
+header says "This device only".
 
 ### 2. Push to GitHub
 
@@ -124,8 +171,12 @@ Thirty seconds of manual work fixes it:
 3. Open your new Pages link → **Case comps** tab → scroll to the bottom →
    **Backup & import progress** → **⬆ Import a backup file** → pick that file.
 
-It will tell you how many competitions it matched. From then on everything syncs
-through Supabase and you never do this again. The same two buttons work as a
+It will tell you how many competitions it matched, and it imports into whichever
+account is signed in — so sign in as yourself first. The progress you had in
+this app *before* accounts existed needs none of this: user 1 inherits it
+automatically on first sign-in.
+
+From then on everything syncs through Supabase and you never do this again. The same two buttons work as a
 plain backup whenever you want one.
 
 ---
@@ -249,3 +300,8 @@ you when you have scrolled past the published window into a repeat.
 | Phone and laptop disagree | One of them was offline when you last tapped. Open both with signal; newest change wins. |
 | Push went live but phone shows old data | Close the app fully and reopen — the shell is cached, data is not. |
 | Old tracker's ticks are missing | Expected. Do the one-time export/import in step 5 — different origins cannot share storage. |
+| Signed in but the tracker looks empty | You are on someone else's number, or a new one. Tap the name pill in the header, sign out, sign in as yours. |
+| "That number and PIN do not match" | Same message for a wrong number and a wrong PIN, on purpose — the form is not a way to find out who exists. |
+| No Users tab | It only shows for user 1. |
+| Someone forgot their PIN | Users tab → Remove them → they sign up again and get a new number. |
+| "Could not find the function … in the schema cache" | Supabase has not picked up the new functions. SQL Editor → run `notify pgrst, 'reload schema';` |

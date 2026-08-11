@@ -4,10 +4,13 @@ Guidance for Claude when working in this repository.
 
 ## Project
 
-A personal three-tab web app for an IIM Indore PGP 2026–28 student: case
-competition tracker, mess menu, class timetable. Deployed to GitHub Pages, meant
-to be installed to a phone home screen. No build step, no dependencies, no
-package manager.
+A shared web app for IIM Indore PGP 2026–28 students: case competition tracker,
+mess menu, class timetable. Deployed to GitHub Pages, meant to be installed to a
+phone home screen. No build step, no dependencies, no package manager.
+
+Multi-user since accounts landed: sign in with a serial number and a 6-digit
+PIN, everyone reads the same competition list, everyone keeps their own ticks.
+Serial 1 is the owner and the only admin.
 
 ```
 index.html              the entire app (HTML + inline CSS + inline vanilla JS)
@@ -30,10 +33,17 @@ the three data files will fail to load.
 
 **Content is in git; progress is in Supabase.** Competitions, mess menu and
 timetable are JSON files the user edits (via Claude) and pushes. Progress —
-`{stage, out, waiting, ppraDone}` per competition — is one JSON blob in one
-Supabase row, because the user's phone can write over HTTP but cannot push a
-commit. Do not move content into the database, and do not move progress into a
-file, without being asked; each is where it is for a specific reason.
+`{stage, out, waiting, ppraDone}` per competition — is one JSON blob per user in
+one Supabase row (`id = 'u<serial>'`), because a phone can write over HTTP but
+cannot push a commit. Do not move content into the database, and do not move
+progress into a file, without being asked; each is where it is for a specific
+reason.
+
+Accounts did not weaken that rule, they sharpened it: the competition list is
+shared *because* it is in git, so one push updates the batch and no two people
+can be looking at different lists. Only progress is per-user. If asked for
+per-user competitions, say what that costs — it moves content into the database
+and gives up exactly that property.
 
 **The timetable and the mess menu now have an upstream.** Both are maintained
 by the institute in Google Sheets, and the app reads them live at boot. The
@@ -72,6 +82,11 @@ holds the truth.
 - **Consecutive slots with identical text collapse into one entry.** Four days
   of End Term are 4 cards, not 24, and the two-slot SMOD group assignment
   reads as the single sitting it is. A blank slot breaks the run.
+- **`AUTH` = `{serial, name, token}`, and `ROW`/`KEY` are derived from it.**
+  They are `let`, not `const`: `applyUser()` points them at `u<serial>` and
+  `case-comp-tracker-v3:u<serial>` once someone signs in. Nothing that reads
+  progress may run before `gate()` resolves, or it reads the wrong person's
+  row — that is why `boot()` awaits the gate before `initSync()`.
 - **`state`** = `{v, updatedAt, comps: {id: {stage, out, waiting, ppraDone}}}`.
   Written to `localStorage` under `KEY` on every mutation, and pushed to
   Supabase on a 600 ms debounce.
@@ -82,21 +97,50 @@ holds the truth.
   a stored state. Follow that pattern when adding a new state field instead of
   bumping `KEY`, which would strand saved progress.
 - **`render()`** is a full re-render via template strings, dispatched to
-  `renderComps` / `renderMess` / `renderTT` by the active tab. No diffing, no
-  framework. Card buttons use inline `onclick`, so `advance`, `selected`,
-  `await_`, `elim`, `revive` and `togglePpra` must stay top-level function
-  declarations (a `const` arrow would not be reachable from the attribute).
+  `renderComps` / `renderMess` / `renderTT` / `renderUsers` by the active tab.
+  No diffing, no framework. Card buttons use inline `onclick`, so `advance`,
+  `selected`, `await_`, `elim`, `revive`, `togglePpra` and `removeUser` must
+  stay top-level function declarations (a `const` arrow would not be reachable
+  from the attribute).
+
+### Accounts
+
+Four Postgres functions, no table reads: `tracker_signup`, `tracker_login`,
+`tracker_touch`, `tracker_users_list`, `tracker_user_remove`. `tracker_users`
+is granted nothing and has no policies, so the anon key cannot read names or
+hashes even though it ships in the page — that is the whole reason accounts go
+through functions rather than PostgREST. PINs are bcrypt (`crypt`/`gen_salt`)
+and are never returned. What a device stores is a token, never the PIN.
+
+Progress rows stay on plain PostgREST with open policies, as before. Names and
+PINs are protected; a checklist of ticks is not. That asymmetry is deliberate —
+don't "fix" it by putting progress behind functions without being asked, and
+don't level it down by exposing the users table.
+
+`gate()` resolves when someone is signed in, and returns immediately in two
+cases: no Supabase configured (single local user, the smoke test's path), or a
+saved token in `localStorage` (verified in the background, because being offline
+must not lock anyone out). `body.locked` is what hides the app behind it, and
+the data-load failure path has to clear it or the error message is invisible.
+
+The Users tab is admin-only in three places that must agree: the nav button is
+`hidden`, `showTab()` refuses to open it, and `tracker_users_list` rejects a
+non-1 caller. The first two are convenience; the third is the actual control.
 
 ### Sync
 
-Last-write-wins on `updatedAt`, whole blob. On boot: newer remote replaces
-local; newer local is pushed; a tie keeps local. That is correct for one user on
-two devices. Failed pushes set `dirty` and retry on `online`, on a 30 s interval,
-and on `visibilitychange` to hidden — the last one matters because iOS freezes
-the tab the instant you swipe away, and the debounce timer would never fire.
+Last-write-wins on `updatedAt`, whole blob, within one user's row. On boot:
+newer remote replaces local; newer local is pushed; a tie keeps local. That is
+correct for one person on two devices, and two people never contend because they
+are never in the same row. Failed pushes set `dirty` and retry on `online`, on a
+30 s interval, and on `visibilitychange` to hidden — the last one matters because
+iOS freezes the tab the instant you swipe away, and the debounce timer would
+never fire.
 
-`readLocal()` lifts progress from the old `case-comp-tracker-v2` key once, so
-the original tracker's saved state is not lost. Keep that path.
+Three one-time lifts keep old progress alive, all of them read-only and all of
+them serial-1 only (`inheritedKey()` / `inheritedRow()`): the pre-accounts
+`case-comp-tracker-v3` local key, the pre-accounts `me` Supabase row, and the
+original single-file tracker's `case-comp-tracker-v2` key. Keep those paths.
 
 ### Things that are easy to get wrong
 

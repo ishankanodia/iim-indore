@@ -76,8 +76,21 @@ for(const [tab, el] of [['comps','list'], ['mess','messBody'], ['tt','ttBody']])
 }
 
 /* Inline onclick means these must stay reachable as globals. */
-['advance','selected','await_','elim','revive','togglePpra'].forEach(fn =>
+['advance','selected','await_','elim','revive','togglePpra','removeUser'].forEach(fn =>
   typeof win[fn] === 'function' ? ok(`window.${fn} reachable`) : bad(`window.${fn} missing — inline onclick would break`));
+
+/* Accounts. With no Supabase configured the gate must get out of the way
+   entirely — that is the single-user fallback, and it is this test's path. */
+is(win.document.body.classList.contains('locked'), false, 'gate released in local-only mode');
+is($('tabUsers').hidden, true, 'users tab hidden for a non-admin');
+is(ev('showTab("users"), tab'), 'comps', 'users tab refuses to open for a non-admin');
+is(ev('KEY'), 'case-comp-tracker-v3', 'storage key unscoped when signed out');
+/* And with a signed-in user, storage has to move to that user's own row. */
+is(ev('AUTH={serial:4,name:"Test",token:"t"}, applyUser(), ROW + " " + KEY'),
+   'u4 case-comp-tracker-v3:u4', 'storage scoped to the signed-in user');
+is(ev('isAdmin()'), false, 'user 4 is not admin');
+is(ev('AUTH.serial=1, applyUser(), isAdmin() && !document.getElementById("tabUsers").hidden'), true, 'user 1 gets the users tab');
+is(ev('inheritedRow()'), 'me', 'user 1 inherits the pre-accounts progress row');
 
 console.log(fails ? `\n${fails} failure(s)` : '\nall good');
 process.exit(fails ? 1 : 0);

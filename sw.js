@@ -16,7 +16,7 @@
  * always hit the live network, and a stale cached response would be worse
  * than no response.
  */
-const VERSION = 'iim-indore-v2';
+const VERSION = 'iim-indore-v3';
 const SHELL = [
   './', './index.html', './config.js', './manifest.webmanifest',
   './icons/icon-192.png', './icons/icon-512.png', './icons/icon-180.png',

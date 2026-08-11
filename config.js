@@ -14,8 +14,9 @@ window.TRACKER_CONFIG = {
   SUPABASE_URL:  "https://jrzpvfqeqvklbveqxism.supabase.co",
   SUPABASE_ANON: "sb_publishable_C8GjtAwq2eDEVvrmn12TUA_Swre-xHj",
 
-  // Which row in the table holds your progress. Only change this if you want
-  // to keep two independent sets of progress in the same Supabase project.
+  // Progress rows are now per user: signing in as number N reads and writes
+  // 'uN'. This is only the row the app used BEFORE accounts existed — user 1
+  // inherits it once, so the original progress carries over. Leave it alone.
   ROW_ID: "me",
 
   // -------------------------------------------------------------------------

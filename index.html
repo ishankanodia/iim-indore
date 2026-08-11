@@ -226,15 +226,105 @@
   .chip { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 5px; background: var(--accent-soft); color: var(--accent); }
   .chip.ex { background: var(--red-soft); color: var(--red); }
   .chip.qz { background: var(--amber-soft); color: var(--amber); }
+
+  /* ---------- sign-in gate ---------- */
+  body.locked > .wrap, body.locked > nav.tabs { display: none; }
+  #gate { display: none; }
+  body.locked #gate {
+    display: flex; align-items: center; justify-content: center;
+    position: fixed; inset: 0; z-index: 100; background: var(--paper);
+    padding: calc(env(safe-area-inset-top) + 24px) 14px calc(env(safe-area-inset-bottom) + 24px);
+    overflow-y: auto;
+  }
+  .gcard { width: 100%; max-width: 380px; background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 22px 20px; box-shadow: var(--shadow); }
+  .gcard h2 { font-family: Georgia, "Times New Roman", serif; font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+  .gcard .sub { font-size: 12.5px; color: var(--muted); line-height: 1.5; margin-bottom: 16px; }
+  .gform { display: none; }
+  .gform.on { display: block; }
+  .fld { margin-bottom: 12px; }
+  .fld label { display: block; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 700; margin-bottom: 5px; }
+  .fld input {
+    width: 100%; font-family: inherit; font-size: 16px; padding: 11px 12px;
+    border: 1px solid var(--line); border-radius: 10px; background: var(--paper); color: var(--ink);
+  }
+  .fld input:focus { outline: none; border-color: var(--accent); background: var(--card); }
+  .fld input.pin { letter-spacing: .35em; font-variant-numeric: tabular-nums; }
+  .fld .hint { font-size: 11px; color: var(--muted); margin-top: 5px; line-height: 1.45; }
+  .prim {
+    width: 100%; border: none; border-radius: 10px; background: var(--accent); color: #fff;
+    font-family: inherit; font-size: 15px; font-weight: 700; padding: 12px; cursor: pointer; margin-top: 4px;
+  }
+  .prim[disabled] { opacity: .55; cursor: default; }
+  .swap { margin-top: 14px; font-size: 12.5px; color: var(--muted); text-align: center; }
+  .swap a { color: var(--accent); font-weight: 700; text-decoration: none; cursor: pointer; }
+  .gerr { display: none; font-size: 12.5px; color: var(--red); background: var(--red-soft); border-radius: 8px; padding: 9px 11px; margin-bottom: 12px; line-height: 1.45; }
+  .gerr.on { display: block; }
+  .gok { font-size: 13px; color: var(--accent); background: var(--accent-soft); border-radius: 10px; padding: 12px; margin-bottom: 14px; line-height: 1.5; }
+  .gok b { font-size: 20px; font-family: Georgia, serif; }
+  .who { font-size: 10.5px; font-weight: 700; padding: 3px 8px; border-radius: 20px; background: var(--violet-soft); color: var(--violet); cursor: pointer; white-space: nowrap; border: none; font-family: inherit; }
+
+  /* ---------- users (admin) ---------- */
+  .urow { display: flex; align-items: center; gap: 11px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 13px; margin-bottom: 9px; box-shadow: var(--shadow); }
+  .urow .num { flex: 0 0 34px; height: 34px; border-radius: 9px; background: var(--accent-soft); color: var(--accent); font-family: Georgia, serif; font-size: 15px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+  .urow .nm { flex: 1; min-width: 0; }
+  .urow .nm b { font-size: 14.5px; font-weight: 700; }
+  .urow .nm .meta { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+  .urow .ghost.danger { color: var(--red); border-color: var(--red-soft); }
 </style>
 </head>
-<body>
+<body class="locked">
+
+<!-- ================= SIGN-IN GATE ================= -->
+<div id="gate">
+  <div class="gcard">
+    <div class="kicker">IIM Indore · PGP 2026–28</div>
+    <h2 id="gTitle">Case Comp Tracker</h2>
+    <div class="sub" id="gSub">Sign in with your user number and PIN.</div>
+    <div class="gerr" id="gErr"></div>
+
+    <form class="gform on" id="formIn" autocomplete="off">
+      <div class="fld">
+        <label for="inSerial">Your user number</label>
+        <input id="inSerial" type="number" inputmode="numeric" min="1" step="1" placeholder="1" required>
+      </div>
+      <div class="fld">
+        <label for="inPin">6-digit PIN</label>
+        <input id="inPin" class="pin" type="password" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="••••••" required>
+      </div>
+      <button class="prim" type="submit">Sign in</button>
+      <div class="swap">New here? <a id="toNew">Create an account</a></div>
+    </form>
+
+    <form class="gform" id="formNew" autocomplete="off">
+      <div class="fld">
+        <label for="nwName">Your name</label>
+        <input id="nwName" type="text" maxlength="40" placeholder="Ishan Kanodia" required>
+      </div>
+      <div class="fld">
+        <label for="nwPin">Choose a 6-digit PIN</label>
+        <input id="nwPin" class="pin" type="password" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="••••••" required>
+      </div>
+      <div class="fld">
+        <label for="nwPin2">Type it again</label>
+        <input id="nwPin2" class="pin" type="password" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="••••••" required>
+        <div class="hint">There is no way to recover a forgotten PIN — only user 1 can remove the account so you can make it again.</div>
+      </div>
+      <button class="prim" type="submit">Create my account</button>
+      <div class="swap">Already have a number? <a id="toIn">Sign in</a></div>
+    </form>
+
+    <div class="gform" id="formDone">
+      <div class="gok">You are user number <b id="dnSerial">–</b><br>Write it down — you need it every time you sign in on a new device.</div>
+      <button class="prim" id="dnGo" type="button">Open my tracker</button>
+    </div>
+  </div>
+</div>
 
 <div class="wrap">
   <header>
     <div class="kicker">IIM Indore · PGP 2026–28</div>
     <h1 id="pageTitle">Case Competitions</h1>
-    <div class="today"><span id="today"></span><span class="sync" id="syncPill">…</span></div>
+    <div class="today"><span id="today"></span><span class="sync" id="syncPill">…</span><button class="who" id="whoPill" hidden></button></div>
   </header>
 </div>
 
@@ -242,6 +332,7 @@
   <button data-tab="comps" class="on"><span class="ico">🏆</span><span>Case comps</span><span class="pip" id="pipComps" hidden></span></button>
   <button data-tab="mess"><span class="ico">🍽️</span><span>Mess menu</span></button>
   <button data-tab="tt"><span class="ico">📚</span><span>Timetable</span></button>
+  <button data-tab="users" id="tabUsers" hidden><span class="ico">👥</span><span>Users</span></button>
 </nav>
 
 <div class="wrap">
@@ -301,6 +392,17 @@
     <div class="strip" id="ttStrip"></div>
     <div id="ttBody"></div>
     <div class="fineprint" id="ttNote"></div>
+  </section>
+
+  <!-- ================= USERS (serial 1 only) ================= -->
+  <section class="pane" id="pane-users">
+    <div class="stats" id="usersStats"></div>
+    <div class="toolbar">
+      <div class="sect-h" style="margin:0; flex:1">Everyone signed up</div>
+      <button class="ghost" id="usersRefresh">Refresh</button>
+    </div>
+    <div id="usersBody"></div>
+    <div class="fineprint" id="usersNote"></div>
   </section>
 </div>
 
@@ -634,22 +736,185 @@ function srcNote(which, what){
 }
 
 /* =========================================================================
+   ACCOUNTS
+   Everyone shares one competition list — the JSON in the repo — and gets their
+   own progress on it. A user is a serial number, a name and a 6-digit PIN;
+   serial 1 is whoever signed up first and is the only admin.
+
+   The PIN never leaves the device in a form anything can read back: it is sent
+   once to a Postgres function which compares it against a bcrypt hash. The
+   users table itself is invisible to the anon key — no grant, no policy — so
+   the names and hashes cannot be read out of the page's own credentials. What
+   the device keeps afterwards is a login token, not the PIN.
+
+   With no Supabase configured the whole gate is skipped and the app runs as a
+   single local user, exactly as it did before. That is also the path the smoke
+   test takes.
+   ========================================================================= */
+const CFG = window.TRACKER_CONFIG || {};
+const REMOTE = !!(CFG.SUPABASE_URL && CFG.SUPABASE_ANON);
+const BASE = REMOTE ? CFG.SUPABASE_URL.replace(/\/+$/,'') : null;
+const REST = REMOTE ? BASE + '/rest/v1/tracker_state' : null;
+const HDRS = REMOTE ? { apikey: CFG.SUPABASE_ANON, Authorization: 'Bearer ' + CFG.SUPABASE_ANON, 'Content-Type': 'application/json' } : null;
+const AUTH_KEY = 'tracker-auth-v1';
+
+let AUTH = null;                     // { serial, name, token } once signed in
+const isAdmin = () => !!AUTH && AUTH.serial === 1;
+
+/* Every account call is a Postgres function, never a table read. Supabase
+   returns errors as {message,hint,...}; surface the message, it is written to
+   be read by a person. */
+async function rpc(fn, args){
+  const r = await fetch(BASE + '/rest/v1/rpc/' + fn, {
+    method:'POST', headers: HDRS, cache:'no-store', body: JSON.stringify(args),
+  });
+  const txt = await r.text();
+  let body = null; try { body = txt ? JSON.parse(txt) : null; } catch(e){}
+  if(!r.ok){
+    const m = (body && (body.message || body.error_description || body.error)) || txt.slice(0,140) || ('HTTP ' + r.status);
+    throw new Error(String(m));
+  }
+  return body;
+}
+
+function readAuth(){
+  try { const p = JSON.parse(localStorage.getItem(AUTH_KEY) || 'null'); if(p && p.serial && p.token) return p; } catch(e){}
+  return null;
+}
+function writeAuth(a){ try { localStorage.setItem(AUTH_KEY, JSON.stringify(a)); } catch(e){} }
+
+/* Point storage at this user. Serial 1 inherits the pre-accounts single-user
+   row and localStorage key on first sign-in, so the original progress carries
+   over instead of starting blank. */
+function applyUser(){
+  const n = AUTH ? AUTH.serial : 0;
+  if(n){ ROW = 'u' + n; KEY = 'case-comp-tracker-v3:u' + n; }
+  const pill = document.getElementById('whoPill');
+  if(AUTH && AUTH.name){
+    pill.hidden = false;
+    pill.textContent = '#' + AUTH.serial + ' ' + AUTH.name.split(/\s+/)[0];
+    pill.title = 'Signed in as ' + AUTH.name + ' — tap to sign out';
+  }
+  document.getElementById('tabUsers').hidden = !isAdmin();
+}
+function inheritedKey(){ return isAdmin() ? 'case-comp-tracker-v3' : null; }
+function inheritedRow(){ return isAdmin() ? (CFG.ROW_ID || 'me') : null; }
+
+function gateErr(msg){
+  const el = document.getElementById('gErr');
+  el.className = 'gerr' + (msg ? ' on' : '');
+  el.textContent = msg || '';
+}
+function gateForm(which){
+  ['formIn','formNew','formDone'].forEach(id =>
+    document.getElementById(id).classList.toggle('on', id === which));
+  gateErr('');
+  const t = document.getElementById('gTitle'), s = document.getElementById('gSub');
+  if(which === 'formIn'){  t.textContent = 'Case Comp Tracker'; s.textContent = 'Sign in with your user number and PIN.'; }
+  if(which === 'formNew'){ t.textContent = 'New here'; s.textContent = 'Pick a PIN and you get a user number. Your progress is yours alone; the competition list is the same for everyone.'; }
+  if(which === 'formDone'){ t.textContent = 'You are in'; s.textContent = ''; }
+}
+
+/* Resolves once there is a signed-in user. Rejects nothing — a failed attempt
+   just leaves the gate up with a message. */
+function gate(){
+  if(!REMOTE){ document.body.classList.remove('locked'); return Promise.resolve(); }
+
+  const saved = readAuth();
+  if(saved){
+    AUTH = saved;
+    document.body.classList.remove('locked');
+    /* Confirm in the background: offline must not lock anyone out, but an
+       account that user 1 has since removed should not linger either. */
+    rpc('tracker_touch', { p_serial: saved.serial, p_token: saved.token })
+      .then(u => { if(u && u.name && u.name !== AUTH.name){ AUTH.name = u.name; writeAuth(AUTH); applyUser(); } })
+      .catch(e => { if(/no longer exists/i.test(String(e.message))) signOut(true); });
+    return Promise.resolve();
+  }
+
+  document.body.classList.add('locked');
+  gateForm('formIn');
+  document.getElementById('inSerial').focus();
+
+  return new Promise(resolve => {
+    const enter = a => {
+      AUTH = a; writeAuth(a);
+      document.body.classList.remove('locked');
+      resolve();
+    };
+    const busy = (form, on, label) => {
+      const b = form.querySelector('.prim');
+      b.disabled = on; b.textContent = on ? 'Just a second…' : label;
+    };
+
+    document.getElementById('toNew').onclick = ()=>{ gateForm('formNew'); document.getElementById('nwName').focus(); };
+    document.getElementById('toIn').onclick  = ()=>{ gateForm('formIn');  document.getElementById('inSerial').focus(); };
+
+    document.getElementById('formIn').onsubmit = async ev => {
+      ev.preventDefault();
+      const f = ev.currentTarget;
+      const serial = parseInt(document.getElementById('inSerial').value, 10);
+      const pin = document.getElementById('inPin').value.trim();
+      if(!(serial > 0)) return gateErr('Enter your user number.');
+      if(!/^\d{6}$/.test(pin)) return gateErr('The PIN is exactly 6 digits.');
+      gateErr(''); busy(f, true, 'Sign in');
+      try {
+        const u = await rpc('tracker_login', { p_serial: serial, p_pin: pin });
+        enter({ serial: u.serial, name: u.name, token: u.token });
+      } catch(e){
+        busy(f, false, 'Sign in');
+        gateErr(String(e.message || e));
+        document.getElementById('inPin').value = '';
+      }
+    };
+
+    document.getElementById('formNew').onsubmit = async ev => {
+      ev.preventDefault();
+      const f = ev.currentTarget;
+      const name = document.getElementById('nwName').value.trim();
+      const pin  = document.getElementById('nwPin').value.trim();
+      const pin2 = document.getElementById('nwPin2').value.trim();
+      if(name.length < 2) return gateErr('Enter your name.');
+      if(!/^\d{6}$/.test(pin)) return gateErr('The PIN must be exactly 6 digits.');
+      if(pin !== pin2) return gateErr('The two PINs do not match.');
+      gateErr(''); busy(f, true, 'Create my account');
+      try {
+        const u = await rpc('tracker_signup', { p_name: name, p_pin: pin });
+        busy(f, false, 'Create my account');
+        document.getElementById('dnSerial').textContent = u.serial;
+        gateForm('formDone');
+        document.getElementById('dnGo').onclick = ()=> enter({ serial: u.serial, name: u.name, token: u.token });
+      } catch(e){
+        busy(f, false, 'Create my account');
+        gateErr(String(e.message || e));
+      }
+    };
+  });
+}
+
+/* Signing out drops the token and this device's cached copy of that person's
+   progress. The progress itself lives in Supabase and comes back on sign-in. */
+function signOut(forced){
+  if(!forced && !confirm('Sign out? Your progress stays saved — you sign back in with your number and PIN.')) return;
+  try { localStorage.removeItem(AUTH_KEY); localStorage.removeItem('tracker-tab'); } catch(e){}
+  if(forced) alert('That account was removed, so this device has been signed out.');
+  location.reload();
+}
+
+/* =========================================================================
    STATE + SYNC
    state = { v, updatedAt, comps: { id: {stage,out,waiting,ppraDone} } }
 
-   The whole blob is one row in Supabase, last-write-wins on updatedAt.
-   That is correct for a single user on two devices: whichever device touched
-   it most recently is the one holding the truth. Every mutation stamps
+   One blob per user, in that user's own row ('u1', 'u2', …), last-write-wins
+   on updatedAt. That is correct for one person on two devices: whichever
+   device touched it most recently is the one holding the truth. Two people
+   never contend, because they are never in the same row. Every mutation stamps
    updatedAt, writes localStorage immediately, and queues a debounced push, so
    a tap is never lost to a flaky campus network — it just syncs later.
    ========================================================================= */
-const KEY = 'case-comp-tracker-v3';
+let KEY = 'case-comp-tracker-v3';
 const LEGACY_KEY = 'case-comp-tracker-v2';
-const CFG = window.TRACKER_CONFIG || {};
-const REMOTE = !!(CFG.SUPABASE_URL && CFG.SUPABASE_ANON);
-const ROW = CFG.ROW_ID || 'me';
-const REST = REMOTE ? CFG.SUPABASE_URL.replace(/\/+$/,'') + '/rest/v1/tracker_state' : null;
-const HDRS = REMOTE ? { apikey: CFG.SUPABASE_ANON, Authorization: 'Bearer ' + CFG.SUPABASE_ANON, 'Content-Type': 'application/json' } : null;
+let ROW = CFG.ROW_ID || 'me';
 
 let state = { v:3, updatedAt:0, comps:{} };
 let dirty = false, pushTimer = null;
@@ -675,7 +940,14 @@ function readLocal(){
   try {
     const raw = localStorage.getItem(KEY);
     if(raw){ const p = JSON.parse(raw); if(p && p.comps) return p; }
-    // one-time lift from the old single-file tracker so nothing is lost
+    /* Two one-time lifts, both for user 1 only, both never overwriting: the
+       pre-accounts single-user key, and before that the original single-file
+       tracker. Nobody's ticks are lost to a storage rename. */
+    const inh = inheritedKey();
+    if(inh){
+      const prev = localStorage.getItem(inh);
+      if(prev){ const p = JSON.parse(prev); if(p && p.comps) return p; }
+    }
     const old = localStorage.getItem(LEGACY_KEY);
     if(old){ const c = JSON.parse(old); if(c && typeof c === 'object') return { v:3, updatedAt:1, comps:c }; }
   } catch(e){}
@@ -688,8 +960,8 @@ function setSync(cls, txt, title){
   el.className = 'sync ' + cls; el.textContent = txt; el.title = title || '';
 }
 
-async function pullRemote(){
-  const r = await fetch(REST + '?id=eq.' + encodeURIComponent(ROW) + '&select=data', { headers: HDRS, cache:'no-store' });
+async function pullRemote(row){
+  const r = await fetch(REST + '?id=eq.' + encodeURIComponent(row || ROW) + '&select=data', { headers: HDRS, cache:'no-store' });
   if(!r.ok) throw new Error('pull ' + r.status + ' ' + (await r.text()).slice(0,120));
   const rows = await r.json();
   return rows.length ? rows[0].data : null;
@@ -723,9 +995,19 @@ async function initSync(){
   state = readLocal();
   if(!REMOTE){ setSync('warn', 'This device only', 'Add your Supabase URL and anon key in config.js to sync across devices.'); return; }
   try {
-    const remote = await pullRemote();
+    let remote = await pullRemote();
+    /* User 1's progress predates accounts and sits in the old single-user row.
+       Read it once, only while 'u1' is still empty, and copy it across so the
+       next device does not have to repeat the lift. */
+    let lifted = false;
+    if((!remote || !remote.comps) && inheritedRow()){
+      const prev = await pullRemote(inheritedRow());
+      if(prev && prev.comps){ remote = prev; lifted = true; }
+    }
     if(remote && remote.comps && (remote.updatedAt||0) > (state.updatedAt||0)){
-      state = remote; writeLocal(); setSync('ok', 'Synced');
+      state = remote; reconcile(); writeLocal();
+      if(lifted) await pushRemote();
+      setSync('ok', 'Synced');
     } else if(!remote || (state.updatedAt||0) > (remote.updatedAt||0)){
       reconcile(); await pushRemote(); setSync('ok', 'Synced');
     } else { setSync('ok', 'Synced'); }
@@ -1033,11 +1315,77 @@ function renderTT(){
 }
 
 /* =========================================================================
+   USERS — visible to serial 1 only.
+   The list is fetched fresh each time the tab is opened rather than cached,
+   because the only reason to look at it is to see who has signed up since.
+   ========================================================================= */
+let USERS = null, usersBusy = false;
+
+function ago(iso){
+  if(!iso) return '—';
+  const mins = Math.round((Date.now() - new Date(iso).getTime()) / 60000);
+  if(mins < 2) return 'just now';
+  if(mins < 60) return mins + ' min ago';
+  const h = Math.round(mins/60); if(h < 24) return h + (h===1?' hour ago':' hours ago');
+  const d = Math.round(h/24);    if(d < 30) return d + (d===1?' day ago':' days ago');
+  return midDate(istMidnight(new Date(iso)));
+}
+
+async function renderUsers(){
+  const body = document.getElementById('usersBody');
+  const stats = document.getElementById('usersStats');
+  document.getElementById('usersNote').innerHTML =
+    'Everyone here shares the same competition list from <code>data/competitions.json</code> and keeps their own ticks. ' +
+    'Removing someone deletes their progress too, and their number is never given out again.';
+  if(!isAdmin()){ body.innerHTML = '<div class="empty">Only user 1 can see this.</div>'; return; }
+  if(!USERS && !usersBusy){
+    usersBusy = true;
+    body.innerHTML = '<div class="empty">Loading the user list…</div>';
+    try { USERS = await rpc('tracker_users_list', { p_serial: AUTH.serial, p_token: AUTH.token }) || []; }
+    catch(e){
+      usersBusy = false;
+      body.innerHTML = '<div class="empty">Could not load the user list.<br><br>' + esc(String(e.message||e)) + '</div>';
+      return;
+    }
+    usersBusy = false;
+  }
+  if(!USERS) return;
+
+  const active = USERS.filter(u => u.has_progress).length;
+  stats.innerHTML =
+    '<div class="stat"><div class="n">' + USERS.length + '</div><div class="l">Signed up</div></div>' +
+    '<div class="stat"><div class="n">' + active + '</div><div class="l">Have ticked something</div></div>' +
+    '<div class="stat"><div class="n">' + SEED.length + '</div><div class="l">Comps everyone sees</div></div>';
+
+  body.innerHTML = USERS.map(u =>
+    '<div class="urow">' +
+      '<div class="num">' + u.serial + '</div>' +
+      '<div class="nm"><b>' + esc(u.name) + (u.serial === 1 ? ' · you' : '') + '</b>' +
+        '<div class="meta">Joined ' + midDate(istMidnight(new Date(u.created_at))) + ' · last open ' + ago(u.last_seen) +
+        (u.has_progress ? '' : ' · no progress yet') + '</div></div>' +
+      (u.serial === 1 ? '' : '<button class="ghost danger" onclick="removeUser(' + u.serial + ')">Remove</button>') +
+    '</div>').join('');
+}
+
+/* Inline onclick, so this has to stay a top-level function declaration. */
+async function removeUser(serial){
+  const u = (USERS || []).find(x => x.serial === serial);
+  if(!u) return;
+  if(!confirm('Remove ' + u.name + ' (user ' + serial + ')?\n\nTheir progress is deleted and cannot be brought back. Number ' + serial + ' will not be reused.')) return;
+  try {
+    await rpc('tracker_user_remove', { p_serial: AUTH.serial, p_token: AUTH.token, p_target: serial });
+    USERS = USERS.filter(x => x.serial !== serial);
+    renderUsers();
+  } catch(e){ alert('Could not remove that user.\n\n' + String(e.message||e)); }
+}
+
+/* =========================================================================
    TABS + BOOT
    ========================================================================= */
-const TITLES = { comps:'Case Competitions', mess:'Mess Menu', tt:'Timetable' };
+const TITLES = { comps:'Case Competitions', mess:'Mess Menu', tt:'Timetable', users:'Users' };
 let tab = 'comps';
 function showTab(t){
+  if(t === 'users' && !isAdmin()) t = 'comps';
   tab = t;
   document.querySelectorAll('nav.tabs button').forEach(b=> b.classList.toggle('on', b.dataset.tab===t));
   document.querySelectorAll('.pane').forEach(p=> p.classList.toggle('on', p.id === 'pane-' + t));
@@ -1054,6 +1402,7 @@ function render(){
   if(tab==='comps') renderComps();
   if(tab==='mess')  renderMess();
   if(tab==='tt')    renderTT();
+  if(tab==='users') renderUsers();
 }
 
 document.querySelectorAll('nav.tabs button').forEach(b=> b.onclick = ()=> showTab(b.dataset.tab));
@@ -1061,6 +1410,8 @@ document.querySelectorAll('.fbtn').forEach(b=> b.onclick = ()=>{
   document.querySelectorAll('.fbtn').forEach(x=>x.classList.remove('active'));
   b.classList.add('active'); filter = b.dataset.f; render();
 });
+document.getElementById('whoPill').onclick = ()=> signOut(false);
+document.getElementById('usersRefresh').onclick = ()=>{ USERS = null; renderUsers(); };
 document.getElementById('reset').onclick = ()=>{
   if(!confirm('Reset all competition progress back to the start?')) return;
   SEED.forEach(c=> state.comps[c.id] = blank());
@@ -1114,11 +1465,16 @@ document.getElementById('ttLbl').onclick    = ()=>{ ttSel = ymd(TODAY); renderTT
 async function boot(){
   try { await loadData(); }
   catch(e){
+    document.body.classList.remove('locked');
     document.getElementById('list').innerHTML =
       '<div class="empty">Could not load the data files.<br><br>If you opened this file directly from Finder, that is expected — browsers block <code>fetch</code> on <code>file://</code>. Run <code>python3 -m http.server</code> in this folder and open <b>http://localhost:8000</b>, or just use the deployed GitHub Pages link.</div>';
     setSync('err','Data not loaded'); return;
   }
   ttIndex();
+  /* Nothing below this line may run before we know whose progress to load —
+     ROW and KEY are decided by who signs in. */
+  await gate();
+  applyUser();
   await initSync();
   reconcile();
   writeLocal();
