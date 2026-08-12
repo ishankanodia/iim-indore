@@ -71,6 +71,18 @@ holds the truth.
   drift from what the app would compute from the same sheet, and drift would
   only ever surface offline. Keep the block self-contained — it must not
   reference anything outside the markers, or the Node side stops working.
+- **`applyMail()` is the last thing `loadData()` does, and it is the only
+  hand-maintained content in `index.html`.** PGP-office mails land days before
+  the sheet is updated, and some of what they say (ID card at the door, entry
+  cut-off, seating rule) has no column in a timetable grid at all. Every piece
+  of it is written to become a no-op once the sheet agrees: `MAIL_EXAMS` only
+  replaces a slot still titled a bare "End Term", `MAIL_COURSES` only fills a
+  code still mapped to itself, `MAIL_NOTES` only attaches to an entry with no
+  note. So nothing here has to be un-done by hand, and nothing here can
+  clobber a fresher sheet. It is not a second content store — keep entries
+  dated so they age out, and put anything durable in the sheet.
+  The end-term papers currently carry an **assumed** 3-hour duration; the mail
+  gave start times only, which is why the card says so.
 - **`SRC` records where each of the two live tabs got its data**
   (`file` / `live` / `stale`) and `srcNote()` turns that into the footnote
   under each tab. Being able to tell "today's sheet" from "the copy from the
@@ -144,6 +156,23 @@ cases: no Supabase configured (single local user, the smoke test's path), or a
 saved token in `localStorage` (verified in the background, because being offline
 must not lock anyone out). `body.locked` is what hides the app behind it, and
 the data-load failure path has to clear it or the error message is invisible.
+
+**The gate opens on a chooser, not on a form.** Landing straight on "your user
+number" was the thing people got stuck on — most first-time openers do not have
+one and read it as being locked out. `formPick` asks the only question they can
+answer, and `GATE_FORMS` / `GATE_COPY` drive the five panels
+(`formPick` / `formIn` / `formNew` / `formDone` / `formHelp`) and the heading
+above them. Adding a panel means adding it to both.
+
+**`friendlyErr()` exists because three unrelated things throw into the same
+catch:** the browser (offline, DNS), PostgREST (bare HTTP codes) and our own
+Postgres functions, and only the third is written for a human. Showing the
+other two verbatim is what made people think they had lost their progress.
+Every branch ends with a next step, because a dead end is what sends somebody
+off to create a duplicate account — and a duplicate account is unfixable
+without user 1. `gateErr()` takes `{head, body}` or a plain string. Sign-in
+clears the typed PIN only when the PIN is what was rejected; wiping it after a
+dropped connection only makes the retry worse.
 
 The Users tab is admin-only in three places that must agree: the nav button is
 `hidden`, `showTab()` refuses to open it, and `tracker_users_list` rejects a

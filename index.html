@@ -231,6 +231,10 @@
   .cls .bcol { flex: 1; min-width: 0; }
   .cls .cname { font-size: 14.5px; font-weight: 700; line-height: 1.3; }
   .cls .csub { font-size: 11.5px; color: var(--muted); margin-top: 3px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  /* Instructions that came by mail — entry cut-offs, seating rules, ID cards.
+     Deliberately loud enough to read on a phone without tapping anything. */
+  .cls .cnote { font-size: 11.5px; line-height: 1.45; margin-top: 7px; padding: 7px 9px; border-radius: 8px; background: var(--amber-soft); color: var(--ink); }
+  .cls.exam .cnote { background: var(--red-soft); }
   .chip { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 5px; background: var(--accent-soft); color: var(--accent); }
   .chip.ex { background: var(--red-soft); color: var(--red); }
   .chip.qz { background: var(--amber-soft); color: var(--amber); }
@@ -263,12 +267,31 @@
     font-family: inherit; font-size: 15px; font-weight: 700; padding: 12px; cursor: pointer; margin-top: 4px;
   }
   .prim[disabled] { opacity: .55; cursor: default; }
-  .swap { margin-top: 14px; font-size: 12.5px; color: var(--muted); text-align: center; }
+  .ghostbig {
+    width: 100%; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); color: var(--ink);
+    font-family: inherit; font-size: 15px; font-weight: 700; padding: 12px; cursor: pointer; margin-top: 9px;
+  }
+  .swap { margin-top: 14px; font-size: 12.5px; color: var(--muted); text-align: center; line-height: 1.6; }
   .swap a { color: var(--accent); font-weight: 700; text-decoration: none; cursor: pointer; }
-  .gerr { display: none; font-size: 12.5px; color: var(--red); background: var(--red-soft); border-radius: 8px; padding: 9px 11px; margin-bottom: 12px; line-height: 1.45; }
+  .gerr { display: none; font-size: 12.5px; color: var(--red); background: var(--red-soft); border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; line-height: 1.5; }
   .gerr.on { display: block; }
-  .gok { font-size: 13px; color: var(--accent); background: var(--accent-soft); border-radius: 10px; padding: 12px; margin-bottom: 14px; line-height: 1.5; }
-  .gok b { font-size: 20px; font-family: Georgia, serif; }
+  .gerr b { display: block; margin-bottom: 3px; font-size: 13px; }
+  .gok { font-size: 13px; color: var(--accent); background: var(--accent-soft); border-radius: 10px; padding: 14px 12px; margin-bottom: 4px; line-height: 1.5; text-align: center; }
+  .gok b { display: block; font-size: 40px; line-height: 1.2; font-family: Georgia, serif; font-variant-numeric: tabular-nums; }
+  /* The explainer and the PIN warning: the two things people were guessing at. */
+  .explain { font-size: 12.5px; line-height: 1.6; color: var(--muted); background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 12px; margin-top: 16px; }
+  .explain b { color: var(--ink); }
+  .warn { font-size: 12px; line-height: 1.5; color: var(--ink); background: var(--amber-soft); border-radius: 9px; padding: 10px 11px; margin: 12px 0; }
+  .pinwrap { position: relative; }
+  .peek {
+    position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+    border: none; background: none; font-family: inherit; font-size: 11.5px; font-weight: 700;
+    color: var(--accent); padding: 6px 7px; cursor: pointer;
+  }
+  /* Offline is not an error the person did anything to cause, so it gets its
+     own calmer banner rather than the red one. */
+  #gNet { display: none; font-size: 12.5px; line-height: 1.5; background: var(--amber-soft); border-radius: 9px; padding: 10px 11px; margin-bottom: 12px; }
+  body.offline #gNet { display: block; }
   .who { font-size: 10.5px; font-weight: 700; padding: 3px 8px; border-radius: 20px; background: var(--violet-soft); color: var(--violet); cursor: pointer; white-space: nowrap; border: none; font-family: inherit; }
 
   /* ---------- users (admin) ---------- */
@@ -287,43 +310,96 @@
   <div class="gcard">
     <div class="kicker">IIM Indore · PGP 2026–28</div>
     <h2 id="gTitle">Case Comp Tracker</h2>
-    <div class="sub" id="gSub">Sign in with your user number and PIN.</div>
+    <div class="sub" id="gSub">Shared deadlines for the batch. Your own ticks.</div>
+    <div id="gNet">You look offline. Signing in needs a connection for a moment — the rest of the app works without one.</div>
     <div class="gerr" id="gErr"></div>
 
-    <form class="gform on" id="formIn" autocomplete="off">
+    <!-- The first screen asks the one question the person can actually answer.
+         Landing straight on "your user number" was the confusion: most people
+         opening this for the first time do not have one yet and assumed they
+         were locked out. -->
+    <div class="gform on" id="formPick">
+      <button class="prim" id="pickNew" type="button">I'm new here — set me up</button>
+      <button class="ghostbig" id="pickIn" type="button">I already have a number</button>
+      <div class="explain">
+        <b>How this works.</b> There are no emails and no passwords. You pick a
+        6-digit PIN, the app hands you a user number, and that pair is your
+        login on any device. Everyone sees the same competition list; what you
+        tick is only yours.
+      </div>
+    </div>
+
+    <form class="gform" id="formIn" autocomplete="off">
       <div class="fld">
         <label for="inSerial">Your user number</label>
-        <input id="inSerial" type="number" inputmode="numeric" min="1" step="1" placeholder="1" required>
+        <input id="inSerial" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="e.g. 7" required>
+        <div class="hint">The number you were given when you signed up — not your roll number.</div>
       </div>
       <div class="fld">
-        <label for="inPin">6-digit PIN</label>
-        <input id="inPin" class="pin" type="password" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="••••••" required>
+        <label for="inPin">Your 6-digit PIN</label>
+        <div class="pinwrap">
+          <input id="inPin" class="pin" type="password" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="••••••" required>
+          <button class="peek" type="button" data-peek="inPin">Show</button>
+        </div>
       </div>
       <button class="prim" type="submit">Sign in</button>
-      <div class="swap">New here? <a id="toNew">Create an account</a></div>
+      <div class="swap"><a class="back" data-go="formPick">← Back</a> · Forgot your number or PIN? <a id="toHelp">Read this</a></div>
+      <div class="explain">
+        <b>If it fails, it is usually the number, not the PIN.</b> Sign-in
+        needs the server for a second, so a weak connection can also make it
+        error. Nothing you have ticked is at risk either way — your progress is
+        stored under your number, not on this device, and wrong attempts never
+        lock you out. If an error keeps coming back, tell user 1 instead of
+        creating a second account.
+      </div>
     </form>
 
     <form class="gform" id="formNew" autocomplete="off">
       <div class="fld">
         <label for="nwName">Your name</label>
-        <input id="nwName" type="text" maxlength="40" placeholder="Ishan Kanodia" required>
+        <input id="nwName" type="text" maxlength="40" placeholder="First and last name" required>
+        <div class="hint">So the batch list is readable. Nobody but user 1 ever sees it.</div>
       </div>
       <div class="fld">
         <label for="nwPin">Choose a 6-digit PIN</label>
-        <input id="nwPin" class="pin" type="password" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="••••••" required>
+        <div class="pinwrap">
+          <input id="nwPin" class="pin" type="password" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="••••••" required>
+          <button class="peek" type="button" data-peek="nwPin">Show</button>
+        </div>
+        <div class="hint">Any 6 digits you will remember. Don't reuse a bank or phone PIN.</div>
       </div>
       <div class="fld">
         <label for="nwPin2">Type it again</label>
-        <input id="nwPin2" class="pin" type="password" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="••••••" required>
-        <div class="hint">There is no way to recover a forgotten PIN — only user 1 can remove the account so you can make it again.</div>
+        <div class="pinwrap">
+          <input id="nwPin2" class="pin" type="password" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="••••••" required>
+          <button class="peek" type="button" data-peek="nwPin2">Show</button>
+        </div>
       </div>
+      <div class="warn">A forgotten PIN cannot be recovered — there is no email to reset it to. If you lose it, ask user 1 to delete your account and sign up again.</div>
       <button class="prim" type="submit">Create my account</button>
-      <div class="swap">Already have a number? <a id="toIn">Sign in</a></div>
+      <div class="swap"><a class="back" data-go="formPick">← Back</a></div>
     </form>
 
     <div class="gform" id="formDone">
-      <div class="gok">You are user number <b id="dnSerial">–</b><br>Write it down — you need it every time you sign in on a new device.</div>
-      <button class="prim" id="dnGo" type="button">Open my tracker</button>
+      <div class="gok">Your user number is<br><b id="dnSerial">–</b></div>
+      <button class="ghostbig" id="dnCopy" type="button">Copy my number</button>
+      <div class="warn">Save this now — a screenshot, a note, anywhere. You need this number plus your PIN every time you sign in on a new device, and it cannot be looked up for you.</div>
+      <button class="prim" id="dnGo" type="button">I've saved it — open my tracker</button>
+    </div>
+
+    <div class="gform" id="formHelp">
+      <div class="explain">
+        <b>Forgot your number?</b> It's shown on the pill at the top right of
+        the app on any device you are still signed in on. Otherwise ask user 1
+        — they can see the list of numbers and names.<br><br>
+        <b>Forgot your PIN?</b> It is stored hashed and nobody, including user
+        1, can read it back. The fix is for user 1 to remove your account so
+        you can create a new one. Your ticks go with it.<br><br>
+        <b>Stuck on an error?</b> Nothing you have ticked is lost — progress
+        lives on the server and on this device. Try again in a minute, and if
+        it keeps failing tell user 1 rather than making a second account.
+      </div>
+      <button class="prim" type="button" data-go="formIn">Back to sign in</button>
     </div>
   </div>
 </div>
@@ -730,6 +806,99 @@ async function loadData(){
   else if(S.TIMETABLE_CSV) SRC.tt = { how:'stale' };
   if(liveMess){ MESS = liveMess; SRC.mess = { how:'live', at:stamp }; }
   else if(S.MESS_CSV) SRC.mess = { how:'stale' };
+
+  applyMail(TT);
+}
+
+/* =========================================================================
+   MAIL OVERRIDES
+   Detail that arrives in a PGP-office mail before the sheet catches up, or
+   that the sheet has no column for at all. Applied last, on top of whichever
+   source won above, and deliberately written so that each piece becomes a
+   no-op the moment the sheet says the same thing — nothing here has to be
+   removed by hand later, and nothing here can overwrite a fresher sheet.
+
+   This is NOT a second content store. Anything durable belongs in the sheet;
+   this is the gap between "the mail landed" and "the sheet was updated", plus
+   the instructions (entry cut-offs, seating rules) a timetable grid cannot
+   express. Keep entries dated, so they age out on their own.
+   ========================================================================= */
+
+/* End-term exam schedule — PGP Office mail, 12 Aug 2026. The sheet carries
+   these four days as one undifferentiated "End Term" block per day; the mail
+   is what says which paper sits in which slot. Durations were not stated —
+   3 hours is the standing assumption, hence the note on the card. */
+const MAIL_EXAMS = {
+  '2026-09-20': [['OM-I', '10:00'], ['OB-I', '14:30']],
+  '2026-09-21': [['MM-I', '10:00'], ['SMOD','14:30']],
+  '2026-09-22': [['FAC',  '10:00'], ['ME-I', '14:30']],
+  '2026-09-23': [['IPS',  '10:00']],
+};
+const EXAM_NOTE = 'Carry your PGP ID card — no card, no exam. Reach 10 min early. ' +
+                  'No phones in the hall. Venue and seating chart to follow. ' +
+                  'End time assumed 3 hours; the mail did not say.';
+
+/* Full course titles, from the same mail. The sheet only ever gives codes and
+   inventing the rest would be worse than the abbreviation, so the three it
+   does not name (CMT, IA, MC) stay as codes until something official names
+   them. */
+const MAIL_COURSES = {
+  'OM-I': 'Operations Management-I',
+  'OB-I': 'Organizational Behaviour-I',
+  'MM-I': 'Marketing Management-I',
+  'SMOD': 'Spreadsheet Modelling',
+  'FAC':  'Financial Accounting and Control',
+  'ME-I': 'Microeconomics for Managers',
+  'IPS':  'Introduction to Probability and Statistics',
+};
+
+/* One-off session instructions. `match` picks the entry on that date; only the
+   first match gets the note, so a two-session block reads once, not twice. */
+const MAIL_NOTES = [
+  { date:'2026-08-13', match:/^OB-I/,
+    note:'New Auditorium (Sports Complex), not E-201. Doors 2:15 pm · no entry after 2:33 pm · ' +
+         'attendance photo at 2:33 and an allotted seat left empty is marked absent. ' +
+         'Sit only in your allotted seat — letter = section, number = your serial on the attendance sheet. ' +
+         'Movie starts 2:35 pm, quiz straight after.' },
+];
+
+function applyMail(tt){
+  if(!tt || !Array.isArray(tt.entries)) return tt;
+  const plus3 = t => { const [h,m] = t.split(':').map(Number); return String((h+3)%24).padStart(2,'0') + ':' + String(m).padStart(2,'0'); };
+
+  Object.keys(MAIL_EXAMS).forEach(date => {
+    /* Only the placeholder is replaced. Once the sheet names the papers
+       itself the titles stop being a bare "End Term" and this does nothing. */
+    const ph = tt.entries.filter(e => e.date === date && /^end[\s-]*term$/i.test(String(e.title).trim()));
+    if(!ph.length) return;
+    const day = ph[0].day;
+    tt.entries = tt.entries.filter(e => ph.indexOf(e) < 0);
+    MAIL_EXAMS[date].forEach(([code, start]) => {
+      const end = plus3(start);
+      tt.entries.push({
+        date, day, start, end,
+        /* Just "End Term" — the paper is already spelled out on the line
+           below it, from MAIL_COURSES via courseName(). */
+        title: 'End Term',
+        room: 'Venue TBA', code, type: 'Exam',
+        time: label12(start) + ' - ' + label12(end),
+        note: EXAM_NOTE,
+      });
+    });
+  });
+
+  MAIL_NOTES.forEach(n => {
+    const hit = tt.entries.find(e => e.date === n.date && n.match.test(String(e.title)) && !e.note);
+    if(hit) hit.note = n.note;
+  });
+
+  tt.courses = tt.courses || {};
+  /* Only fill in a code the sheet already uses, and only where it is still
+     mapped to itself — a sheet that starts giving real titles keeps its own. */
+  Object.keys(MAIL_COURSES).forEach(c => { if(tt.courses[c] === c) tt.courses[c] = MAIL_COURSES[c]; });
+
+  tt.entries.sort((a,b) => a.date < b.date ? -1 : a.date > b.date ? 1 : a.start.localeCompare(b.start));
+  return tt;
 }
 
 /* The footnote under each of the two sheet-backed tabs. Being able to tell
@@ -808,19 +977,57 @@ function applyUser(){
 function inheritedKey(){ return isAdmin() ? 'case-comp-tracker-v3' : null; }
 function inheritedRow(){ return isAdmin() ? (CFG.ROW_ID || 'me') : null; }
 
+/* Errors arrive here from three different places — the browser (offline, DNS),
+   PostgREST (HTTP codes), and our own Postgres functions (`raise exception`,
+   which are already written for humans). Only the third kind is worth showing
+   verbatim; the other two are noise like "Failed to fetch" or "HTTP 401" that
+   made people think they had broken something or lost their progress. Every
+   branch has to end with a next step, because a dead end is what sends
+   somebody off to create a duplicate account. */
+function friendlyErr(e){
+  const raw = String((e && e.message) || e || '');
+  if(!navigator.onLine || /failed to fetch|networkerror|load failed|timed out|aborted/i.test(raw))
+    return { head:'No connection right now',
+             body:'The sign-in check could not reach the server. Nothing was lost — try again once you have signal or Wi-Fi.' };
+  if(/do not match/i.test(raw))
+    return { head:'That number and PIN do not match',
+             body:'Check the user number first — it is the small number you were given at signup, not your roll number. Wrong tries do not lock you out, so try again.' };
+  if(/no longer exists/i.test(raw))
+    return { head:'That account was removed',
+             body:'Ask user 1 whether this was meant to happen. You can create a new account from the first screen.' };
+  if(/must be exactly 6 digits|enter your name/i.test(raw))
+    return { head:'Check the form', body:raw };
+  if(/\b(50\d|429)\b|upstream|unavailable|timeout/i.test(raw))
+    return { head:'The server is having a moment',
+             body:'This is on the server, not on you. Wait a minute and try again — your progress is untouched.' };
+  if(/\b(401|403|apikey|jwt)\b/i.test(raw))
+    return { head:'The app could not talk to the database',
+             body:'This is a setup problem, not something you did. Tell user 1 and mention this message: ' + raw };
+  return { head:'Something went wrong', body:raw + ' — try again, and if it keeps happening tell user 1 rather than making a second account.' };
+}
+
 function gateErr(msg){
   const el = document.getElementById('gErr');
-  el.className = 'gerr' + (msg ? ' on' : '');
-  el.textContent = msg || '';
+  const m = !msg ? null : (typeof msg === 'string' ? { head:'', body:msg } : msg);
+  el.className = 'gerr' + (m ? ' on' : '');
+  el.innerHTML = m ? ((m.head ? '<b>' + esc(m.head) + '</b>' : '') + esc(m.body)) : '';
+  if(m) try { el.scrollIntoView({ block:'nearest' }); } catch(e){}
 }
+
+const GATE_FORMS = ['formPick','formIn','formNew','formDone','formHelp'];
+const GATE_COPY = {
+  formPick: ['Case Comp Tracker', 'Shared deadlines for the batch. Your own ticks.'],
+  formIn:   ['Welcome back',      'Your user number and your 6-digit PIN.'],
+  formNew:  ['Set up your login', 'Two things and you are in. No email, no password.'],
+  formDone: ['You are in',        'One thing to do before you go.'],
+  formHelp: ['If you are stuck',  ''],
+};
 function gateForm(which){
-  ['formIn','formNew','formDone'].forEach(id =>
-    document.getElementById(id).classList.toggle('on', id === which));
+  GATE_FORMS.forEach(id => document.getElementById(id).classList.toggle('on', id === which));
   gateErr('');
-  const t = document.getElementById('gTitle'), s = document.getElementById('gSub');
-  if(which === 'formIn'){  t.textContent = 'Case Comp Tracker'; s.textContent = 'Sign in with your user number and PIN.'; }
-  if(which === 'formNew'){ t.textContent = 'New here'; s.textContent = 'Pick a PIN and you get a user number. Your progress is yours alone; the competition list is the same for everyone.'; }
-  if(which === 'formDone'){ t.textContent = 'You are in'; s.textContent = ''; }
+  const [title, sub] = GATE_COPY[which] || GATE_COPY.formPick;
+  document.getElementById('gTitle').textContent = title;
+  document.getElementById('gSub').textContent = sub;
 }
 
 /* Resolves once there is a signed-in user. Rejects nothing — a failed attempt
@@ -841,8 +1048,34 @@ function gate(){
   }
 
   document.body.classList.add('locked');
-  gateForm('formIn');
-  document.getElementById('inSerial').focus();
+  gateForm('formPick');
+
+  /* Offline is worth saying before the person types a PIN and watches it fail,
+     not after. */
+  const net = ()=> document.body.classList.toggle('offline', !navigator.onLine);
+  net();
+  addEventListener('online', net); addEventListener('offline', net);
+
+  /* A masked 6-digit field is where most of the wrong-PIN attempts came from,
+     so let people look at what they typed. */
+  document.querySelectorAll('.peek').forEach(b => {
+    b.onclick = ()=>{
+      const i = document.getElementById(b.dataset.peek);
+      const show = i.type === 'password';
+      i.type = show ? 'text' : 'password';
+      b.textContent = show ? 'Hide' : 'Show';
+      i.focus();
+    };
+  });
+  document.querySelectorAll('[data-go]').forEach(a => { a.onclick = ()=> gateForm(a.dataset.go); });
+
+  /* Digits only, and the PIN submits nothing until it is six of them —
+     catching that here rather than at the server keeps a typo from reading as
+     a rejected login. */
+  ['inSerial','inPin','nwPin','nwPin2'].forEach(id => {
+    const el = document.getElementById(id);
+    el.addEventListener('input', ()=>{ el.value = el.value.replace(/\D/g,''); });
+  });
 
   return new Promise(resolve => {
     const enter = a => {
@@ -855,24 +1088,28 @@ function gate(){
       b.disabled = on; b.textContent = on ? 'Just a second…' : label;
     };
 
-    document.getElementById('toNew').onclick = ()=>{ gateForm('formNew'); document.getElementById('nwName').focus(); };
-    document.getElementById('toIn').onclick  = ()=>{ gateForm('formIn');  document.getElementById('inSerial').focus(); };
+    document.getElementById('pickNew').onclick = ()=>{ gateForm('formNew'); document.getElementById('nwName').focus(); };
+    document.getElementById('pickIn').onclick  = ()=>{ gateForm('formIn');  document.getElementById('inSerial').focus(); };
+    document.getElementById('toHelp').onclick  = ()=>  gateForm('formHelp');
 
     document.getElementById('formIn').onsubmit = async ev => {
       ev.preventDefault();
       const f = ev.currentTarget;
       const serial = parseInt(document.getElementById('inSerial').value, 10);
       const pin = document.getElementById('inPin').value.trim();
-      if(!(serial > 0)) return gateErr('Enter your user number.');
-      if(!/^\d{6}$/.test(pin)) return gateErr('The PIN is exactly 6 digits.');
+      if(!(serial > 0)) return gateErr({ head:'Which number?', body:'Type the user number you were given when you signed up. If you have never signed up, go back and choose "I\'m new here".' });
+      if(!/^\d{6}$/.test(pin)) return gateErr({ head:'The PIN is exactly 6 digits', body:'You have typed ' + pin.length + '. Tap Show if you want to see it.' });
       gateErr(''); busy(f, true, 'Sign in');
       try {
         const u = await rpc('tracker_login', { p_serial: serial, p_pin: pin });
         enter({ serial: u.serial, name: u.name, token: u.token });
       } catch(e){
         busy(f, false, 'Sign in');
-        gateErr(String(e.message || e));
-        document.getElementById('inPin').value = '';
+        const m = friendlyErr(e);
+        gateErr(m);
+        /* Clear the PIN only when the PIN is what was wrong. Wiping it after a
+           dropped connection just makes the retry worse. */
+        if(/do not match/i.test(String(e.message || e))) document.getElementById('inPin').value = '';
       }
     };
 
@@ -882,19 +1119,24 @@ function gate(){
       const name = document.getElementById('nwName').value.trim();
       const pin  = document.getElementById('nwPin').value.trim();
       const pin2 = document.getElementById('nwPin2').value.trim();
-      if(name.length < 2) return gateErr('Enter your name.');
-      if(!/^\d{6}$/.test(pin)) return gateErr('The PIN must be exactly 6 digits.');
-      if(pin !== pin2) return gateErr('The two PINs do not match.');
+      if(name.length < 2) return gateErr({ head:'Name, please', body:'Type your name so the batch list is readable.' });
+      if(!/^\d{6}$/.test(pin)) return gateErr({ head:'The PIN must be exactly 6 digits', body:'You have typed ' + pin.length + '. Tap Show if you want to see it.' });
+      if(pin !== pin2) return gateErr({ head:'The two PINs do not match', body:'Tap Show on both boxes and check them against each other.' });
       gateErr(''); busy(f, true, 'Create my account');
       try {
         const u = await rpc('tracker_signup', { p_name: name, p_pin: pin });
         busy(f, false, 'Create my account');
         document.getElementById('dnSerial').textContent = u.serial;
         gateForm('formDone');
+        document.getElementById('dnCopy').onclick = ()=>{
+          const b = document.getElementById('dnCopy');
+          try { navigator.clipboard.writeText(String(u.serial)); b.textContent = 'Copied ✓'; }
+          catch(err){ b.textContent = 'Write it down: ' + u.serial; }
+        };
         document.getElementById('dnGo').onclick = ()=> enter({ serial: u.serial, name: u.name, token: u.token });
       } catch(e){
         busy(f, false, 'Create my account');
-        gateErr(String(e.message || e));
+        gateErr(friendlyErr(e));
       }
     };
   });
@@ -1405,7 +1647,8 @@ function renderTT(){
         return '<div class="cls ' + kind + (past?' past':'') + (i===nextIdx?' next':'') + '">' +
           '<div class="tcol"><div class="t1">' + hhmmLabel(e.start) + '</div><div class="t2">' + hhmmLabel(e.end) + '</div></div>' +
           '<div class="bcol"><div class="cname">' + esc(e.title) + '</div>' +
-          '<div class="csub">' + chip + '<span>' + esc(courseName(e.code)) + '</span><span>· ' + esc(e.room) + '</span></div></div></div>';
+          '<div class="csub">' + chip + '<span>' + esc(courseName(e.code)) + '</span><span>· ' + esc(e.room) + '</span></div>' +
+          (e.note ? '<div class="cnote">' + esc(e.note) + '</div>' : '') + '</div></div>';
       }).join('')
     : '<div class="empty">No classes on ' + midDate(fromYmd(ttSel)) + '.<br>Free day.</div>';
 
