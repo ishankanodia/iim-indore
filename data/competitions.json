@@ -1171,5 +1171,68 @@
     "t": "<b>National Final Round</b> — top 5 campus winners present to the jury at ReNew's head office in Gurgaon. ₹5L winner, ₹3L runner-up, plus PPI opportunities"
    }
   ]
+ },
+ {
+  "id": "talentwood",
+  "name": "Talentwood Season 5",
+  "org": "Saregama · Teams 3–4 · ₹1.75L + PPI",
+  "ppra": true,
+  "reg": {
+   "label": "Register on saregama.com",
+   "url": "https://www.saregama.com/talentwood?utm_source=campuses&utm_medium=offline&utm_campaign=talentwood&utm_content=campus_promotion"
+  },
+  "pproof": {
+   "label": "PPRA — proof form",
+   "url": "https://forms.gle/9ZyfPb3aXen6nR686"
+  },
+  "deadline": "2026-08-13T23:59:00+05:30",
+  "deadlineLabel": "Register · 13 Aug 11:59 PM · MANDATORY",
+  "stages": [
+   "Register",
+   "Quiz",
+   "One Slide Solution",
+   "Virtual Round",
+   "Grand Finale · Mumbai"
+  ],
+  "stageStarts": {
+   "1": {
+    "on": null,
+    "short": "Quiz"
+   },
+   "2": {
+    "on": null,
+    "short": "One slide solution"
+   },
+   "3": {
+    "on": null,
+    "short": "Virtual round"
+   },
+   "4": {
+    "on": null,
+    "short": "Finale · Mumbai"
+   }
+  },
+  "timeline": [
+   {
+    "d": "6–13 Aug",
+    "t": "<b>Registration</b> — opened 6 Aug 1:00 PM, closes 13 Aug 11:59 PM. <b>Mandatory for the batch.</b> Teams of 3–4, 1st-yr / 2nd-yr / mixed; no cap on teams per college, no fee, one team per person. <b>No team changes after registering.</b> The email and phone used at registration are the only channel for all further communication"
+   },
+   {
+    "d": "TBA",
+    "t": "<b>Round 1 · Aao Quiz Kare</b> — 20-min MCQ on aptitude + domain knowledge. Ranking is by correctness; ties broken by who finishes faster"
+   },
+   {
+    "d": "TBA",
+    "t": "<b>Round 2 · One Slide Solution</b> — two case studies released to qualifiers; pick one and submit a PPT/PDF of min 1, max 2 slides (no intro or thank-you slides), under 5 MB. Named Case study A or B_Team name_College name_Team Leader First Name. Edits allowed until the deadline"
+   },
+   {
+    "d": "TBA",
+    "t": "<b>Round 3 · Virtual Round</b> — dates to be declared"
+   },
+   {
+    "d": "Oct 2026",
+    "t": "<b>Grand Finale</b> — Saregama HQ, Mumbai. ₹1L / ₹50K / ₹25K, plus interaction with Saregama senior leadership, certificates and goodies. Finalists get a shot at a PPI — summer internship for 1st years, final placement for 2nd years"
+   }
+  ]
  }
 ]

@@ -52,6 +52,18 @@
   .sync.warn { background: var(--amber-soft); color: var(--amber); }
   .sync.err  { background: var(--red-soft);   color: var(--red); }
 
+  /* One-time accuracy notice. Shown to everybody once, dismissed per device —
+     signup shows the same words on the "you're in" panel, this is what catches
+     the people who signed up before it existed. */
+  #notice { display: none; margin-top: 14px; background: var(--amber-soft); border-radius: 12px; padding: 13px 14px; }
+  #notice.on { display: block; }
+  #notice p { font-size: 12.5px; line-height: 1.55; color: var(--ink); }
+  #notice b { font-weight: 700; }
+  #noticeOk {
+    margin-top: 10px; border: none; font-family: inherit; font-size: 12px; font-weight: 700;
+    background: var(--ink); color: #fff; padding: 8px 14px; border-radius: 8px; cursor: pointer;
+  }
+
   /* ---------- bottom tab bar ---------- */
   nav.tabs {
     position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
@@ -384,7 +396,16 @@
       <div class="gok">Your user number is<br><b id="dnSerial">–</b></div>
       <button class="ghostbig" id="dnCopy" type="button">Copy my number</button>
       <div class="warn">Save this now — a screenshot, a note, anywhere. You need this number plus your PIN every time you sign in on a new device, and it cannot be looked up for you.</div>
-      <button class="prim" id="dnGo" type="button">I've saved it — open my tracker</button>
+      <div class="explain">
+        <b>One more thing — this is a helper, not the official word.</b> Every
+        deadline, round date and rule here is typed in by hand from placecomm
+        mails, portal pages and the institute's sheets, so it can be wrong,
+        incomplete or out of date. The mail in your inbox and the competition's
+        own portal are the real source. <b>Check them before you rely on
+        anything here</b>, and please don't miss a deadline because this app
+        said something different.
+      </div>
+      <button class="prim" id="dnGo" type="button">Understood — open my tracker</button>
     </div>
 
     <div class="gform" id="formHelp">
@@ -409,6 +430,14 @@
     <div class="kicker">IIM Indore · PGP 2026–28</div>
     <h1 id="pageTitle">Case Competitions</h1>
     <div class="today"><span id="today"></span><span class="sync" id="syncPill">…</span><button class="who" id="whoPill" hidden></button></div>
+    <div id="notice">
+      <p><b>This is a helper, not the official word.</b> Every deadline, round
+      date and rule here is typed in by hand from placecomm mails, portal pages
+      and the institute's sheets, so it can be wrong, incomplete or out of date.
+      The mail in your inbox and the competition's own portal are the real
+      source — <b>check them before you rely on anything here.</b></p>
+      <button id="noticeOk" type="button">Got it</button>
+    </div>
   </header>
 </div>
 
@@ -1811,6 +1840,24 @@ document.getElementById('ttPrev').onclick   = ()=>{ ttSel = ymd(addDays(fromYmd(
 document.getElementById('ttNext').onclick   = ()=>{ ttSel = ymd(addDays(fromYmd(ttSel),  7)); renderTT(); };
 document.getElementById('ttLbl').onclick    = ()=>{ ttSel = ymd(TODAY); renderTT(); };
 
+/* The accuracy notice. Dismissal is per-device localStorage, deliberately not
+   part of `state` — it is not progress, it must not sync, and a new phone
+   should show it again. Bump NOTICE_KEY's version if the wording ever changes
+   materially enough that everyone should re-read it. */
+const NOTICE_KEY = 'tracker-notice-v1';
+function showNotice(){
+  const el = document.getElementById('notice');
+  if(!el) return;
+  let seen = false;
+  try { seen = localStorage.getItem(NOTICE_KEY) === '1'; } catch(e){}
+  if(seen) return;
+  el.classList.add('on');
+  document.getElementById('noticeOk').onclick = ()=>{
+    el.classList.remove('on');
+    try { localStorage.setItem(NOTICE_KEY, '1'); } catch(e){}
+  };
+}
+
 async function boot(){
   try { await loadData(); }
   catch(e){
@@ -1830,6 +1877,7 @@ async function boot(){
   writeLocal();
   try { const t = localStorage.getItem('tracker-tab'); if(t && TITLES[t]) tab = t; } catch(e){}
   showTab(tab);
+  showNotice();
 
   /* A tab left open across IST midnight would otherwise keep showing yesterday.
      Also re-renders every minute so "on right now" and "next up" stay honest. */
