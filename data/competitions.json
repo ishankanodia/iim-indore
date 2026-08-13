@@ -1234,5 +1234,68 @@
     "t": "<b>Grand Finale</b> — Saregama HQ, Mumbai. ₹1L / ₹50K / ₹25K, plus interaction with Saregama senior leadership, certificates and goodies. Finalists get a shot at a PPI — summer internship for 1st years, final placement for 2nd years"
    }
   ]
+ },
+ {
+  "id": "daburverve",
+  "name": "Dabur Verve Season 5",
+  "org": "Dabur · Teams 2–3 · ₹9L + PPO",
+  "ppra": true,
+  "reg": {
+   "label": "Register on Mettl",
+   "url": "https://xathon.mettl.com/event/daburVerve2026"
+  },
+  "pproof": {
+   "label": "PPRA — Google Form",
+   "url": "https://docs.google.com/forms/d/e/1FAIpQLSfB95Mqq5KVnt7uPbsF0U-5BhaRBvOCvjHYrHxVD_Fokkr4sg/viewform"
+  },
+  "deadline": "2026-08-22T23:59:00+05:30",
+  "deadlineLabel": "Register · 22 Aug · MANDATORY",
+  "stages": [
+   "Register",
+   "Round 1 · The Big Case",
+   "UGC Challenge",
+   "Round 2 · Category Caselets",
+   "Finale · The Pitch"
+  ],
+  "stageStarts": {
+   "1": {
+    "on": "2026-08-23T00:00:00+05:30",
+    "short": "Round 1 test"
+   },
+   "2": {
+    "on": "2026-08-25T00:00:00+05:30",
+    "short": "UGC challenge"
+   },
+   "3": {
+    "on": "2026-08-29T00:00:00+05:30",
+    "short": "Caselets"
+   },
+   "4": {
+    "on": "2026-09-12T00:00:00+05:30",
+    "short": "Finale"
+   }
+  },
+  "timeline": [
+   {
+    "d": "10–22 Aug",
+    "t": "<b>Registrations</b> — teams of 2–3 from the same campus, free. <b>Mandatory for the batch</b> per placecomm. First-year flagship MBA/PGDM only; IIM Indore is on the list of 65 eligible campuses"
+   },
+   {
+    "d": "23 Aug",
+    "t": "<b>Round 1 · The Big Case</b> — timed, structured online business assessment. <b>One representative per team only.</b> Decides who moves ahead"
+   },
+   {
+    "d": "25–28 Aug",
+    "t": "<b>UGC Challenge · #FlipTheDaburLabel</b> — creative engagement round on originality and brand understanding. Follow the guidelines shared for the challenge"
+   },
+   {
+    "d": "29 Aug–6 Sep",
+    "t": "<b>Round 2 · Category Caselets</b> — shortlisted teams work brand-focused caselets. Clear analysis and practical recommendations weigh most"
+   },
+   {
+    "d": "12–13 Sep",
+    "t": "<b>Finale · The Pitch</b> — live presentation to Dabur leadership. ₹4.5L winner (+ PPO for the summer internship), ₹3L runner-up, ₹1.5L second runner-up. Certificates for all participants"
+   }
+  ]
  }
 ]
