@@ -52,18 +52,31 @@
   .sync.warn { background: var(--amber-soft); color: var(--amber); }
   .sync.err  { background: var(--red-soft);   color: var(--red); }
 
-  /* One-time accuracy notice. Shown to everybody once, dismissed per device.
-     Signup has its own `formTerms` panel saying the same thing and marks this
-     seen on the way through, so this is what catches the people who signed up
-     before it existed and anyone opening on a second device. */
-  #notice { display: none; margin-top: 14px; background: var(--amber-soft); border-radius: 12px; padding: 13px 14px; }
-  #notice.on { display: block; }
-  #notice p { font-size: 12.5px; line-height: 1.55; color: var(--ink); }
-  #notice b { font-weight: 700; }
-  #noticeOk {
-    margin-top: 10px; border: none; font-family: inherit; font-size: 12px; font-weight: 700;
-    background: var(--ink); color: #fff; padding: 8px 14px; border-radius: 8px; cursor: pointer;
+  /* One-time accuracy disclaimer, centred over the app and dismissed per
+     device. It is a modal because the header banner it replaced was one more
+     box on a screen of boxes and got scrolled past. Nothing behind it is
+     usable until Okay — that is the point, not a side effect. */
+  #disc {
+    position: fixed; inset: 0; z-index: 200; display: flex;
+    align-items: center; justify-content: center;
+    padding: calc(env(safe-area-inset-top) + 18px) 16px calc(env(safe-area-inset-bottom) + 18px);
+    background: rgba(24,22,20,.55); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
+    animation: discIn .18s ease-out;
   }
+  #disc[hidden] { display: none; }
+  @keyframes discIn { from { opacity: 0 } to { opacity: 1 } }
+  .disc-card {
+    width: 100%; max-width: 380px; max-height: 100%; overflow-y: auto;
+    background: var(--paper); border-radius: 16px; padding: 18px;
+    box-shadow: 0 18px 50px rgba(0,0,0,.3);
+  }
+  .disc-body { background: var(--amber-soft); border-radius: 12px; padding: 14px 15px; margin-bottom: 12px; }
+  .disc-body p { font-size: 12.5px; line-height: 1.6; color: var(--ink); }
+  .disc-body .lede { font-size: 16px; line-height: 1.35; font-weight: 700; margin-bottom: 9px; }
+  .disc-body ul { margin: 10px 0 0; padding-left: 17px; }
+  .disc-body li { font-size: 12.5px; line-height: 1.55; color: var(--ink); margin-bottom: 7px; }
+  .disc-body b { font-weight: 700; }
+  .disc-body .fine { margin-top: 11px; font-weight: 700; }
 
   /* ---------- bottom tab bar ---------- */
   nav.tabs {
@@ -295,15 +308,6 @@
   .explain { font-size: 12.5px; line-height: 1.6; color: var(--muted); background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 12px; margin-top: 16px; }
   .explain b { color: var(--ink); }
   .warn { font-size: 12px; line-height: 1.5; color: var(--ink); background: var(--amber-soft); border-radius: 9px; padding: 10px 11px; margin: 12px 0; }
-  /* The disclaimer gets its own panel after the number, because stacked under
-     it people read the number and tapped straight past the words. */
-  .disc { background: var(--amber-soft); border-radius: 12px; padding: 14px 15px; margin-bottom: 4px; }
-  .disc p { font-size: 12.5px; line-height: 1.6; color: var(--ink); }
-  .disc .lede { font-size: 15px; line-height: 1.4; font-weight: 700; margin-bottom: 9px; }
-  .disc ul { margin: 10px 0 0; padding-left: 17px; }
-  .disc li { font-size: 12.5px; line-height: 1.55; color: var(--ink); margin-bottom: 7px; }
-  .disc b { font-weight: 700; }
-  .disc .fine { margin-top: 11px; font-weight: 700; }
   .pinwrap { position: relative; }
   .peek {
     position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
@@ -406,27 +410,7 @@
       <div class="gok">Your user number is<br><b id="dnSerial">–</b></div>
       <button class="ghostbig" id="dnCopy" type="button">Copy my number</button>
       <div class="warn">Save this now — a screenshot, a note, anywhere. You need this number plus your PIN every time you sign in on a new device, and it cannot be looked up for you.</div>
-      <button class="prim" id="dnNext" type="button">I've saved it — continue</button>
-    </div>
-
-    <div class="gform" id="formTerms">
-      <div class="disc">
-        <p class="lede">Every date in this app was typed in by hand.</p>
-        <p>Deadlines, round dates and rules are copied from placecomm mails,
-        portal pages and the institute's sheets by one student. They can be
-        wrong, they can be stale, and a round can move after it was entered
-        here.</p>
-        <ul>
-          <li><b>The mail and the portal are the real source.</b> This app is
-          not, and it is nobody's official channel.</li>
-          <li><b>Check before you rely on anything.</b> Especially the last day
-          to register and anything you have to submit.</li>
-          <li><b>A missed deadline is still yours.</b> Nobody here can get you
-          back into a closed competition.</li>
-        </ul>
-        <p class="fine">Use it to keep track. Don't use it as your only alarm.</p>
-      </div>
-      <button class="prim" id="dnGo" type="button">Okay, I understand</button>
+      <button class="prim" id="dnGo" type="button">I've saved it — continue</button>
     </div>
 
     <div class="gform" id="formHelp">
@@ -451,14 +435,6 @@
     <div class="kicker">IIM Indore · PGP 2026–28</div>
     <h1 id="pageTitle">Case Competitions</h1>
     <div class="today"><span id="today"></span><span class="sync" id="syncPill">…</span><button class="who" id="whoPill" hidden></button></div>
-    <div id="notice">
-      <p><b>This is a helper, not the official word.</b> Every deadline, round
-      date and rule here is typed in by hand from placecomm mails, portal pages
-      and the institute's sheets, so it can be wrong, incomplete or out of date.
-      The mail in your inbox and the competition's own portal are the real
-      source — <b>check them before you rely on anything here.</b></p>
-      <button id="noticeOk" type="button">Got it</button>
-    </div>
   </header>
 </div>
 
@@ -538,6 +514,32 @@
     <div id="usersBody"></div>
     <div class="fineprint" id="usersNote"></div>
   </section>
+</div>
+
+<!-- ================= ACCURACY DISCLAIMER ================= -->
+<!-- Shown over the app once per device, after the gate. Modal on purpose: the
+     header banner it replaced sat above a screen full of deadlines and lost
+     every time. -->
+<div id="disc" hidden>
+  <div class="disc-card" role="dialog" aria-modal="true" aria-labelledby="discHead">
+    <div class="disc-body">
+      <p class="lede" id="discHead">Every date in this app was typed in by hand.</p>
+      <p>Deadlines, round dates and rules are copied from placecomm mails,
+      portal pages and the institute's sheets by one student. They can be
+      wrong, they can be stale, and a round can move after it was entered
+      here.</p>
+      <ul>
+        <li><b>The mail and the portal are the real source.</b> This app is
+        not, and it is nobody's official channel.</li>
+        <li><b>Check before you rely on anything.</b> Especially the last day
+        to register and anything you have to submit.</li>
+        <li><b>A missed deadline is still yours.</b> Nobody here can get you
+        back into a closed competition.</li>
+      </ul>
+      <p class="fine">Use it to keep track. Don't use it as your only alarm.</p>
+    </div>
+    <button class="prim" id="discOk" type="button">Okay, I understand</button>
+  </div>
 </div>
 
 <script src="./config.js"></script>
@@ -1064,14 +1066,13 @@ function gateErr(msg){
   if(m) try { el.scrollIntoView({ block:'nearest' }); } catch(e){}
 }
 
-const GATE_FORMS = ['formPick','formIn','formNew','formDone','formTerms','formHelp'];
+const GATE_FORMS = ['formPick','formIn','formNew','formDone','formHelp'];
 const GATE_COPY = {
-  formPick:  ['Case Comp Tracker', 'Shared deadlines for the batch. Your own ticks.'],
-  formIn:    ['Welcome back',      'Your user number and your 6-digit PIN.'],
-  formNew:   ['Set up your login', 'Two things and you are in. No email, no password.'],
-  formDone:  ['You are in',        'Write this number down before you go on.'],
-  formTerms: ['Before you start',  'Read this one. It is the important bit.'],
-  formHelp:  ['If you are stuck',  ''],
+  formPick: ['Case Comp Tracker', 'Shared deadlines for the batch. Your own ticks.'],
+  formIn:   ['Welcome back',      'Your user number and your 6-digit PIN.'],
+  formNew:  ['Set up your login', 'Two things and you are in. No email, no password.'],
+  formDone: ['You are in',        'Write this number down before you go on.'],
+  formHelp: ['If you are stuck',  ''],
 };
 function gateForm(which){
   GATE_FORMS.forEach(id => document.getElementById(id).classList.toggle('on', id === which));
@@ -1184,13 +1185,7 @@ function gate(){
           try { navigator.clipboard.writeText(String(u.serial)); b.textContent = 'Copied ✓'; }
           catch(err){ b.textContent = 'Write it down: ' + u.serial; }
         };
-        document.getElementById('dnNext').onclick = ()=> gateForm('formTerms');
-        document.getElementById('dnGo').onclick = ()=>{
-          /* They have just read it here, so don't greet them with the same
-             words again as the in-app banner. */
-          try { localStorage.setItem(NOTICE_KEY, '1'); } catch(err){}
-          enter({ serial: u.serial, name: u.name, token: u.token });
-        };
+        document.getElementById('dnGo').onclick = ()=> enter({ serial: u.serial, name: u.name, token: u.token });
       } catch(e){
         busy(f, false, 'Create my account');
         gateErr(friendlyErr(e));
@@ -1868,22 +1863,28 @@ document.getElementById('ttPrev').onclick   = ()=>{ ttSel = ymd(addDays(fromYmd(
 document.getElementById('ttNext').onclick   = ()=>{ ttSel = ymd(addDays(fromYmd(ttSel),  7)); renderTT(); };
 document.getElementById('ttLbl').onclick    = ()=>{ ttSel = ymd(TODAY); renderTT(); };
 
-/* The accuracy notice. Dismissal is per-device localStorage, deliberately not
-   part of `state` — it is not progress, it must not sync, and a new phone
+/* The accuracy disclaimer. Dismissal is per-device localStorage, deliberately
+   not part of `state` — it is not progress, it must not sync, and a new phone
    should show it again. Bump NOTICE_KEY's version if the wording ever changes
-   materially enough that everyone should re-read it. */
+   materially enough that everyone should re-read it.
+
+   It opens after the gate, over a rendered app, and there is no dismiss but
+   the button: no backdrop click, no Escape. Both of those exist to let people
+   out of a dialog quickly, which is the opposite of what this one is for. */
 const NOTICE_KEY = 'tracker-notice-v1';
 function showNotice(){
-  const el = document.getElementById('notice');
+  const el = document.getElementById('disc');
   if(!el) return;
   let seen = false;
   try { seen = localStorage.getItem(NOTICE_KEY) === '1'; } catch(e){}
   if(seen) return;
-  el.classList.add('on');
-  document.getElementById('noticeOk').onclick = ()=>{
-    el.classList.remove('on');
+  el.hidden = false;
+  const ok = document.getElementById('discOk');
+  ok.onclick = ()=>{
+    el.hidden = true;
     try { localStorage.setItem(NOTICE_KEY, '1'); } catch(e){}
   };
+  try { ok.focus({ preventScroll: true }); } catch(e){}
 }
 
 async function boot(){
