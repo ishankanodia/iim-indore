@@ -52,9 +52,10 @@
   .sync.warn { background: var(--amber-soft); color: var(--amber); }
   .sync.err  { background: var(--red-soft);   color: var(--red); }
 
-  /* One-time accuracy notice. Shown to everybody once, dismissed per device —
-     signup shows the same words on the "you're in" panel, this is what catches
-     the people who signed up before it existed. */
+  /* One-time accuracy notice. Shown to everybody once, dismissed per device.
+     Signup has its own `formTerms` panel saying the same thing and marks this
+     seen on the way through, so this is what catches the people who signed up
+     before it existed and anyone opening on a second device. */
   #notice { display: none; margin-top: 14px; background: var(--amber-soft); border-radius: 12px; padding: 13px 14px; }
   #notice.on { display: block; }
   #notice p { font-size: 12.5px; line-height: 1.55; color: var(--ink); }
@@ -294,6 +295,15 @@
   .explain { font-size: 12.5px; line-height: 1.6; color: var(--muted); background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 12px; margin-top: 16px; }
   .explain b { color: var(--ink); }
   .warn { font-size: 12px; line-height: 1.5; color: var(--ink); background: var(--amber-soft); border-radius: 9px; padding: 10px 11px; margin: 12px 0; }
+  /* The disclaimer gets its own panel after the number, because stacked under
+     it people read the number and tapped straight past the words. */
+  .disc { background: var(--amber-soft); border-radius: 12px; padding: 14px 15px; margin-bottom: 4px; }
+  .disc p { font-size: 12.5px; line-height: 1.6; color: var(--ink); }
+  .disc .lede { font-size: 15px; line-height: 1.4; font-weight: 700; margin-bottom: 9px; }
+  .disc ul { margin: 10px 0 0; padding-left: 17px; }
+  .disc li { font-size: 12.5px; line-height: 1.55; color: var(--ink); margin-bottom: 7px; }
+  .disc b { font-weight: 700; }
+  .disc .fine { margin-top: 11px; font-weight: 700; }
   .pinwrap { position: relative; }
   .peek {
     position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
@@ -396,16 +406,27 @@
       <div class="gok">Your user number is<br><b id="dnSerial">–</b></div>
       <button class="ghostbig" id="dnCopy" type="button">Copy my number</button>
       <div class="warn">Save this now — a screenshot, a note, anywhere. You need this number plus your PIN every time you sign in on a new device, and it cannot be looked up for you.</div>
-      <div class="explain">
-        <b>One more thing — this is a helper, not the official word.</b> Every
-        deadline, round date and rule here is typed in by hand from placecomm
-        mails, portal pages and the institute's sheets, so it can be wrong,
-        incomplete or out of date. The mail in your inbox and the competition's
-        own portal are the real source. <b>Check them before you rely on
-        anything here</b>, and please don't miss a deadline because this app
-        said something different.
+      <button class="prim" id="dnNext" type="button">I've saved it — continue</button>
+    </div>
+
+    <div class="gform" id="formTerms">
+      <div class="disc">
+        <p class="lede">Every date in this app was typed in by hand.</p>
+        <p>Deadlines, round dates and rules are copied from placecomm mails,
+        portal pages and the institute's sheets by one student. They can be
+        wrong, they can be stale, and a round can move after it was entered
+        here.</p>
+        <ul>
+          <li><b>The mail and the portal are the real source.</b> This app is
+          not, and it is nobody's official channel.</li>
+          <li><b>Check before you rely on anything.</b> Especially the last day
+          to register and anything you have to submit.</li>
+          <li><b>A missed deadline is still yours.</b> Nobody here can get you
+          back into a closed competition.</li>
+        </ul>
+        <p class="fine">Use it to keep track. Don't use it as your only alarm.</p>
       </div>
-      <button class="prim" id="dnGo" type="button">Understood — open my tracker</button>
+      <button class="prim" id="dnGo" type="button">Okay, I understand</button>
     </div>
 
     <div class="gform" id="formHelp">
@@ -1043,13 +1064,14 @@ function gateErr(msg){
   if(m) try { el.scrollIntoView({ block:'nearest' }); } catch(e){}
 }
 
-const GATE_FORMS = ['formPick','formIn','formNew','formDone','formHelp'];
+const GATE_FORMS = ['formPick','formIn','formNew','formDone','formTerms','formHelp'];
 const GATE_COPY = {
-  formPick: ['Case Comp Tracker', 'Shared deadlines for the batch. Your own ticks.'],
-  formIn:   ['Welcome back',      'Your user number and your 6-digit PIN.'],
-  formNew:  ['Set up your login', 'Two things and you are in. No email, no password.'],
-  formDone: ['You are in',        'One thing to do before you go.'],
-  formHelp: ['If you are stuck',  ''],
+  formPick:  ['Case Comp Tracker', 'Shared deadlines for the batch. Your own ticks.'],
+  formIn:    ['Welcome back',      'Your user number and your 6-digit PIN.'],
+  formNew:   ['Set up your login', 'Two things and you are in. No email, no password.'],
+  formDone:  ['You are in',        'Write this number down before you go on.'],
+  formTerms: ['Before you start',  'Read this one. It is the important bit.'],
+  formHelp:  ['If you are stuck',  ''],
 };
 function gateForm(which){
   GATE_FORMS.forEach(id => document.getElementById(id).classList.toggle('on', id === which));
@@ -1162,7 +1184,13 @@ function gate(){
           try { navigator.clipboard.writeText(String(u.serial)); b.textContent = 'Copied ✓'; }
           catch(err){ b.textContent = 'Write it down: ' + u.serial; }
         };
-        document.getElementById('dnGo').onclick = ()=> enter({ serial: u.serial, name: u.name, token: u.token });
+        document.getElementById('dnNext').onclick = ()=> gateForm('formTerms');
+        document.getElementById('dnGo').onclick = ()=>{
+          /* They have just read it here, so don't greet them with the same
+             words again as the in-app banner. */
+          try { localStorage.setItem(NOTICE_KEY, '1'); } catch(err){}
+          enter({ serial: u.serial, name: u.name, token: u.token });
+        };
       } catch(e){
         busy(f, false, 'Create my account');
         gateErr(friendlyErr(e));
