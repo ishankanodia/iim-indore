@@ -99,7 +99,8 @@ holds the truth.
   `case-comp-tracker-v3:u<serial>` once someone signs in. Nothing that reads
   progress may run before `gate()` resolves, or it reads the wrong person's
   row — that is why `boot()` awaits the gate before `initSync()`.
-- **`state`** = `{v, updatedAt, comps: {id: {stage, out, waiting, ppraDone}}}`.
+- **`state`** = `{v, updatedAt, comps: {id: {stage, out, waiting, ppraDone,
+  unserious}}}`.
   Written to `localStorage` under `KEY` on every mutation, and pushed to
   Supabase on a 600 ms debounce.
 - **`touch()`** is the single mutation epilogue: stamp `updatedAt`, write local,
@@ -111,7 +112,8 @@ holds the truth.
 - **`render()`** is a full re-render via template strings, dispatched to
   `renderComps` / `renderMess` / `renderTT` / `renderUsers` by the active tab.
   No diffing, no framework. Card buttons use inline `onclick`, so `advance`,
-  `selected`, `await_`, `elim`, `revive`, `togglePpra`, `undo` and `removeUser`
+  `selected`, `await_`, `elim`, `revive`, `togglePpra`, `toggleUnserious`,
+  `undo` and `removeUser`
   must stay top-level function declarations (a `const` arrow would not be
   reachable from the attribute).
 - **`mutate()` is how every card action changes progress**, and it snapshots
@@ -227,6 +229,15 @@ original single-file tracker's `case-comp-tracker-v2` key. Keep those paths.
   days out is Waiting, not Action needed — that distinction is the entire point
   of the split, so don't "fix" it by folding upcoming rounds back into the
   active bucket.
+- **`unserious` is for the comps that were mandatory to enter and nothing
+  more**, and it silences the rounds without silencing the compulsory part.
+  `muted(c)` — unserious *and* registered *and* (no PPRA, or PPRA filled) — is
+  what greys the card, greys the badge and drops it out of Action needed.
+  Before that point `pending()` deliberately keeps returning `action: true`,
+  first for registration and then for the form, because those are the two
+  things the flag must never let you miss. It is not a stage and not an
+  ending: `out` says you are gone, this says you are entered and coasting, so
+  the card stays in the live list and the tab counts.
 - **PPRA deliberately does not move a card between tabs.** It's a form, not a
   round, so a Waiting card with `ppraDone: false` stays in Waiting — but its
   `.why` line appends "· PPRA form still to fill". Keep that note.

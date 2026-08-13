@@ -76,7 +76,7 @@ for(const [tab, el] of [['comps','list'], ['mess','messBody'], ['tt','ttBody']])
 }
 
 /* Inline onclick means these must stay reachable as globals. */
-['advance','selected','await_','elim','revive','togglePpra','removeUser','undo','back'].forEach(fn =>
+['advance','selected','await_','elim','revive','togglePpra','toggleUnserious','removeUser','undo','back'].forEach(fn =>
   typeof win[fn] === 'function' ? ok(`window.${fn} reachable`) : bad(`window.${fn} missing — inline onclick would break`));
 
 /* Undo has to restore every progress field, not just the one the action was
@@ -105,6 +105,25 @@ try {
   is(ev('undoKey().indexOf(KEY) === 0 && undoKey() !== KEY'), true, 'undo stored under its own key, out of the synced blob');
   win.undo(id);
 } catch(e){ bad(`undo threw: ${e.message}`); }
+
+/* Unserious silences the rounds but not the compulsory part — the whole reason
+   the flag exists is comps you had to enter, so registration and the PPRA form
+   have to keep nagging or it becomes a way to lose the one deadline that
+   mattered. */
+try {
+  const c = ev('JSON.stringify(SEED.find(x=>x.ppra))'), id = JSON.parse(c).id;
+  ev(`state.comps["${id}"] = {stage:0, out:false, waiting:false, ppraDone:false, unserious:true}`);
+  is(ev(`pending(SEED.find(x=>x.id==="${id}")).action`), true, 'unserious still nags you to register');
+  ev(`state.comps["${id}"].stage = 1`);
+  is(ev(`pending(SEED.find(x=>x.id==="${id}")).action`), true, 'unserious still nags for the PPRA form');
+  ev(`state.comps["${id}"].ppraDone = true`);
+  is(ev(`pending(SEED.find(x=>x.id==="${id}")).action`), false, 'unserious drops out of Action needed once registered + PPRA done');
+  is(ev(`muted(SEED.find(x=>x.id==="${id}"))`), true, 'card greys out at the same moment');
+  win.toggleUnserious(id);
+  is(ev(`state.comps["${id}"].unserious`), false, 'toggle turns it back off');
+  win.undo(id);
+  is(ev(`state.comps["${id}"].unserious`), true, 'undo restores the unserious flag');
+} catch(e){ bad(`unserious threw: ${e.message}`); }
 
 /* Accounts. With no Supabase configured the gate must get out of the way
    entirely — that is the single-user fallback, and it is this test's path. */

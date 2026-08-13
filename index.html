@@ -140,6 +140,7 @@
   .card.later  { border-left-color: var(--accent); }
   .card.out    { opacity: .52; }
   .card.out .name { text-decoration: line-through; }
+  .card.unser  { opacity: .62; border-left-color: var(--line); }
   .card-top { display: flex; align-items: flex-start; gap: 10px; }
   .name-block { flex: 1; min-width: 0; }
   .name { font-size: 16px; font-weight: 700; letter-spacing: -.01em; line-height: 1.25; }
@@ -148,6 +149,7 @@
   .tag { font-size: 10.5px; font-weight: 700; padding: 3px 8px; border-radius: 6px; }
   .tag.ppra   { background: var(--accent-soft); color: var(--accent); }
   .tag.noppra { background: var(--amber-soft); color: var(--amber); }
+  .tag.unser  { background: #eceef0; color: var(--done); }
   .meta { font-size: 12px; color: var(--muted); margin-top: 8px; line-height: 1.45; }
   .meta b { color: var(--ink); font-weight: 600; }
   .why { font-size: 12px; font-weight: 600; margin-top: 9px; padding: 7px 10px; border-radius: 8px; line-height: 1.45; }
@@ -193,6 +195,8 @@
   .revive { background: #eceef0; color: var(--ink); }
   .wait { background: var(--violet-soft); color: var(--violet); }
   .selected { background: var(--green); color: #fff; }
+  .unser-btn { background: transparent; color: var(--muted); border: 1px solid var(--line) !important; }
+  .unser-btn.on { background: #eceef0; color: var(--ink); }
   .undo { background: transparent; color: var(--muted); border: 1px solid var(--line) !important; margin-left: auto; }
   #toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(18px + env(safe-area-inset-bottom));
     z-index: 40; display: flex; align-items: center; gap: 12px; max-width: min(520px, calc(100vw - 28px));
@@ -1202,7 +1206,7 @@ function signOut(forced){
 
 /* =========================================================================
    STATE + SYNC
-   state = { v, updatedAt, comps: { id: {stage,out,waiting,ppraDone} } }
+   state = { v, updatedAt, comps: { id: {stage,out,waiting,ppraDone,unserious} } }
 
    One blob per user, in that user's own row ('u1', 'u2', …), last-write-wins
    on updatedAt. That is correct for one person on two devices: whichever
@@ -1218,7 +1222,7 @@ let ROW = CFG.ROW_ID || 'me';
 let state = { v:3, updatedAt:0, comps:{} };
 let dirty = false, pushTimer = null;
 
-function blank(){ return { stage:0, out:false, waiting:false, ppraDone:false }; }
+function blank(){ return { stage:0, out:false, waiting:false, ppraDone:false, unserious:false }; }
 
 /* Fill in defaults for competitions added to the JSON after this state was
    saved, and for fields added after the fact. Never wipe, always back-fill. */
@@ -1231,6 +1235,7 @@ function reconcile(){
       if(s.out === undefined) s.out = false;
       if(s.waiting === undefined) s.waiting = false;
       if(s.ppraDone === undefined) s.ppraDone = false;
+      if(s.unserious === undefined) s.unserious = false;
     }
   });
 }
@@ -1329,7 +1334,19 @@ document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState 
 let filter = 'todo';
 const S = id => state.comps[id];
 
-function urgency(c){ const s=S(c.id); if(s.stage>0||s.waiting) return 'later'; const d=daysLeft(c.deadline); if(d<=1) return 'urgent'; if(d<=4) return 'soon'; return 'later'; }
+function urgency(c){ const s=S(c.id); if(muted(c)||s.stage>0||s.waiting) return 'later'; const d=daysLeft(c.deadline); if(d<=1) return 'urgent'; if(d<=4) return 'soon'; return 'later'; }
+
+/* "Unserious" is for the comps that are mandatory to enter and nothing more:
+   you registered because the batch had to, and you are not doing the rounds.
+   It silences the rounds, NOT the compulsory part — until you are registered
+   and (where it applies) the PPRA form is filled, the card keeps nagging,
+   because those are the two things you actually still owe. Once both are done
+   it drops out of Action needed and greys out. Not a stage and not an ending:
+   `out` means you're gone, this means you're present and coasting. */
+function muted(c){
+  const s = S(c.id);
+  return !!s.unserious && s.stage > 0 && (!c.ppra || s.ppraDone);
+}
 
 /* The round you're on hasn't started yet (sim/test/submission still ahead, or
    date unannounced). Returns the stageStarts entry, or null when the round is
@@ -1349,6 +1366,14 @@ function nextRound(c){
 function pending(c){
   const s = S(c.id);
   if(s.out || s.stage >= c.stages.length) return null;
+  /* Unserious + registered = the rounds stop counting as work you owe. The
+     PPRA form is the one exception, so it gets its own line rather than being
+     tacked onto a round message that no longer applies. */
+  if(s.unserious && s.stage > 0){
+    return c.ppra && !s.ppraDone
+      ? {action:true,  why:'Marked unserious — PPRA form is the only thing left'}
+      : {action:false, why:'Marked unserious — registered, nothing else owed'};
+  }
   if(s.waiting) return {action:false, why:'Submitted — waiting on their results'};
   const nr = nextRound(c);
   if(nr) return {action:false, why: nr.on === null
@@ -1362,6 +1387,7 @@ function badge(c){
   const s=S(c.id);
   if(s.out) return {cls:'done', txt:'Eliminated'};
   if(s.stage>=c.stages.length) return {cls:'done', txt:'Complete'};
+  if(muted(c)) return {cls:'done', txt:'Unserious'};
   if(s.waiting) return {cls:'wait', txt:'Awaiting results'};
   const nr = nextRound(c);
   if(nr){
@@ -1461,6 +1487,15 @@ function renderComps(){
          reverse and cannot claim to restore anything more than the round.
          Label goes in the tooltip, not on the face: "↶ Undo brought back into
          play" would wrap the button onto its own row on a phone. */
+      /* Offered on every live card, because "I only entered because I had to"
+         is a thing you decide at any point, not only at registration. Hidden on
+         eliminated cards — you're already gone, there is nothing to coast on. */
+      if(!s.out){
+        actions += '<button class="act unser-btn' + (s.unserious?' on':'') + '" onclick="toggleUnserious(\'' + c.id + '\')" title="' +
+                   (s.unserious ? 'Start treating this as a real competition again' : 'Registered because it was compulsory, but not actually chasing it') +
+                   '">' + (s.unserious ? '☑ Unserious' : '☐ Unserious') + '</button>';
+      }
+
       const stack = UNDO[c.id];
       if(stack && stack.length){
         actions += '<button class="act undo" onclick="undo(\'' + c.id + '\')" title="Undo: ' +
@@ -1476,13 +1511,14 @@ function renderComps(){
       const p = pending(c);
       const whyLine = p ? '<div class="why ' + (p.action?'act':'hold') + '">' + (p.action?'▶ ':'⏸ ') + p.why +
         (c.ppra && !s.ppraDone ? ' <span class="ppra-note">· PPRA form still to fill</span>' : '') + '</div>' : '';
-      const ppraTag = c.ppra ? '<span class="tag ppra">PPRA required</span>' : '<span class="tag noppra">No PPRA in mail</span>';
+      const ppraTag = (c.ppra ? '<span class="tag ppra">PPRA required</span>' : '<span class="tag noppra">No PPRA in mail</span>') +
+        (s.unserious && !s.out ? '<span class="tag unser">Unserious</span>' : '');
       const ppraCheck = c.ppra
         ? '<label class="ppra-check ' + (s.ppraDone?'done':'') + '"><input type="checkbox" ' + (s.ppraDone?'checked':'') +
           ' onchange="togglePpra(\'' + c.id + '\')">' + (s.ppraDone ? '✓ PPRA form filled' : 'PPRA form not filled yet') + '</label>'
         : '';
 
-      return '<div class="card ' + (s.out?'out':u) + '">' +
+      return '<div class="card ' + (s.out?'out':u) + (muted(c)?' unser':'') + '">' +
         '<div class="card-top"><div class="name-block"><div class="name">' + c.name + '</div>' +
         '<div class="org">' + c.org + '</div><div class="tags">' + ppraTag + '</div></div>' +
         '<span class="badge ' + b.cls + '">' + b.txt + '</span></div>' +
@@ -1523,7 +1559,7 @@ const UNDO_MAX = 10;
 function undoKey(){ return KEY + ':undo'; }
 function loadUndo(){ try { UNDO = JSON.parse(localStorage.getItem(undoKey())) || {}; } catch(e){ UNDO = {}; } }
 function saveUndo(){ try { localStorage.setItem(undoKey(), JSON.stringify(UNDO)); } catch(e){} }
-function snap(s){ return {stage: s.stage, out: s.out, waiting: s.waiting, ppraDone: s.ppraDone}; }
+function snap(s){ return {stage: s.stage, out: s.out, waiting: s.waiting, ppraDone: s.ppraDone, unserious: s.unserious}; }
 
 function mutate(id, label, fn){
   const s = S(id);
@@ -1593,6 +1629,9 @@ function await_(id){ mutate(id, 'marked submitted', s => { s.waiting = true; });
 function elim(id){ mutate(id, 'marked out', s => { s.out = true; s.waiting = false; }); }
 function revive(id){ mutate(id, 'brought back into play', s => { s.out = false; }); }
 function togglePpra(id){ mutate(id, 'PPRA tick', s => { s.ppraDone = !s.ppraDone; }); }
+function toggleUnserious(id){
+  mutate(id, S(id).unserious ? 'back to serious' : 'marked unserious', s => { s.unserious = !s.unserious; });
+}
 
 /* =========================================================================
    SHARED — week strip used by both the mess and timetable tabs.
@@ -1841,7 +1880,7 @@ document.getElementById('importFile').onchange = function(){
     SEED.forEach(c=>{
       const v = comps[c.id];
       if(v && typeof v === 'object' && typeof v.stage === 'number'){
-        state.comps[c.id] = { stage:v.stage, out:!!v.out, waiting:!!v.waiting, ppraDone:!!v.ppraDone };
+        state.comps[c.id] = { stage:v.stage, out:!!v.out, waiting:!!v.waiting, ppraDone:!!v.ppraDone, unserious:!!v.unserious };
         hits++;
       }
     });
