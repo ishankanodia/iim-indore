@@ -578,8 +578,8 @@
    "label": "PPRA — Google Form",
    "url": "https://forms.gle/CRGk2znbjEHZpxBG7"
   },
-  "deadline": "2026-08-05T23:59:00+05:30",
-  "deadlineLabel": "Register · 5 Aug 11:59 PM (placecomm) · Begin Your Journey form due 9 Aug",
+  "deadline": "2026-08-24T23:59:00+05:30",
+  "deadlineLabel": "Business Idea Submission · 24 Aug 11:59 PM (reg was 5 Aug)",
   "stages": [
    "Register + Begin Your Journey Form",
    "Marico Quiz",
@@ -635,7 +635,7 @@
    },
    {
     "d": "14–24 Aug",
-    "t": "<b>Business Idea Submission</b> — one big idea in chosen category; 3-slide PPT proposal + 3–4 line summary"
+    "t": "<b>Business Idea Submission</b> — closes <b>24 Aug 11:59 PM</b>. One big idea in your chosen category, built around the listed focus areas: a <b>3-slide proposal (PDF)</b> plus a 3–4 line summary. The 3 slides exclude the cover and end slide; credit any references. Name it <b>TeamName_CampusName_OTW14</b>, max 20 MB. Team leader submits on the Unstop page"
    },
    {
     "d": "24 Aug–24 Sep",
@@ -672,8 +672,8 @@
    "label": "PPRA — proof of registration form",
    "url": "https://forms.gle/YMk66DxPxFzKmjDs6"
   },
-  "deadline": "2026-08-19T23:59:00+05:30",
-  "deadlineLabel": "PPRA form due 19 Aug EOD · Unstop registration closes 21 Aug 11:59 PM",
+  "deadline": "2026-08-23T23:59:00+05:30",
+  "deadlineLabel": "Campus Round submission · 23 Aug 11:59 PM (PPRA form was 19 Aug)",
   "stages": [
    "Register",
    "Campus Round · Pitch + Concept Note",
@@ -711,8 +711,8 @@
   },
   "timeline": [
    {
-    "d": "10–21 Aug",
-    "t": "<b>Stage 1 · Campus Round</b> — register and submit a 3-min executive pitch video + 2-page concept note on the case (problem statement launches 10 Aug). Results 26 Aug. Only group leader fills the PPRA form"
+    "d": "10–23 Aug",
+    "t": "<b>Stage 1 · Campus Round</b> — closes <b>23 Aug 11:59 PM</b>. Team leader submits a <b>2-page concept note (PDF)</b> + a <b>3-min executive pitch video (MP4)</b>; members must be clearly visible in frame. If the MP4 won’t upload, put it on YouTube as <i>Unlisted</i> and submit the link. Name files <b>InstituteName_TeamName</b>. Case study downloads from the competition page. Results 26 Aug. Only the group leader fills the PPRA form"
    },
    {
     "d": "14 Aug",
@@ -766,16 +766,16 @@
    "url": null
   },
   "deadline": "2026-08-14T23:59:00+05:30",
-  "deadlineLabel": "Register · 14 Aug 11:59 PM · R1 due 15 Aug 11:59 PM",
+  "deadlineLabel": "Register · 14 Aug 11:59 PM · Exec summary due 23 Aug 8:00 AM (extended)",
   "stages": [
    "Register",
-   "Round 1 Submission",
+   "Round 1 · Executive Summary",
    "National Finale"
   ],
   "stageStarts": {
    "1": {
     "on": "2026-07-28T00:00:00+05:30",
-    "short": "Round 1"
+    "short": "Exec summary"
    },
    "2": {
     "on": null,
@@ -796,8 +796,8 @@
     "t": "<b>Registration closes</b> 11:59 PM. Management Track: 1st-yr full-time 2-yr MBA/PGDM. IIM Indore is on the eligible list"
    },
    {
-    "d": "15 Aug",
-    "t": "<b>Round 1 Submission</b> — due 11:59 PM. Case is live on the portal, accessible only to registered teams"
+    "d": "23 Aug (extended)",
+    "t": "<b>Round 1 · Executive Summary</b> — deadline <b>extended from 15 Aug to 23 Aug, 8:00 AM</b>. Team leader submits the final solution on the GradPartners page. Case is live on the portal, accessible only to registered teams"
    },
    {
     "d": "TBA",
@@ -819,7 +819,7 @@
    "url": "https://forms.gle/pqWL17KJmc2X8JXP9"
   },
   "deadline": "2026-08-17T23:59:00+05:30",
-  "deadlineLabel": "Register · 17 Aug 11:59 PM · MANDATORY",
+  "deadlineLabel": "Registration closed 17 Aug · Aptitude assessment next — date on the portal",
   "stages": [
    "Register",
    "Assessment",
@@ -828,7 +828,7 @@
   "stageStarts": {
    "1": {
     "on": null,
-    "short": "Assessment"
+    "short": "Aptitude test"
    },
    "2": {
     "on": null,
@@ -837,12 +837,12 @@
   },
   "timeline": [
    {
-    "d": "Till 17 Aug",
-    "t": "<b>Registration</b> — closes 17 Aug 11:59 PM IST. <b>Mandatory for the batch.</b> Management Track: 1st-year full-time MBA/PGDM, all B-schools"
+    "d": "Closed 17 Aug",
+    "t": "<b>Registration closed</b> — 17 Aug 11:59 PM IST. <b>Was mandatory for the batch.</b> 66,000+ registrations across Management, Engineering, Pharma, Coding, Data Science and AI tracks"
    },
    {
-    "d": "TBA",
-    "t": "<b>Assessment round</b> — shortlisting for the interview drive"
+    "d": "Date on the portal",
+    "t": "<b>Aptitude Assessment</b> — dates are listed per assessment on the Destination Dr. Reddy’s website. Announcements come by mail and on Grad Partners’ LinkedIn, so watch both"
    },
    {
     "d": "TBA",
@@ -1127,8 +1127,8 @@
    "label": "PPRA — proof form",
    "url": "https://forms.gle/g4hzT9jwx2jjx4sk8"
   },
-  "deadline": "2026-08-21T23:59:00+05:30",
-  "deadlineLabel": "Register + case submission · 21 Aug 11:59 PM · MANDATORY",
+  "deadline": "2026-08-23T23:59:00+05:30",
+  "deadlineLabel": "Reg + case submission · 23 Aug 11:59 PM (placecomm was 21 Aug)",
   "stages": [
    "Register",
    "Case Submission",
@@ -1155,12 +1155,12 @@
     "t": "<b>Registration opens</b> — 5:00 PM IST. Open to 1st- and 2nd-year students of 2-year full-time MBA/PGDM at eligible campuses"
    },
    {
-    "d": "Till 21 Aug",
-    "t": "<b>Placecomm deadline</b> — 21 Aug 11:59 PM IST. <b>Mandatory for the batch</b>, and earlier than Unstop's own 23 Aug cutoff, so treat 21 Aug as the real one"
+    "d": "Was 21 Aug",
+    "t": "<b>Placecomm deadline</b> — 21 Aug 11:59 PM IST, <b>mandatory for the batch</b>. Unstop’s own window runs to 23 Aug 11:59 PM, so a late entry is still submittable there"
    },
    {
     "d": "7–23 Aug",
-    "t": "<b>Registration & Case Submission</b> — two deliverables: a max 2-slide <b>Executive Summary</b> and a max 10-slide <b>Main Presentation</b> (appendix up to 20 slides). State assumptions; the deck must be deliverable in 15 minutes"
+    "t": "<b>Registration &amp; Case Submission</b> — closes <b>23 Aug 11:59 PM</b>. Two deliverables: a max <b>2-slide Executive Summary</b> (PDF) and a max <b>10-slide Presentation</b> (appendix up to 20) in <b>both PDF and PPT</b>. Name both <b>TeamName_Presentation</b>, max 20 MB. Team leader submits on the Unstop opportunity page; use “Change Submission” to revise before the deadline. Deck must be deliverable in 15 minutes"
    },
    {
     "d": "14–18 Sep",

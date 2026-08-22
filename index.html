@@ -915,6 +915,28 @@ const MAIL_NOTES = [
          'Movie starts 2:35 pm, quiz straight after.' },
 ];
 
+/* Campus-wide events that are not classes and so have no row in a timetable
+   grid, but do sit inside the teaching day: a shutdown, a mandatory talk, a
+   holiday declared mid-term. `dedupe` is what keeps this idempotent: if the
+   sheet ever grows a slot of its own on that date and time, the regex matches
+   it and this entry is not added, so the block never doubles a card. Keep
+   these dated so they age out with everything else here. */
+const MAIL_EVENTS = [
+  /* IT Department mail, 19 Aug 2026. Estate Electrical are load-shifting the
+     server room UPS, so the whole campus loses internet and LAN for three
+     hours. It straddles the 10:30 and 12:00 slots, which is the reason it is
+     worth a card rather than a note on one class. */
+  { date:'2026-08-25', day:'Tuesday', start:'11:00', end:'14:00',
+    title:'No internet · UPS load-shifting',
+    room:'Campus-wide', code:'IT', codeName:'IT Department notice', type:'Class',
+    dedupe:/ups|internet|load[\s-]*shift/i,
+    note:'Server room UPS load-shifting by Estate Electrical. All server room ' +
+         'equipment is powered off, so internet and LAN are down campus-wide ' +
+         'from 11:00 am to 2:00 pm. Anything needing a submission portal, ' +
+         'Unstop or a live sheet has to happen either side of it. Mobile data ' +
+         'is unaffected.' },
+];
+
 function applyMail(tt){
   if(!tt || !Array.isArray(tt.entries)) return tt;
   const plus3 = t => { const [h,m] = t.split(':').map(Number); return String((h+3)%24).padStart(2,'0') + ':' + String(m).padStart(2,'0'); };
@@ -940,6 +962,16 @@ function applyMail(tt){
     });
   });
 
+  MAIL_EVENTS.forEach(ev => {
+    /* Only add it if the sheet has nothing on that date already saying the
+       same thing. Compare on the day, not the exact slot, because the sheet
+       would be free to file it at 10:45 and still mean this. */
+    const already = tt.entries.some(e => e.date === ev.date && ev.dedupe.test(String(e.title)));
+    if(already) return;
+    const { dedupe, codeName, ...entry } = ev;
+    tt.entries.push({ ...entry, time: label12(ev.start) + ' - ' + label12(ev.end) });
+  });
+
   MAIL_NOTES.forEach(n => {
     const hit = tt.entries.find(e => e.date === n.date && n.match.test(String(e.title)) && !e.note);
     if(hit) hit.note = n.note;
@@ -949,6 +981,10 @@ function applyMail(tt){
   /* Only fill in a code the sheet already uses, and only where it is still
      mapped to itself — a sheet that starts giving real titles keeps its own. */
   Object.keys(MAIL_COURSES).forEach(c => { if(tt.courses[c] === c) tt.courses[c] = MAIL_COURSES[c]; });
+  /* Codes introduced by MAIL_EVENTS never appear in the sheet, so they are not
+     in tt.courses at all and courseName() would fall back to the bare code.
+     Name them here, and only if nothing already has. */
+  MAIL_EVENTS.forEach(ev => { if(ev.code && ev.codeName && !tt.courses[ev.code]) tt.courses[ev.code] = ev.codeName; });
 
   tt.entries.sort((a,b) => a.date < b.date ? -1 : a.date > b.date ? 1 : a.start.localeCompare(b.start));
   return tt;

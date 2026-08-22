@@ -78,8 +78,10 @@ holds the truth.
   of it is written to become a no-op once the sheet agrees: `MAIL_EXAMS` only
   replaces a slot still titled a bare "End Term", `MAIL_COURSES` only fills a
   code still mapped to itself, `MAIL_NOTES` only attaches to an entry with no
-  note. So nothing here has to be un-done by hand, and nothing here can
-  clobber a fresher sheet. It is not a second content store — keep entries
+  note, and `MAIL_EVENTS` (campus-wide things that are not classes, so the
+  grid has no row for them: a shutdown, a mandatory talk) skips itself if
+  anything on that date already matches its `dedupe` regex. So nothing here
+  has to be un-done by hand, and nothing here can clobber a fresher sheet. It is not a second content store — keep entries
   dated so they age out, and put anything durable in the sheet.
   The end-term papers currently carry an **assumed** 3-hour duration; the mail
   gave start times only, which is why the card says so.
